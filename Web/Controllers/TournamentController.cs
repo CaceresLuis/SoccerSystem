@@ -1,21 +1,22 @@
-﻿using System;
-using MediatR;
-using Shared.ViewModel;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Core.Modules.TeamModule.Add;
-using Core.Modules.TeamModule.Get;
-using Core.Modules.TeamModule.List;
+﻿using Core.Modules.TeamModule.Get;
 using Core.Modules.TeamModule.Remove;
 using Core.Modules.TeamModule.Update;
+using Core.Modules.TournamentModule.Add;
+using Core.Modules.TournamentModule.List;
+using Infrastructure.Models;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Shared.ViewModel;
+using System;
+using System.Threading.Tasks;
 
 namespace Web.Controllers
 {
-    public class TeamController : Controller
+    public class TournamentController : Controller
     {
         private readonly IMediator _mediator;
 
-        public TeamController(IMediator mediator)
+        public TournamentController(IMediator mediator)
         {
             _mediator = mediator;
         }
@@ -23,7 +24,11 @@ namespace Web.Controllers
         // GET: TeamController
         public async Task<ActionResult> Index()
         {
-            return View(await _mediator.Send(new ListTeamsQuery()));
+            TournamentEntity[] tournaments = await _mediator.Send(new ListTournamentsQuery());
+            if (tournaments.Length < 1)
+                return View();
+
+            return View(tournaments);
         }
 
         public ActionResult Create()
@@ -33,7 +38,7 @@ namespace Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(AddTeamCommand team)
+        public async Task<ActionResult> Create(AddTournamentCommand team)
         {
             if (await _mediator.Send(team))
                 return RedirectToAction(nameof(Index));

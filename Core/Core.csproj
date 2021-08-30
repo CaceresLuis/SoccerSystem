@@ -13,4 +13,10 @@
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Modules\TournamentModule\Get\" />
+    <Folder Include="Modules\TournamentModule\Remove\" />
+    <Folder Include="Modules\TournamentModule\Update\" />
+  </ItemGroup>
+
 </Project>
