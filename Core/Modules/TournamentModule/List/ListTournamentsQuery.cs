@@ -1,10 +1,9 @@
 ﻿using MediatR;
-using Shared.ViewModel;
-using Infrastructure.Models;
+using Core.ModelResponse;
 
 namespace Core.Modules.TournamentModule.List
 {
-    public class ListTournamentsQuery : IRequest<TournamentEntity[]>
+    public class ListTournamentsQuery : IRequest<TournamentResponse[]>
     {
     }
 }

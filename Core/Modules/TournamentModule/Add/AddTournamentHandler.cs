@@ -1,13 +1,14 @@
 ﻿using MediatR;
+using Shared.Enums;
 using System.Threading;
-using Shared.ViewModel;
+using Core.ModelResponse;
 using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 
 namespace Core.Modules.TournamentModule.Add
 {
-    public class AddTournamentHandler : IRequestHandler<AddTournamentCommand, bool>
+    public class AddTournamentHandler : IRequestHandler<AddTournamentCommand, ActionResponse>
     {
         private readonly ITournamentRepository _tournamentRepository;
 
@@ -16,9 +17,9 @@ namespace Core.Modules.TournamentModule.Add
             _tournamentRepository = tournamentRepository;
         }
 
-        public async Task<bool> Handle(AddTournamentCommand request, CancellationToken cancellationToken)
+        public async Task<ActionResponse> Handle(AddTournamentCommand request, CancellationToken cancellationToken)
         {
-            TournamentViewModel<GroupEntity> t = request.Tournament;
+            TournamentResponse t = request.Tournament;
             TournamentEntity tournament = new TournamentEntity 
             {
                 IsActive = t.IsActive,
@@ -30,7 +31,12 @@ namespace Core.Modules.TournamentModule.Add
                 StartDate = t.StartDate
             };
 
-            return await _tournamentRepository.AddTournamentAsync(tournament);
+            var create = await _tournamentRepository.AddTournamentAsync(tournament);
+
+            if(!create)
+                return new ActionResponse { IsSuccess = false, Message = "The tournament don't created", State = State.Failed };
+
+            return new ActionResponse { IsSuccess = true, Message = "The tournament created", State = State.Success };
         }
     }
 }

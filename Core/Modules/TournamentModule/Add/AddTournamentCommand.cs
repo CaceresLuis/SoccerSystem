@@ -1,11 +1,10 @@
 ﻿using MediatR;
-using Shared.ViewModel;
-using Infrastructure.Models;
+using Core.ModelResponse;
 
 namespace Core.Modules.TournamentModule.Add
 {
-    public class AddTournamentCommand : IRequest<bool>
+    public class AddTournamentCommand : IRequest<ActionResponse>
     {
-        public TournamentViewModel<GroupEntity> Tournament { get; set; }
+        public TournamentResponse Tournament { get; set; }
     }
 }

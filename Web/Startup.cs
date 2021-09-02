@@ -29,16 +29,21 @@ namespace Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Config MediatoR
             services.AddMediatR(typeof(AddTeamCommand).Assembly);
 
             services.AddControllersWithViews();
 
+            //Config Datacontex
             services.AddDbContext<DataContext>(conf =>
             {
                 conf.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            //Config Automapper
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+            //Inyection of Repositories
             services.AddScoped<ITeamRepository, TeamRepository>();
             services.AddScoped<ITournamentRepository, TournamentRepository>();
         }

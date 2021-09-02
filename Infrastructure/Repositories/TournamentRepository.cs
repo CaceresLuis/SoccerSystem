@@ -28,6 +28,26 @@ namespace Infrastructure.Repositories
         {
             return await _dataContext.Tournaments.FindAsync(id);
         }
+        
+        public async Task<TournamentEntity> GetTournamentWithGroupAsync(int id)
+        {
+            return await _dataContext.Tournaments
+                .Include(t => t.Groups).FirstOrDefaultAsync(t => t.Id == id);
+        }
+
+        public async Task<TournamentEntity> GetTournamentDetailsAsync(int id)
+        {
+            return await _dataContext.Tournaments
+                .Include(t => t.Groups)
+                .ThenInclude(t => t.Matches)
+                .ThenInclude(t => t.Local)
+                .Include(t => t.Groups)
+                .ThenInclude(t => t.Matches)
+                .ThenInclude(t => t.Visitor)
+                .Include(t => t.Groups)
+                .ThenInclude(t => t.GroupDetails)
+                .FirstOrDefaultAsync(t => t.Id == id);
+        }
 
         public async Task<TournamentEntity[]> GetTournamentsAsync()
         {
@@ -50,28 +70,16 @@ namespace Infrastructure.Repositories
             .ToArrayAsync());
         }
 
-        public async Task<TournamentEntity> GetTournamentDetailsAsync(int id)
+        public async Task<bool> UpdateTournamentAsync(TournamentEntity tournament)
         {
-            return await _dataContext.Tournaments
-                .Include(t => t.Groups)
-                .ThenInclude(t => t.Matches)
-                .ThenInclude(t => t.Local)
-                .Include(t => t.Groups)
-                .ThenInclude(t => t.Matches)
-                .ThenInclude(t => t.Visitor)
-                .Include(t => t.Groups)
-                .ThenInclude(t => t.GroupDetails)
-                .FirstOrDefaultAsync(t => t.Id == id);
+            _dataContext.Tournaments.Update(tournament);
+            return await _dataContext.SaveChangesAsync() > 0;
         }
 
-        public Task<bool> UpdateTournamentAsync(TournamentEntity tournament)
+        public async Task<bool> DeleteTournamentAsync(TournamentEntity tournament)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> DeleteTournamentAsync(TournamentEntity tournament)
-        {
-            throw new NotImplementedException();
+            _dataContext.Tournaments.Remove(tournament);
+            return await _dataContext.SaveChangesAsync() > 0;
         }
     }
 }
