@@ -13,5 +13,6 @@ namespace Infrastructure.Interfaces
         Task<bool> UpdateTournamentAsync(TournamentEntity tournament);
         Task<bool> DeleteTournamentAsync(TournamentEntity tournament);
         Task<TournamentEntity> GetTournamentWithGroupAsync(int id);
+        Task<TournamentEntity> GetTournamentByNameAsync(string name);
     }
 }

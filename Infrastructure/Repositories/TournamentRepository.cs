@@ -28,6 +28,10 @@ namespace Infrastructure.Repositories
         {
             return await _dataContext.Tournaments.FindAsync(id);
         }
+        public async Task<TournamentEntity> GetTournamentByNameAsync(string name)
+        {
+            return await _dataContext.Tournaments.FirstOrDefaultAsync(t => t.Name == name);
+        }
         
         public async Task<TournamentEntity> GetTournamentWithGroupAsync(int id)
         {

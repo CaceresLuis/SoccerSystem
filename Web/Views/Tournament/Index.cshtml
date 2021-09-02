@@ -3,9 +3,6 @@
 @{
     var url = "https://localhost:44372/Tournament/Details";
     ViewData["Title"] = "Tournaments";
-    var mesaje = @Model.Data.Message;
-    var title = @Model.Data.Title;
-    var ico = @Model.Data.State.ToString();
 }
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
@@ -102,7 +99,10 @@ else
 
 @if (@Model.Data.Message != null)
 {
-<script type="text/javascript">
+    string mesaje = @Model.Data.Message;
+    string title = @Model.Data.Title;
+    string ico = @Model.Data.State.ToString();
+    <script type="text/javascript">
           Swal.fire({
               title: '<h2><strong>@mesaje</strong></h2>',
               icon: `@ico`,
@@ -112,7 +112,7 @@ else
               showConfirmButton: false,
               timer: 4500
           })
-</script>
+    </script>
 }
 
 @section Scripts {

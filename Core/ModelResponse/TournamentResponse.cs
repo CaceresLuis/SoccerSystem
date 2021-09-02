@@ -34,5 +34,6 @@ namespace Core.ModelResponse
 
         [Display(Name = "End Date")]
         public DateTime EndDateLocal => EndDate.ToLocalTime();
+        public ActionResponse Data { get; set; }
     }
 }

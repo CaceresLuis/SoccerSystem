@@ -1,5 +1,4 @@
-﻿using System;
-using MediatR;
+﻿using MediatR;
 using Newtonsoft.Json;
 using Core.ModelResponse;
 using System.Threading.Tasks;
@@ -27,33 +26,34 @@ namespace Web.Controllers
             if (tournaments.Length < 1)
                 return View();
 
-            var response = new ListTournamentResponse{ Tournaments = tournaments };
-
-            var actionResponse = new ActionResponse { };
-            response.Data = actionResponse;
+            ListTournamentResponse response = new ListTournamentResponse{ Tournaments = tournaments };
+            response.Data = new ActionResponse { };
 
             if (TempData["Data"] != null)
                 response.Data = JsonConvert.DeserializeObject<ActionResponse>((string)TempData["Data"]);
-
 
             return View(response);
         }
 
         public ActionResult Create()
         {
-            return View();
+            TournamentResponse response = new TournamentResponse{ };
+            response.Data = new ActionResponse { };
+            return View(response);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(TournamentResponse tournament)
         {
-            var create = await _mediator.Send(new AddTournamentCommand { Tournament = tournament });
+            ActionResponse create = await _mediator.Send(new AddTournamentCommand { Tournament = tournament });
 
             if (!create.IsSuccess)
             {
-                TempData["Data"] = JsonConvert.SerializeObject(create);
-                return View();
+                TournamentResponse response = new TournamentResponse { };
+                response.Data = create;
+
+                return View(response);
             }
                 
             TempData["Data"] = JsonConvert.SerializeObject(create);
@@ -71,18 +71,31 @@ namespace Web.Controllers
         {
             if (id < 1) return NotFound();
 
-            return View(await _mediator.Send(new GetTournamentQuery { Id = id }));
+            TournamentResponse response = await _mediator.Send(new GetTournamentQuery { Id = id });
+            response.Data = new ActionResponse { };
+
+            if (TempData["Data"] != null)
+                response.Data = JsonConvert.DeserializeObject<ActionResponse>((string)TempData["Data"]);
+
+            return View(response);
         }
 
-        // POST: TeamController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(int id, TournamentResponse tournament)
         {
             tournament.Id = id;
-            if (!await _mediator.Send(new UpdateTournamentCommnad { TournamentResponse = tournament }))
-                throw new Exception("algo ha salido mal");
+            ActionResponse update = await _mediator.Send(new UpdateTournamentCommnad { TournamentResponse = tournament });
+            if (!update.IsSuccess)
+            {
+                //Preparamos toda el modelo para reenviar a la vista
+                TournamentResponse response = await _mediator.Send(new GetTournamentQuery { Id = id });
+                response.Data = update;
 
+                return View(response);
+            }
+
+            TempData["Data"] = JsonConvert.SerializeObject(update);
             return  RedirectToAction(nameof(Index));
         }
 
