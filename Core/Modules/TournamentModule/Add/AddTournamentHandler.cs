@@ -34,9 +34,9 @@ namespace Core.Modules.TournamentModule.Add
             var create = await _tournamentRepository.AddTournamentAsync(tournament);
 
             if(!create)
-                return new ActionResponse { IsSuccess = false, Message = "The tournament don't created", State = State.Failed };
+                return new ActionResponse { IsSuccess = false, Title = "Error!", Message = "The tournament {tournament.Name} was not created", State = State.error };
 
-            return new ActionResponse { IsSuccess = true, Message = "The tournament created", State = State.Success };
+            return new ActionResponse { IsSuccess = true, Title = "Created", Message = $"The tournament {tournament.Name} was created", State = State.success };
         }
     }
 }

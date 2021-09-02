@@ -2,10 +2,10 @@
 {
     public enum State
     {
-        Success,
-        Failed,
-        Create,
-        Deleted,
-        Updated
+        success,
+        error,
+        warning,
+        info,
+        question
     }
 }

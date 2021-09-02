@@ -24,15 +24,15 @@ namespace Core.Modules.TournamentModule.Remove
         {
             var exist = await _tournamentRepository.GetTournamentWithGroupAsync(request.Id);
             if(exist == null)
-                return new ActionResponse { IsSuccess = false, Message = "The tournament don't exist", State = State.Failed };
+                return new ActionResponse { IsSuccess = false, Title = "Error", Message = "The tournament does not exist", State = State.error };
 
             if(exist.Groups.Count() > 0)
-                return new ActionResponse { IsSuccess = false, Message = "The tournament has registered groups", State = State.Failed };
+                return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"The tournament {exist.Name} has registered groups", State = State.error };
 
             if (!await _tournamentRepository.DeleteTournamentAsync(exist))
-                return new ActionResponse { IsSuccess = false, Message = "Something has goes wrong", State = State.Failed };
+                return new ActionResponse { IsSuccess = false, Message = "Something has gone wrong", State = State.error };
 
-            return new ActionResponse {IsSuccess = true, Message = "Tournament Deleted!", State = State.Deleted };
+            return new ActionResponse {IsSuccess = true, Title = "Deleted!", Message = $"Tournament {exist.Name} has been deleted!", State = State.success };
         }
     }
 }

@@ -15,7 +15,6 @@ namespace Web.Controllers
     public class TournamentController : Controller
     {
         private readonly IMediator _mediator;
-        private ActionResponse Data { get; set; }
 
         public TournamentController(IMediator mediator)
         {
@@ -30,8 +29,7 @@ namespace Web.Controllers
 
             var response = new ListTournamentResponse{ Tournaments = tournaments };
 
-            var actionResponse = new ActionResponse { Message = "Free" };
-            
+            var actionResponse = new ActionResponse { };
             response.Data = actionResponse;
 
             if (TempData["Data"] != null)
