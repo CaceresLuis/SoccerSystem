@@ -4,7 +4,8 @@
 
 1. Core
 	- Microsoft.AspNetCore.Http.Features 3.1.18
-	- MediatR.Extensions.Microsoft.DependencyInjection
+	- MediatR.Extensions.Microsoft.DependencyInjection 9.0.0
+	- AutoMapper.Extensions.Microsoft.DependencyInjection 8.1.1
 
 2. Infrastructure
 	-
