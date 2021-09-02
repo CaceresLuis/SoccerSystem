@@ -15,10 +15,5 @@ namespace Infrastructure.Models
         public string LogoPath { get; set; }
         public ICollection<GroupDetailEntity> GroupDetails { get; set; }
         public ICollection<UserEntity> Users { get; set; }
-
-        [Display(Name = "Logo")]
-        public string LogoFullPath => string.IsNullOrEmpty(LogoPath)
-            ? "https://soccer-web.conveyor.cloud/images/noimage.png"
-            : $"https://soccer-web.conveyor.cloud/{LogoPath.Substring(1)}";
     }
 }

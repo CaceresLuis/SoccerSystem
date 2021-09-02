@@ -1,10 +1,10 @@
 ﻿using MediatR;
-using Shared.ViewModel;
+using Core.ModelResponse;
 
 namespace Core.Modules.TeamModule.Update
 {
-    public class UpdateTeamCommand : IRequest<bool>
+    public class UpdateTeamCommand : IRequest<ActionResponse>
     {
-        public TeamViewModel TeamViewModel { get; set; }
+        public Team Team { get; set; }
     }
 }

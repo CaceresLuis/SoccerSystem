@@ -1,12 +1,10 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
+using Core.ModelResponse;
 
 namespace Core.Modules.TeamModule.Add
 {
-    public class AddTeamCommand : IRequest<bool>
+    public class AddTeamCommand : IRequest<ActionResponse>
     {
-        public IFormFile LogoFile { get; set; }
-
-        public string Name { get; set; }
+        public Team Team { get; set; }
     }
 }

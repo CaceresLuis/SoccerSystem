@@ -1,23 +1,26 @@
 ﻿using MediatR;
+using AutoMapper;
 using System.Threading;
-using Infrastructure.Models;
+using Core.ModelResponse;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 
 namespace Core.Modules.TeamModule.List
 {
-    public class ListTeamsHandler : IRequestHandler<ListTeamsQuery, TeamEntity[]>
+    public class ListTeamsHandler : IRequestHandler<ListTeamsQuery, Team[]>
     {
+        private readonly IMapper _mapper;
         private readonly ITeamRepository _teamRepository;
 
-        public ListTeamsHandler(ITeamRepository teamRepository)
+        public ListTeamsHandler(ITeamRepository teamRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _teamRepository = teamRepository;
         }
 
-        public async Task<TeamEntity[]> Handle(ListTeamsQuery request, CancellationToken cancellationToken)
+        public async Task<Team[]> Handle(ListTeamsQuery request, CancellationToken cancellationToken)
         {
-            return await _teamRepository.GetAllTeamAsync();
+            return _mapper.Map<Team[]>(await _teamRepository.GetAllTeamAsync());
         }
     }
 }

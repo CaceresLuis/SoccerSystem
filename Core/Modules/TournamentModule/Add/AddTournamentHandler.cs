@@ -23,15 +23,13 @@ namespace Core.Modules.TournamentModule.Add
 
         public async Task<ActionResponse> Handle(AddTournamentCommand request, CancellationToken cancellationToken)
         {
-            TournamentEntity tournamentByName = await _tournamentRepository.GetTournamentByNameAsync(request.Tournament.Name);
-            if (tournamentByName != null)
-                return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"The {tournamentByName.Name} tournament name is already registered", State = State.error };
-
             TournamentEntity tournament = _mapper.Map<TournamentEntity>(request.Tournament);
 
-            bool create = await _tournamentRepository.AddTournamentAsync(tournament);
-            if(!create)
-                return new ActionResponse { IsSuccess = false, Title = "Error!", Message = $"The tournament {tournament.Name} was not created", State = State.error };
+            if (await _tournamentRepository.GetTournamentByNameAsync(tournament.Name) != null)
+                return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"The {tournament.Name} tournament name is already registered", State = State.error };
+
+            if(!await _tournamentRepository.AddTournamentAsync(tournament))
+                return new ActionResponse { IsSuccess = false, Title = "Error!", Message = $"Something has gone wrong", State = State.error };
 
             return new ActionResponse { IsSuccess = true, Title = "Created", Message = $"The tournament {tournament.Name} was created", State = State.success };
         }

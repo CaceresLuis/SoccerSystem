@@ -1,4 +1,4 @@
-﻿@model Core.ModelResponse.TournamentResponse
+﻿@model Core.ModelResponse.One.OneTournamentResponse
 
 @{
     var url = "https://localhost:44391/Group/DetailsGroup";
@@ -72,41 +72,41 @@
         <div class="col-md-4">
             <dl class="dl-horizontal text-center">
                 <dt>
-                    @Model.Name
+                    @Model.Tournament.Name
                 </dt>
                 <dd>
-                    @Model.Name
+                    @Model.Tournament.Name
                 </dd>
                 <dt>
-                    @Html.DisplayNameFor(model => model.StartDateLocal)
+                    @Html.DisplayNameFor(model => model.Tournament.StartDateLocal)
                 </dt>
                 <dd>
-                    @Model.StartDateLocal
+                    @Model.Tournament.StartDateLocal
                 </dd>
                 <dt>
-                    @Html.DisplayNameFor(model => model.EndDateLocal)
+                    @Html.DisplayNameFor(model => model.Tournament.EndDateLocal)
                 </dt>
                 <dd>
-                    @Model.EndDateLocal
+                    @Model.Tournament.EndDateLocal
                 </dd>
                 <dt>
-                    @Html.DisplayNameFor(model => model.IsActive)
+                    @Html.DisplayNameFor(model => model.Tournament.IsActive)
                 </dt>
                 <dd>
-                    @Model.IsActive
+                    @Model.Tournament.IsActive
                 </dd>
                 <dt>
                     # Groups
                 </dt>
                 <dd>
-                    @Model.Groups.Count
+                    @Model.Tournament.Groups.Count
                 </dd>
             </dl>
         </div>
         <div class="col-md-4">
-            @if (!string.IsNullOrEmpty(Model.LogoPath))
+            @if (!string.IsNullOrEmpty(Model.Tournament.LogoPath))
             {
-                <img src="@Url.Content(Model.LogoPath)" alt="Image" style="width:150px;height:150px;max-width: 100%; height: auto;" />
+                <img src="@Url.Content(Model.Tournament.LogoPath)" alt="Image" style="width:150px;height:150px;max-width: 100%; height: auto;" />
             }
         </div>
     </div>
@@ -115,10 +115,10 @@
     <a asp-action="Index" class="btn btn-default">
         <i class="glyphicon glyphicon-hand-left"></i> Back
     </a>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+    <a asp-action="Edit" asp-route-id="@Model.Tournament.Id" class="btn btn-warning">
         <i class="glyphicon glyphicon-pencil"></i> Edit
     </a>
-    <a asp-controller="Groups" asp-action="AddGroup" asp-route-id="@Model.Id" class="btn btn-primary">
+    <a asp-controller="Groups" asp-action="AddGroup" asp-route-id="@Model.Tournament.Id" class="btn btn-primary">
         <i class="glyphicon glyphicon-ok-circle"></i> Add Group
     </a>
 </div>
@@ -134,7 +134,7 @@
                     <thead>
                         <tr>
                             <th>
-                                @Html.DisplayNameFor(model => model.Name)
+                                @Html.DisplayNameFor(model => model.Tournament.Name)
                             </th>
                             <th>
                                 # Teams
@@ -146,7 +146,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model.Groups.OrderBy(g => g.Name))
+                        @foreach (var item in Model.Tournament.Groups.OrderBy(g => g.Name))
                         {
                             <tr>
                                 <td class='clickable-row' data-href='@url/@item.Id'>

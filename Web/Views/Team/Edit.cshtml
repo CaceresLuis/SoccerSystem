@@ -1,4 +1,4 @@
-﻿@model Shared.ViewModel.TeamViewModel
+﻿@model Core.ModelResponse.One.OneTeamResponse
 
 @{ ViewData["Title"] = "Edit"; }
 <hr />
@@ -9,8 +9,8 @@
         <h3>Edit Team</h3>
         <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="LogoPath" />
+            <input type="hidden" asp-for="Team.Id" />
+            <input type="hidden" asp-for="Team.LogoPath" />
 
             <partial name="_Team" />
 
@@ -24,12 +24,12 @@
     </div>
     <div class="col-md-4">
         <div>
-            <h3>@Model.Name</h3>
+            <h3>@Model.Team.Name</h3>
         </div>
 
-        @if (!string.IsNullOrEmpty(Model.LogoPath))
+        @if (!string.IsNullOrEmpty(Model.Team.LogoPath))
         {
-<img src="@Model.LogoPath" alt="Image" style="width:200px;height:200px;max-width: 100%; height: auto;" />}
+<img src="@Model.Team.LogoPath" alt="Image" style="width:200px;height:200px;max-width: 100%; height: auto;" />}
     </div>
 </div>
 
