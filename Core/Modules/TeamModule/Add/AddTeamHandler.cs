@@ -1,31 +1,36 @@
-﻿using Infrastructure.Interfaces;
-using Infrastructure.Models;
-using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using MediatR;
+using AutoMapper;
+using Shared.Enums;
 using System.Threading;
+using Core.ModelResponse;
+using Infrastructure.Models;
 using System.Threading.Tasks;
+using Infrastructure.Interfaces;
 
 namespace Core.Modules.TeamModule.Add
 {
-    public class AddTeamHandler : IRequestHandler<AddTeamCommand, bool>
+    public class AddTeamHandler : IRequestHandler<AddTeamCommand, ActionResponse>
     {
+        private readonly IMapper _mapper;
         private readonly ITeamRepository _teamRepository;
 
-        public AddTeamHandler(ITeamRepository teamRepository)
+        public AddTeamHandler(ITeamRepository teamRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _teamRepository = teamRepository;
         }
 
-        public async Task<bool> Handle(AddTeamCommand request, CancellationToken cancellationToken)
+        public async Task<ActionResponse> Handle(AddTeamCommand request, CancellationToken cancellationToken)
         {
-            var team = new TeamEntity
-            {
-                Name = request.Name
-            };
+            TeamEntity team = _mapper.Map<TeamEntity>(request.Team);
 
-            return await _teamRepository.AddTeamAsync(team);
+            if(await _teamRepository.FindTeamByNameAsync(team.Name) != null)
+                return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"The {team.Name} is already registered", State = State.error };
+
+            if(!await _teamRepository.AddTeamAsync(team))
+                return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"Something has gone wrong", State = State.error }; ;
+
+            return new ActionResponse { IsSuccess = true, Title = "Created", Message = $"The team {team.Name} was created", State = State.success }; ;
         }
     }
 }

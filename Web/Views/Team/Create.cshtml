@@ -1,4 +1,4 @@
-﻿@model Shared.ViewModel.TeamViewModel
+﻿@model Core.ModelResponse.One.OneTeamResponse
 
 @{ ViewData["Title"] = "Create"; }
 
@@ -23,6 +23,8 @@
         </form>
     </div>
 </div>
+
+<partial name="_Alert" />
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

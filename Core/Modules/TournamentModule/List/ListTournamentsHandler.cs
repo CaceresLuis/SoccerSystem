@@ -7,7 +7,7 @@ using Infrastructure.Interfaces;
 
 namespace Core.Modules.TournamentModule.List
 {
-    public class ListTournamentsHandler : IRequestHandler<ListTournamentsQuery, TournamentResponse[]>
+    public class ListTournamentsHandler : IRequestHandler<ListTournamentsQuery, Tournament[]>
     {
         private readonly IMapper _mapper;
         private readonly ITournamentRepository _tournamentRepository;
@@ -18,11 +18,11 @@ namespace Core.Modules.TournamentModule.List
             _tournamentRepository = tournamentRepository;
         }
 
-        public async Task<TournamentResponse[]> Handle(ListTournamentsQuery request, CancellationToken cancellationToken)
+        public async Task<Tournament[]> Handle(ListTournamentsQuery request, CancellationToken cancellationToken)
         {
             var tournament = await _tournamentRepository.GetTournamentsDetailsAsync();
 
-            return _mapper.Map<TournamentResponse[]>(tournament);
+            return _mapper.Map<Tournament[]>(tournament);
         }
     }
 }

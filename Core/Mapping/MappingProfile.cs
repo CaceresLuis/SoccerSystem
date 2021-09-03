@@ -8,8 +8,8 @@ namespace Core.Mapping
     {
         public MappingProfile()
         {
-            CreateMap<TournamentEntity, TournamentResponse>().ReverseMap();
-            //CreateMap<TournamentEntity, TournamentResponse>().ReverseMap();
+            CreateMap<TeamEntity, Team>().ReverseMap();
+            CreateMap<TournamentEntity, Tournament>().ReverseMap();
         }
     }
 }

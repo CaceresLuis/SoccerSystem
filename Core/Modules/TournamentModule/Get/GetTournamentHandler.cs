@@ -1,16 +1,16 @@
-﻿using AutoMapper;
-using Core.ModelResponse;
-using Infrastructure.Interfaces;
-using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using MediatR;
+using AutoMapper;
+using Shared.Enums;
 using System.Threading;
+using Core.ModelResponse;
+using Infrastructure.Models;
 using System.Threading.Tasks;
+using Core.ModelResponse.One;
+using Infrastructure.Interfaces;
 
 namespace Core.Modules.TournamentModule.Get
 {
-    public class GetTournamentHandler : IRequestHandler<GetTournamentQuery, TournamentResponse>
+    public class GetTournamentHandler : IRequestHandler<GetTournamentQuery, OneTournamentResponse>
     {
         private readonly IMapper _mapper;
         private readonly ITournamentRepository _tournamentRepository;
@@ -21,10 +21,19 @@ namespace Core.Modules.TournamentModule.Get
             _tournamentRepository = tournamentRepository;
         }
 
-        public async Task<TournamentResponse> Handle(GetTournamentQuery request, CancellationToken cancellationToken)
+        public async Task<OneTournamentResponse> Handle(GetTournamentQuery request, CancellationToken cancellationToken)
         {
-            var tournament = await _tournamentRepository.GetTournamentDetailsAsync(request.Id);
-            return _mapper.Map<TournamentResponse>(tournament);
+            OneTournamentResponse response = new OneTournamentResponse { };
+
+            TournamentEntity tournament = await _tournamentRepository.GetTournamentDetailsAsync(request.Id);
+            if(tournament == null)
+            {
+                response.Data = new ActionResponse { IsSuccess = false, Title = "Error", Message = "The tournament does not exist", State = State.error };
+                return response;
+            }
+
+            response.Tournament = _mapper.Map<Tournament>(tournament);
+            return response;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model Core.ModelResponse.TournamentResponse
+﻿@model Core.ModelResponse.One.OneTournamentResponse
 
 @{
     ViewData["Title"] = "Edit";
@@ -12,8 +12,8 @@
     <div class="col-md-4">
         <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="LogoPath" />
+            <input type="hidden" asp-for="Tournament.Id" />
+            <input type="hidden" asp-for="Tournament.LogoPath" />
 
             <partial name="_Tournament" />
 
@@ -28,30 +28,14 @@
         </form>
     </div>
     <div class="col-md-4">
-        @if (!string.IsNullOrEmpty(Model.LogoPath))
+        @if (!string.IsNullOrEmpty(Model.Tournament.LogoPath))
         {
-            <img src="@Url.Content(Model.LogoPath)" alt="Image" style="width:200px;height:200px;max-width: 100%; height: auto;" />
+            <img src="@Url.Content(Model.Tournament.LogoPath)" alt="Image" style="width:200px;height:200px;max-width: 100%; height: auto;" />
         }
     </div>
 </div>
 
-@if (@Model.Data.Message != null)
-{
-    string mesaje = @Model.Data.Message;
-    string title = @Model.Data.Title;
-    string ico = @Model.Data.State.ToString();
-    <script type="text/javascript">
-          Swal.fire({
-              title: '<h2><strong>@mesaje</strong></h2>',
-              icon: `@ico`,
-              title: `@title`,
-              html:
-                '<h3> <b> @mesaje </b> </h3>',
-              showConfirmButton: false,
-              timer: 4500
-          })
-    </script>
-}
+<partial name="_Alert" />
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

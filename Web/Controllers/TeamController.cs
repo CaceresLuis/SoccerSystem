@@ -1,7 +1,11 @@
 ﻿using System;
 using MediatR;
+using Newtonsoft.Json;
 using Shared.ViewModel;
+using Core.ModelResponse;
+using Core.ModelResponse.One;
 using System.Threading.Tasks;
+using Core.ModelResponse.Lists;
 using Microsoft.AspNetCore.Mvc;
 using Core.Modules.TeamModule.Add;
 using Core.Modules.TeamModule.Get;
@@ -23,50 +27,83 @@ namespace Web.Controllers
         // GET: TeamController
         public async Task<ActionResult> Index()
         {
-            return View(await _mediator.Send(new ListTeamsQuery()));
+            Team[] team = await _mediator.Send(new ListTeamsQuery());
+
+            ListTeamResponse response = new ListTeamResponse { Teams = team };
+            response.Data = new ActionResponse { };
+
+            if(team.Length <= 1)
+                return View(response);
+
+
+            if (TempData["Data"] != null)
+                response.Data = JsonConvert.DeserializeObject<ActionResponse>((string)TempData["Data"]);
+
+            return View(response);
         }
 
         public ActionResult Create()
         {
-            return View();
+            OneTeamResponse response = new OneTeamResponse { };
+            response.Data = new ActionResponse { };
+            return View(response);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(AddTeamCommand team)
+        public async Task<ActionResult> Create(Team team)
         {
-            if (await _mediator.Send(team))
-                return RedirectToAction(nameof(Index));
+            ActionResponse create = await _mediator.Send(new AddTeamCommand { Team = team });
+            if (!create.IsSuccess)
+            {
+                OneTeamResponse response = new OneTeamResponse { };
+                response.Data = create;
+                return View(response);
+            }
 
-            return View();
+            TempData["Data"] = JsonConvert.SerializeObject(create);
+            return RedirectToAction(nameof(Index));
         }
 
         public async Task<ActionResult> Edit(int id)
         {
             if (id < 1) return NotFound();
 
-            return View(await _mediator.Send(new GetTeamByIdQuery { TeamId = id }));
+            OneTeamResponse team = await _mediator.Send(new GetTeamByIdQuery { TeamId = id });
+
+            return View(team);
         }
 
         // POST: TeamController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, TeamViewModel team)
+        public async Task<ActionResult> Edit(int id, Team team)
         {
             team.Id = id;
-            if (!await _mediator.Send(new UpdateTeamCommand { TeamViewModel = team }))
-                throw new Exception("algo ha salido mal");
+            ActionResponse update = await _mediator.Send(new UpdateTeamCommand { Team = team });
+            if (!update.IsSuccess)
+            {
+                OneTeamResponse response = await _mediator.Send(new GetTeamByIdQuery { TeamId = id });
+                response.Data = update;
+                return View(response);
+            }
 
-            return  RedirectToAction(nameof(Index));
+            TempData["Data"] = JsonConvert.SerializeObject(update);
+            return RedirectToAction(nameof(Index));
         }
 
         public async Task<ActionResult> Delete(int id)
         {
             if (id < 1) return NotFound();
 
-            if (!await _mediator.Send(new RemoveTeamCommand { IdTeam = id }))
-                throw new Exception("Algo salio mal");
+            ActionResponse response = await _mediator.Send(new RemoveTeamCommand { IdTeam = id });
+            if (response.IsSuccess)
+            {
+                TempData["Data"] = JsonConvert.SerializeObject(response);
+                return RedirectToAction(nameof(Index));
+            }
 
+            TempData["Data"] = JsonConvert.SerializeObject(response);
             return RedirectToAction(nameof(Index));
         }
     }

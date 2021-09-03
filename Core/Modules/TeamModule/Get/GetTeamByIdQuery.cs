@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using Shared.ViewModel;
+using Core.ModelResponse.One;
 
 namespace Core.Modules.TeamModule.Get
 {
-    public class GetTeamByIdQuery : IRequest<TeamViewModel>
+    public class GetTeamByIdQuery : IRequest<OneTeamResponse>
     {
         public int TeamId { get; set; }
     }
