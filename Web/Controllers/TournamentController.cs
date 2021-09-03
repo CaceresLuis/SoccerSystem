@@ -104,15 +104,14 @@ namespace Web.Controllers
         {
             if (id < 1) return NotFound();
 
-            ActionResponse remove = await _mediator.Send(new RemoveTournamentCommand { Id = id });
-            if (!remove.IsSuccess)
+            ActionResponse response = await _mediator.Send(new RemoveTournamentCommand { Id = id });
+            if (!response.IsSuccess)
             {
-                TempData["Data"] = JsonConvert.SerializeObject(remove);
+                TempData["Data"] = JsonConvert.SerializeObject(response);
                 return RedirectToAction(nameof(Index));
             }
 
-            TempData["Data"] = JsonConvert.SerializeObject(remove);
-
+            TempData["Data"] = JsonConvert.SerializeObject(response);
             return RedirectToAction(nameof(Index));
         }
     }

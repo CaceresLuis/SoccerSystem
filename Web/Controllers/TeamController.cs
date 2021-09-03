@@ -96,9 +96,14 @@ namespace Web.Controllers
         {
             if (id < 1) return NotFound();
 
-            if (!await _mediator.Send(new RemoveTeamCommand { IdTeam = id }))
-                throw new Exception("Algo salio mal");
+            ActionResponse response = await _mediator.Send(new RemoveTeamCommand { IdTeam = id });
+            if (response.IsSuccess)
+            {
+                TempData["Data"] = JsonConvert.SerializeObject(response);
+                return RedirectToAction(nameof(Index));
+            }
 
+            TempData["Data"] = JsonConvert.SerializeObject(response);
             return RedirectToAction(nameof(Index));
         }
     }

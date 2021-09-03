@@ -25,12 +25,12 @@ namespace Core.Modules.TeamModule.Add
             TeamEntity team = _mapper.Map<TeamEntity>(request.Team);
 
             if(await _teamRepository.FindTeamByNameAsync(team.Name) != null)
-                return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"The {team.Name} team name is already registered", State = State.error };
+                return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"The {team.Name} is already registered", State = State.error };
 
             if(!await _teamRepository.AddTeamAsync(team))
                 return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"Something has gone wrong", State = State.error }; ;
 
-            return new ActionResponse { IsSuccess = true, Title = "Created", Message = $"The {team.Name} tournament name is already registered", State = State.success }; ;
+            return new ActionResponse { IsSuccess = true, Title = "Created", Message = $"The team {team.Name} was created", State = State.success }; ;
         }
     }
 }
