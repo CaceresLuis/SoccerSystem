@@ -65,8 +65,13 @@ namespace Web.Controllers
         public async Task<ActionResult> Details(int id)
         {
             if (id < 1) return NotFound();
+            var response = await _mediator.Send(new GetTournamentQuery { Id = id });
+            response.Data = new ActionResponse { };
 
-            return View(await _mediator.Send(new GetTournamentQuery { Id = id }));
+            if (TempData["Data"] != null)
+                response.Data = JsonConvert.DeserializeObject<ActionResponse>((string)TempData["Data"]);
+
+            return View(response);
         }
 
         public async Task<ActionResult> Edit(int id)

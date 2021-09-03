@@ -9,6 +9,7 @@ namespace Core.Mapping
         public MappingProfile()
         {
             CreateMap<TeamEntity, Team>().ReverseMap();
+            CreateMap<GroupEntity, Group>().ReverseMap();
             CreateMap<TournamentEntity, Tournament>().ReverseMap();
         }
     }

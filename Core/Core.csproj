@@ -14,4 +14,9 @@
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Modules\GroupModule\List\" />
+    <Folder Include="Modules\GroupModule\Update\" />
+  </ItemGroup>
+
 </Project>

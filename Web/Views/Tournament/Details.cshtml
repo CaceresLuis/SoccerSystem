@@ -4,64 +4,6 @@
     var url = "https://localhost:44391/Group/DetailsGroup";
     ViewData["Title"] = "Details";
 }
-@if (@ViewBag.Mensaje != null)
-{
-    string msj = TempData["mensaje"].ToString();
-    bool stringCreate = msj.Contains("creado");
-    bool stringDelete = msj.Contains("eliminado");
-    bool stringedit = msj.Contains("editado");
-    if (stringCreate == true)
-    {
-        <script type="text/javascript">
-            Swal.fire({
-                title: '<h2><strong>Succees</strong></h2>',
-                icon: 'success',
-                html:
-                  '<h3> <b> @msj </b> </h3>',
-                showConfirmButton: false,
-                timer: 1900
-            })
-        </script>
-    }
-    else if (stringDelete == true)
-    {
-        <script type="text/javascript">
-            Swal.fire({
-                title: '<h2><strong>Deleted</strong></h2>',
-                icon: 'success',
-                html:
-                  '<h3> <b> @msj </b> </h3>',
-                showConfirmButton: false,
-                timer: 1900
-            })
-        </script>
-    }
-    else if (stringedit == true)
-    {
-        <script type="text/javascript">
-            Swal.fire({
-                title: '<h2><strong>Edit</strong></h2>',
-                icon: 'success',
-                html:
-                  '<h3> <b> @msj </b> </h3>',
-                showConfirmButton: false,
-                timer: 1900
-            })
-        </script>
-    }
-    else
-    {
-        <script type="text/javascript">
-            Swal.fire({
-                title: '<h2><strong>Error</strong></h2>',
-                icon: 'warning',
-                html: '<h3> <b> @msj </b> </h3>',
-                showConfirmButton: false,
-                timer: 2000
-            })
-        </script>
-    }
-}
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
 
@@ -118,7 +60,7 @@
     <a asp-action="Edit" asp-route-id="@Model.Tournament.Id" class="btn btn-warning">
         <i class="glyphicon glyphicon-pencil"></i> Edit
     </a>
-    <a asp-controller="Groups" asp-action="AddGroup" asp-route-id="@Model.Tournament.Id" class="btn btn-primary">
+    <a asp-controller="Group" asp-action="Create" asp-route-id="@Model.Tournament.Id" class="btn btn-primary">
         <i class="glyphicon glyphicon-ok-circle"></i> Add Group
     </a>
 </div>
@@ -173,6 +115,7 @@
 </div>
 
 <partial name="_DeleteDialog" />
+<partial name="_Alert" />
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
@@ -190,7 +133,7 @@
             });
 
             $("#btnYesDelete").click(function () {
-                window.location.href = '/Groups/Delete/' + item_to_delete;
+                window.location.href = '/Group/Delete/' + item_to_delete;
             });
         });
 
