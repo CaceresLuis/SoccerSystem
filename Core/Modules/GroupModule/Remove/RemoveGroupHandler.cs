@@ -23,7 +23,7 @@ namespace Core.Modules.GroupModule.Remove
             if(group == null)
                 return new ActionResponse { IsSuccess = false, Title = "Error", Message = "The Group does not exist", State = State.error };
 
-            if (await _groupDetailsRepository.GetGroupDetailsAsync(group.Id) != null)
+            if (await _groupDetailsRepository.GetGroupDetailsByGroupAsync(group.Id) != null)
                 return new ActionResponse { IsSuccess = false, Title = "Error", Message = "The group has resgistered teams", State = State.error };
 
             if(!await _groupRepository.DeleteGroupAsync(group))

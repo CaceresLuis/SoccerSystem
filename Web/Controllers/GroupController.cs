@@ -4,11 +4,11 @@ using Core.ModelResponse;
 using Core.ModelResponse.One;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Core.Modules.TeamModule.Get;
 using Core.Modules.GroupModule.Add;
-using Core.Modules.TournamentModule.Get;
-using Core.Modules.GroupModule.Remove;
 using Core.Modules.GroupModule.Get;
+using Core.Modules.GroupModule.Remove;
+using Core.Modules.GroupModule.Update;
+using Core.Modules.TournamentModule.Get;
 
 namespace Web.Controllers
 {
@@ -20,23 +20,6 @@ namespace Web.Controllers
         {
             _mediator = mediator;
         }
-
-        //public async Task<ActionResult> Index()
-        //{
-        //    Team[] team = await _mediator.Send(new ListTeamsQuery());
-
-        //    ListTeamResponse response = new ListTeamResponse { Teams = team };
-        //    response.Data = new ActionResponse { };
-
-        //    if(team.Length <= 1)
-        //        return View(response);
-
-
-        //    if (TempData["Data"] != null)
-        //        response.Data = JsonConvert.DeserializeObject<ActionResponse>((string)TempData["Data"]);
-
-        //    return View(response);
-        //}
 
         public async Task<ActionResult> Create(int id)
         {
@@ -68,31 +51,49 @@ namespace Web.Controllers
             return RedirectToAction("Details", "Tournament", new { id = group.Tournament.Id });
         }
 
-        //public async Task<ActionResult> Edit(int id)
-        //{
-        //    if (id < 1) return NotFound();
+        public async Task<ActionResult> Detail(int id)
+        {
+            if (id < 1) return NotFound();
 
-        //    OneTeamResponse team = await _mediator.Send(new GetTeamByIdQuery { TeamId = id });
+            OneGroupResponse response = await _mediator.Send(new GetFullGroupQuery { Id = id });
+            response.Data = new ActionResponse { };
+            if (TempData["Data"] != null)
+                response.Data = JsonConvert.DeserializeObject<ActionResponse>((string)TempData["Data"]);
 
-        //    return View(team);
-        //}
+            return View(response);
+        }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<ActionResult> Edit(int id, Team team)
-        //{
-        //    team.Id = id;
-        //    ActionResponse update = await _mediator.Send(new UpdateTeamCommand { Team = team });
-        //    if (!update.IsSuccess)
-        //    {
-        //        OneTeamResponse response = await _mediator.Send(new GetTeamByIdQuery { TeamId = id });
-        //        response.Data = update;
-        //        return View(response);
-        //    }
+        public async Task<ActionResult> Edit(int id)
+        {
+            if (id < 1) return NotFound();
 
-        //    TempData["Data"] = JsonConvert.SerializeObject(update);
-        //    return RedirectToAction(nameof(Index));
-        //}
+            Group group = await _mediator.Send(new GetGroupQuery { Id = id });
+            OneGroupResponse response = new OneGroupResponse { Group = group };
+            response.Data = new ActionResponse { };
+
+            if (TempData["Data"] != null)
+                response.Data = JsonConvert.DeserializeObject<ActionResponse>((string)TempData["Data"]);
+
+            return View(response);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Edit(int id, Group group)
+        {
+            group.Id = id;
+            ActionResponse update = await _mediator.Send(new UpdateGroupCommand { Group = group });
+            if (!update.IsSuccess)
+            {
+                Group getGroup = await _mediator.Send(new GetGroupQuery { Id = id });
+                OneGroupResponse response = new OneGroupResponse { Group = getGroup };
+                response.Data = update;
+                return View(response);
+            }
+
+            TempData["Data"] = JsonConvert.SerializeObject(update);
+            return RedirectToAction("Details", "Tournament", new { id = group.Tournament.Id });
+        }
 
         public async Task<ActionResult> Delete(int id)
         {

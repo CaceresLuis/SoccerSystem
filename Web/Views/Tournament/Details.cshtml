@@ -1,50 +1,37 @@
 ﻿@model Core.ModelResponse.One.OneTournamentResponse
 
 @{
-    var url = "https://localhost:44391/Group/DetailsGroup";
+    var url = "https://localhost:44372/Group/Detail";
     ViewData["Title"] = "Details";
 }
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
 
-<div>
     <h4>Tournament</h4>
     <hr />
-    <div class="row">
-        <div class="col-md-4">
-            <dl class="dl-horizontal text-center">
-                <dt>
-                    @Model.Tournament.Name
-                </dt>
-                <dd>
-                    @Model.Tournament.Name
-                </dd>
-                <dt>
-                    @Html.DisplayNameFor(model => model.Tournament.StartDateLocal)
-                </dt>
-                <dd>
-                    @Model.Tournament.StartDateLocal
-                </dd>
-                <dt>
-                    @Html.DisplayNameFor(model => model.Tournament.EndDateLocal)
-                </dt>
-                <dd>
-                    @Model.Tournament.EndDateLocal
-                </dd>
-                <dt>
-                    @Html.DisplayNameFor(model => model.Tournament.IsActive)
-                </dt>
-                <dd>
-                    @Model.Tournament.IsActive
-                </dd>
-                <dt>
-                    # Groups
-                </dt>
-                <dd>
-                    @Model.Tournament.Groups.Count
-                </dd>
-            </dl>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="https://localhost:44372/Tournament/Details/">Tournament ||<b> @Model.Tournament.Name </b></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a> Start Date  || <b> @Model.Tournament.StartDateLocal </b></a>
+                </li>
+                <li class="nav-item">
+                    <a> End Date || <b> @Model.Tournament.EndDateLocal </b></a>
+                </li>
+                <li class="nav-item">
+                    <a> Is Active? || <b> @Model.Tournament.IsActive </b></a>
+                </li>
+                <li class="nav-item">
+                    <a> # Groups || <b> @Model.Tournament.Groups.Count </b></a>
+                </li>
+            </ul>
         </div>
+    </nav>
+    <div class="row">
         <div class="col-md-4">
             @if (!string.IsNullOrEmpty(Model.Tournament.LogoPath))
             {
@@ -52,16 +39,15 @@
             }
         </div>
     </div>
-</div>
 <div class="text-center">
     <a asp-action="Index" class="btn btn-default">
-        <i class="glyphicon glyphicon-hand-left"></i> Back
+        <i class="bi bi-arrow-left-circle-fill"></i> Back
     </a>
     <a asp-action="Edit" asp-route-id="@Model.Tournament.Id" class="btn btn-warning">
-        <i class="glyphicon glyphicon-pencil"></i> Edit
+        <i class="bi bi-pencil-square"></i> Edit
     </a>
     <a asp-controller="Group" asp-action="Create" asp-route-id="@Model.Tournament.Id" class="btn btn-primary">
-        <i class="glyphicon glyphicon-ok-circle"></i> Add Group
+        <i class="bi bi-plus-circle-fill"></i> Add Group
     </a>
 </div>
 <br />
@@ -76,15 +62,17 @@
                     <thead>
                         <tr>
                             <th>
-                                @Html.DisplayNameFor(model => model.Tournament.Name)
+                                Name Group
                             </th>
                             <th>
-                                # Teams
+                                # Amount of Teams
                             </th>
                             <th>
                                 # Matches
                             </th>
-                            <th></th>
+                            <th>
+                                Actions
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -101,8 +89,11 @@
                                     @item.Matches.Count
                                 </td>
                                 <td>
+                                    <a asp-controller="Group" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a> |
                                     <button data-id="@item.Id" class="btn btn-danger deleteItem" data-toggle="modal" data-target="#deleteDialog">
-                                        <i class="glyphicon glyphicon-trash"></i> Delete
+                                        <i class="bi bi-trash-fill"></i>
                                     </button>
                                 </td>
                             </tr>

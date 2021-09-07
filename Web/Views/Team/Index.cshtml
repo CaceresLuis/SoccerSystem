@@ -14,7 +14,7 @@
     <p>
         <h2>Aun no hay Teams</h2>
         <a asp-action="Create" class="btn btn-primary">
-            <i class="glyphicon glyphicon-ok-circle"></i> Create New Team
+            <i class="bi bi-plus-circle-fill"></i> Add New Team
         </a>
         || Teams
     </p>
@@ -28,7 +28,7 @@ else
                 <div class="panel-heading">
                     <p>
                         <a asp-action="Create" class="btn btn-primary">
-                            <i class="glyphicon glyphicon-ok-circle"></i> Create New Team
+                            <i class="bi bi-plus-circle-fill"></i> Add New Team
                         </a>
                         || Teams
                     </p>
@@ -66,14 +66,14 @@ else
                                         }
                                     </td>
                                     <td>
-                                        <button data-id="@item.Id" class="btn btn-danger deleteItem" data-toggle="modal" data-target="#deleteDialog">
-                                            <i class="glyphicon glyphicon-trash"></i> Delete
-                                        </button>
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
                                     </td>
                                     <td>
-                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info">
-                                            <i class="glyphicon glyphicon-trash"></i> Edit
-                                        </a>
+                                        <button data-id="@item.Id" class="btn btn-danger deleteItem" data-toggle="modal" data-target="#deleteDialog">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
                                     </td>
                                 </tr>
                                 num++;

@@ -13,7 +13,7 @@
     <div class="panel-heading">
         <h2>Aun no hay torneos</h2>
         <a asp-action="Create" class="btn btn-primary">
-            <i class="glyphicon glyphicon-ok-circle"></i> Create New Tournament
+            <i class="bi bi-plus-circle-fill"></i> Add New Tournament
         </a>
     </div>
 }
@@ -25,7 +25,7 @@ else
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <a asp-action="Create" class="btn btn-primary">
-                        <i class="glyphicon glyphicon-ok-circle"></i> Create New Tournament
+                        <i class="bi bi-plus-circle-fill"></i> Add New Tournament
                     </a>
                 </div>
                 <div class="panel-body">
@@ -80,7 +80,7 @@ else
                                     </td>
                                     <td>
                                         <button data-id="@item.Id" class="btn btn-danger deleteItem" data-toggle="modal" data-target="#deleteDialog">
-                                            <i class="glyphicon glyphicon-trash"></i> Delete
+                                            <i class="bi bi-trash-fill"></i>
                                         </button>
                                     </td>
                                 </tr>

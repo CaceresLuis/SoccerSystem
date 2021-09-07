@@ -7,6 +7,7 @@ namespace Core.ModelResponse
         public int Id { get; set; }
         public string Name { get; set; }
         public Tournament Tournament { get; set; }
-        public ICollection<Team> Teams { get; set; }
+        public ICollection<Match> Matches { get; set; }
+        public ICollection<GroupDetail> GroupDetails { get; set; }
     }
 }

@@ -12,5 +12,7 @@ namespace Infrastructure.Interfaces
         Task<GroupEntity[]> GetAllGroupOfTournamentAsync(int idTournamnet);
         Task<bool> UpdateGroupAsync(GroupEntity group);
         Task<GroupEntity> GetGroupWithTournamentAsync(int id);
+        Task<GroupEntity> GetFullGroupAsync(int id);
+        Task<GroupEntity> GetGroupTeamAndDetailsAsync(int id);
     }
 }

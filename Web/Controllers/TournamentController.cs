@@ -65,7 +65,7 @@ namespace Web.Controllers
         public async Task<ActionResult> Details(int id)
         {
             if (id < 1) return NotFound();
-            var response = await _mediator.Send(new GetTournamentQuery { Id = id });
+            OneTournamentResponse response = await _mediator.Send(new GetTournamentQuery { Id = id });
             response.Data = new ActionResponse { };
 
             if (TempData["Data"] != null)

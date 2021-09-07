@@ -21,7 +21,7 @@ namespace Core.Modules.GroupModule.Get
 
         public async Task<Group> Handle(GetGroupQuery request, CancellationToken cancellationToken)
         {
-            GroupEntity group = await _groupRepository.FindGroupByIdAsync(request.Id);
+            GroupEntity group = await _groupRepository.GetGroupWithTournamentAsync(request.Id);
 
             return _mapper.Map<Group>(group);
         }
