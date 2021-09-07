@@ -9,7 +9,7 @@ namespace Infrastructure.Interfaces
         Task<bool> AddTeamAsync(TeamEntity team);
         Task<TeamEntity> FindTeamByIdAsync(int teamId);
         Task<TeamEntity> FindTeamByNameAsync(string teamName);
-        Task<TeamEntity[]> GetAllTeamAsync();
+        Task<List<TeamEntity>> GetAllTeamAsync();
         //List<TeamEntity> GetAllTeamAsync();
         Task<bool> UpdateTeamAsync(TeamEntity team);
         Task<bool> DeleteTeamAsync(TeamEntity team);

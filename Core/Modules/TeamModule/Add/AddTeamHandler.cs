@@ -30,7 +30,7 @@ namespace Core.Modules.TeamModule.Add
             if(!await _teamRepository.AddTeamAsync(team))
                 return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"Something has gone wrong", State = State.error }; ;
 
-            return new ActionResponse { IsSuccess = true, Title = "Created", Message = $"The team {team.Name} was created", State = State.success }; ;
+            return new ActionResponse { IsSuccess = true, Title = "Created", Message = $"The team {team.Name} was created", State = State.success };
         }
     }
 }

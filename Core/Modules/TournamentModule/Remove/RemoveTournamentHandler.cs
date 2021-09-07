@@ -3,6 +3,7 @@ using System.Linq;
 using Shared.Enums;
 using System.Threading;
 using Core.ModelResponse;
+using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 
@@ -19,7 +20,7 @@ namespace Core.Modules.TournamentModule.Remove
 
         public async Task<ActionResponse> Handle(RemoveTournamentCommand request, CancellationToken cancellationToken)
         {
-            Infrastructure.Models.TournamentEntity tournamnet = await _tournamentRepository.GetTournamentWithGroupAsync(request.Id);
+            TournamentEntity tournamnet = await _tournamentRepository.GetTournamentWithGroupAsync(request.Id);
             if(tournamnet == null)
                 return new ActionResponse { IsSuccess = false, Title = "Error", Message = "The tournament does not exist", State = State.error };
 

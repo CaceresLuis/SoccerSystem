@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace Infrastructure.Repositories
 {
@@ -32,9 +33,9 @@ namespace Infrastructure.Repositories
             return await _dataContext.Teams.FirstOrDefaultAsync(t => t.Name == teamName) ;
         }
 
-        public async Task<TeamEntity[]> GetAllTeamAsync()
+        public async Task<List<TeamEntity>> GetAllTeamAsync()
         {
-            return await _dataContext.Teams.ToArrayAsync();
+            return await _dataContext.Teams.ToListAsync();
         }
 
         public async Task<bool> UpdateTeamAsync(TeamEntity team)

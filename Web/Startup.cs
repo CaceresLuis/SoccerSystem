@@ -1,19 +1,15 @@
 using Core.Modules.TeamModule.Add;
 using Infrastructure;
+using System;
+using MediatR;
 using Infrastructure.Interfaces;
 using Infrastructure.Repositories;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Web
 {
@@ -45,7 +41,9 @@ namespace Web
 
             //Inyection of Repositories
             services.AddScoped<ITeamRepository, TeamRepository>();
+            services.AddScoped<IGroupRepository, GroupRepository>();
             services.AddScoped<ITournamentRepository, TournamentRepository>();
+            services.AddScoped<IGroupDetailsRepository, GroupDetailsRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

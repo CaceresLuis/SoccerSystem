@@ -106,9 +106,6 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("LocalId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TeamId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("VisitorId")
                         .HasColumnType("int");
 
@@ -117,8 +114,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("GroupId");
 
                     b.HasIndex("LocalId");
-
-                    b.HasIndex("TeamId");
 
                     b.HasIndex("VisitorId");
 
@@ -461,10 +456,6 @@ namespace Infrastructure.Migrations
                     b.HasOne("Infrastructure.Models.TeamEntity", "Local")
                         .WithMany()
                         .HasForeignKey("LocalId");
-
-                    b.HasOne("Infrastructure.Models.TeamEntity", "Team")
-                        .WithMany()
-                        .HasForeignKey("TeamId");
 
                     b.HasOne("Infrastructure.Models.TeamEntity", "Visitor")
                         .WithMany()
