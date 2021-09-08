@@ -1,0 +1,138 @@
+﻿@model Core.ModelResponse.One.OneTournamentResponse
+
+@{
+    var url = "https://localhost:44372/Group/Detail";
+    ViewData["Title"] = "Details";
+}
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+
+    <h4>Tournament</h4>
+    <hr />
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="https://localhost:44372/Tournament/Details/">Tournament ||<b> @Model.Tournament.Name </b></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a> Start Date  || <b> @Model.Tournament.StartDateLocal </b></a>
+                </li>
+                <li class="nav-item">
+                    <a> End Date || <b> @Model.Tournament.EndDateLocal </b></a>
+                </li>
+                <li class="nav-item">
+                    <a> Is Active? || <b> @Model.Tournament.IsActive </b></a>
+                </li>
+                <li class="nav-item">
+                    <a> # Groups || <b> @Model.Tournament.Groups.Count </b></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="row">
+        <div class="col-md-4">
+            @if (!string.IsNullOrEmpty(Model.Tournament.LogoPath))
+            {
+                <img src="@Url.Content(Model.Tournament.LogoPath)" alt="Image" style="width:150px;height:150px;max-width: 100%; height: auto;" />
+            }
+        </div>
+    </div>
+<div class="text-center">
+    <a asp-action="Index" class="btn btn-default">
+        <i class="bi bi-arrow-left-circle-fill"></i> Back
+    </a>
+    <a asp-action="Edit" asp-route-id="@Model.Tournament.Id" class="btn btn-warning">
+        <i class="bi bi-pencil-square"></i> Edit
+    </a>
+    <a asp-controller="Group" asp-action="Create" asp-route-id="@Model.Tournament.Id" class="btn btn-primary">
+        <i class="bi bi-plus-circle-fill"></i> Add Group
+    </a>
+</div>
+<br />
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Groups</h3>
+            </div>
+            <div class="panel-body">
+                <table class="table table-hover table-responsive table-striped" id="MyTable">
+                    <thead>
+                        <tr>
+                            <th>
+                                Name Group
+                            </th>
+                            <th>
+                                # Amount of Teams
+                            </th>
+                            <th>
+                                # Matches
+                            </th>
+                            <th>
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Tournament.Groups.OrderBy(g => g.Name))
+                        {
+                            <tr>
+                                <td class='clickable-row' data-href='@url/@item.Id'>
+                                    @item.Name
+                                </td>
+                                <td class='clickable-row' data-href='@url/@item.Id'>
+                                    @item.GroupDetails.Count
+                                </td>
+                                <td class='clickable-row' data-href='@url/@item.Id'>
+                                    @item.Matches.Count
+                                </td>
+                                <td>
+                                    <a asp-controller="Group" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a> |
+                                    <button data-id="@item.Id" class="btn btn-danger deleteItem" data-toggle="modal" data-target="#deleteDialog">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<partial name="_DeleteDialog" />
+<partial name="_Alert" />
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#MyTable').DataTable();
+
+            // Delete item
+            var item_to_delete;
+
+            $('.deleteItem').click((e) => {
+                item_to_delete = e.currentTarget.dataset.id;
+            });
+
+            $("#btnYesDelete").click(function () {
+                window.location.href = '/Group/Delete/' + item_to_delete;
+            });
+        });
+
+        jQuery(document).ready(function ($) {
+            $('.clickable-row').css('cursor', 'pointer');
+            $(".clickable-row").click(function () {
+                window.location = $(this).data("href");
+            });
+        });
+    </script>
+}

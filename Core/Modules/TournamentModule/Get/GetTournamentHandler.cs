@@ -1,0 +1,39 @@
+﻿using MediatR;
+using AutoMapper;
+using Shared.Enums;
+using System.Threading;
+using Core.ModelResponse;
+using Infrastructure.Models;
+using System.Threading.Tasks;
+using Core.ModelResponse.One;
+using Infrastructure.Interfaces;
+
+namespace Core.Modules.TournamentModule.Get
+{
+    public class GetTournamentHandler : IRequestHandler<GetTournamentQuery, OneTournamentResponse>
+    {
+        private readonly IMapper _mapper;
+        private readonly ITournamentRepository _tournamentRepository;
+
+        public GetTournamentHandler(ITournamentRepository tournamentRepository, IMapper mapper)
+        {
+            _mapper = mapper;
+            _tournamentRepository = tournamentRepository;
+        }
+
+        public async Task<OneTournamentResponse> Handle(GetTournamentQuery request, CancellationToken cancellationToken)
+        {
+            OneTournamentResponse response = new OneTournamentResponse { };
+
+            TournamentEntity tournament = await _tournamentRepository.GetTournamentDetailsAsync(request.Id);
+            if(tournament == null)
+            {
+                response.Data = new ActionResponse { IsSuccess = false, Title = "Error", Message = "The tournament does not exist", State = State.error };
+                return response;
+            }
+
+            response.Tournament = _mapper.Map<Tournament>(tournament);
+            return response;
+        }
+    }
+}
