@@ -31,7 +31,7 @@ namespace Core.Modules.GroupDetailsModule.Get
                 return response;
             }
 
-            response.GroupDetail = _mapper.Map<GroupDetailResponse>(groupDetailEntity);
+            response.GroupDetail = _mapper.Map<AGroupDetailResponse>(groupDetailEntity);
             return response;
         }
     }

@@ -1,6 +1,6 @@
-﻿namespace Core.ModelResponse
+﻿namespace Core.ModelResponse.One
 {
-    public class GroupDetailResponse
+    public class AGroupDetailResponse
     {
         public int Id { get; set; }
         public string Name { get; set; }

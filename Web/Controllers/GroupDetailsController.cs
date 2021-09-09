@@ -10,57 +10,42 @@ using Core.Modules.TeamModule.Remove;
 using Core.Modules.GroupDetailsModule.Add;
 using Core.Modules.GroupDetailsModule.Get;
 using Core.Modules.GroupDetailsModule.Update;
+using Web.ViewModel;
+using AutoMapper;
 
 namespace Web.Controllers
 {
     public class GroupDetailsController : Controller
     {
+        private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
-        public GroupDetailsController(IMediator mediator)
+        public GroupDetailsController(IMediator mediator, IMapper mapper)
         {
+            _mapper = mapper;
             _mediator = mediator;
         }
-
-        //public async Task<ActionResult> Index()
-        //{
-        //    Team[] team = await _mediator.Send(new ListTeamsQuery());
-
-        //    ListTeamResponse response = new ListTeamResponse { Teams = team };
-        //    response.Data = new ActionResponse { };
-
-        //    if(team.Length <= 1)
-        //        return View(response);
-
-
-        //    if (TempData["Data"] != null)
-        //        response.Data = JsonConvert.DeserializeObject<ActionResponse>((string)TempData["Data"]);
-
-        //    return View(response);
-        //}
 
         public async Task<ActionResult> Create(int id)
         {
             GroupDetailsResponse response = await _mediator.Send(new GetGroupDetailsByGroupQuery { IdGroup = id });
-            return View(response);
+            CreateGroupDetailsViewModel detailsViewModel = _mapper.Map<CreateGroupDetailsViewModel>(response);
+
+            return View(detailsViewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(GroupDetailsResponse groupDetail)
+        public async Task<ActionResult> Create(CreateGroupDetailsViewModel groupDetail)
         {
-            ActionResponse create = await _mediator.Send(new AddGroupDetailsCommand { GroupDetail = groupDetail });
-            if (!create.IsSuccess)
-            {
-                OneGroupDetailsResponse response = new OneGroupDetailsResponse { };
-                response.Data = create;
+            GroupDetailsResponse groupDetailsResponse = _mapper.Map<GroupDetailsResponse>(groupDetail);
+            ActionResponse response = await _mediator.Send(new AddGroupDetailsCommand { GroupDetail = groupDetailsResponse });
+            groupDetail.Data = response;
+            if (!response.IsSuccess)
                 return View(response);
-            }
 
-            AGroupResponse group = await _mediator.Send(new GetFullGroupQuery { Id = groupDetail.Group.Id });
-
-            TempData["Data"] = JsonConvert.SerializeObject(create);
-            return RedirectToAction("Detail", "Group", new { id = group.Group.Id });
+            TempData["Data"] = JsonConvert.SerializeObject(response);
+            return RedirectToAction("Detail", "Group", new { id = groupDetail.Group.Id });
         }
 
         public async Task<ActionResult> Edit(int id)
@@ -71,7 +56,7 @@ namespace Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, GroupDetailResponse groupDetail)
+        public async Task<ActionResult> Edit(int id, AGroupDetailResponse groupDetail)
         {
             groupDetail.Id = id;
             ActionResponse update = await _mediator.Send(new UpdateGroupDetailsCommand { GroupDetail = groupDetail });
