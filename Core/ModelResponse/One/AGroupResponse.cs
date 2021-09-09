@@ -1,8 +1,8 @@
 ﻿namespace Core.ModelResponse.One
 {
-    public class OneGroupResponse
+    public class AGroupResponse
     {
-        public Group Group { get; set; }
+        public GroupResponse Group { get; set; }
         public ActionResponse Data { get; set; }
     }
 }

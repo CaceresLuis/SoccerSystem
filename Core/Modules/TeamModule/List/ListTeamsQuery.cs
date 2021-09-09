@@ -3,7 +3,7 @@ using Core.ModelResponse;
 
 namespace Core.Modules.TeamModule.List
 {
-    public class ListTeamsQuery : IRequest<Team[]>
+    public class ListTeamsQuery : IRequest<TeamResponse[]>
     {
     }
 }

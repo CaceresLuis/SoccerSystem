@@ -19,7 +19,7 @@ namespace Core.Modules.GroupDetailsModule.Update
 
         public async Task<ActionResponse> Handle(UpdateGroupDetailsCommand request, CancellationToken cancellationToken)
         {
-            GroupDetail groupDetail = request.GroupDetail;
+            GroupDetailResponse groupDetail = request.GroupDetail;
             GroupDetailEntity entity = await _groupDetailsRepository.GetGroupDetailsAsync(groupDetail.Id);
             if (entity == null)
                 return new ActionResponse { IsSuccess = false, Title = "Error", Message = "The groupDetails does not exist", State = State.error };

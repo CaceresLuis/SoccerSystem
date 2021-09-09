@@ -1,9 +1,11 @@
 ﻿using MediatR;
+using Web.Models;
+using AutoMapper;
+using Web.ViewModel;
 using Newtonsoft.Json;
 using Core.ModelResponse;
 using System.Threading.Tasks;
 using Core.ModelResponse.One;
-using Core.ModelResponse.Lists;
 using Microsoft.AspNetCore.Mvc;
 using Core.Modules.TournamentModule.Add;
 using Core.Modules.TournamentModule.Get;
@@ -15,17 +17,21 @@ namespace Web.Controllers
 {
     public class TournamentController : Controller
     {
+        private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
-        public TournamentController(IMediator mediator)
+        public TournamentController(IMediator mediator, IMapper mapper)
         {
+            _mapper = mapper;
             _mediator = mediator;
         }
 
         public async Task<ActionResult> Index()
         {
-            Tournament[] tournaments = await _mediator.Send(new ListTournamentsQuery());
-            ListTournamentResponse response = new ListTournamentResponse{ Tournaments = tournaments };
+            TournamentResponse[] tournaments = await _mediator.Send(new ListTournamentsQuery());
+            Tournament[] tournament = _mapper.Map<Tournament[]>(tournaments);
+            ListTournamentViewModel response = new ListTournamentViewModel { Tournaments = tournament };
+
             response.Data = new ActionResponse { };
 
             if (tournaments.Length < 1)
@@ -40,7 +46,7 @@ namespace Web.Controllers
 
         public ActionResult Create()
         {
-            OneTournamentResponse response = new OneTournamentResponse { };
+            TournamentViewModel response = new TournamentViewModel { };
             response.Data = new ActionResponse { };
             return View(response);
         }
@@ -49,11 +55,12 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(Tournament tournament)
         {
-            ActionResponse create = await _mediator.Send(new AddTournamentCommand { Tournament = tournament });
+            TournamentResponse tournamentResponse = _mapper.Map<TournamentResponse>(tournament);
+            ActionResponse create = await _mediator.Send(new AddTournamentCommand { Tournament = tournamentResponse });
 
             if (!create.IsSuccess)
             {
-                OneTournamentResponse response = new OneTournamentResponse { };
+                TournamentViewModel response = new TournamentViewModel { };
                 response.Data = create;
                 return View(response);
             }
@@ -65,26 +72,28 @@ namespace Web.Controllers
         public async Task<ActionResult> Details(int id)
         {
             if (id < 1) return NotFound();
-            OneTournamentResponse response = await _mediator.Send(new GetTournamentQuery { Id = id });
-            response.Data = new ActionResponse { };
+            ATournamentResponse tournamentResponse = await _mediator.Send(new GetTournamentQuery { Id = id });
+            Tournament tournament = _mapper.Map<Tournament>(tournamentResponse.Tournament);
+            TournamentViewModel tournamentView = new TournamentViewModel { Tournament = tournament, Data = new ActionResponse { } };
 
             if (TempData["Data"] != null)
-                response.Data = JsonConvert.DeserializeObject<ActionResponse>((string)TempData["Data"]);
+                tournamentView.Data = JsonConvert.DeserializeObject<ActionResponse>((string)TempData["Data"]);
 
-            return View(response);
+            return View(tournamentView);
         }
 
         public async Task<ActionResult> Edit(int id)
         {
             if (id < 1) return NotFound();
 
-            OneTournamentResponse response = await _mediator.Send(new GetTournamentQuery { Id = id });
-            response.Data = new ActionResponse { };
+            ATournamentResponse tournamentResponse = await _mediator.Send(new GetTournamentQuery { Id = id });
+            Tournament tournament = _mapper.Map<Tournament>(tournamentResponse.Tournament);
+            TournamentViewModel tournamentView = new TournamentViewModel { Tournament = tournament, Data = new ActionResponse { } };
 
             if (TempData["Data"] != null)
-                response.Data = JsonConvert.DeserializeObject<ActionResponse>((string)TempData["Data"]);
+                tournamentResponse.Data = JsonConvert.DeserializeObject<ActionResponse>((string)TempData["Data"]);
 
-            return View(response);
+            return View(tournamentView);
         }
 
         [HttpPost]
@@ -92,13 +101,13 @@ namespace Web.Controllers
         public async Task<ActionResult> Edit(int id, Tournament tournament)
         {
             tournament.Id = id;
-            ActionResponse update = await _mediator.Send(new UpdateTournamentCommnad { TournamentResponse = tournament });
+            TournamentResponse tournamentResponse = _mapper.Map<TournamentResponse>(tournament);
+            ActionResponse update = await _mediator.Send(new UpdateTournamentCommnad { TournamentResponse = tournamentResponse });
             if (!update.IsSuccess)
             {
                 //Preparamos toda el modelo para reenviar a la vista
-                OneTournamentResponse response = await _mediator.Send(new GetTournamentQuery { Id = id });
-                response.Data = update;
-                return View(response);
+                TournamentViewModel tournamentView = new TournamentViewModel { Tournament = tournament, Data = update };
+                return View(tournamentView);
             }
 
             TempData["Data"] = JsonConvert.SerializeObject(update);

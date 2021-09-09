@@ -19,7 +19,7 @@ namespace Core.Modules.TournamentModule.Update
 
         public async Task<ActionResponse> Handle(UpdateTournamentCommnad request, CancellationToken cancellationToken)
         {
-            Tournament upTournament = request.TournamentResponse;
+            TournamentResponse upTournament = request.TournamentResponse;
 
             TournamentEntity tournament = await _tournamentRepository.GetTournamentFindAsync(request.TournamentResponse.Id);
             if (tournament == null)

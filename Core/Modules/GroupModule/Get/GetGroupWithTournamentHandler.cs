@@ -8,7 +8,7 @@ using Infrastructure.Models;
 
 namespace Core.Modules.GroupModule.Get
 {
-    public class GetGroupWithTournamentHandler : IRequestHandler<GetGroupWithTournamentQuery, Group>
+    public class GetGroupWithTournamentHandler : IRequestHandler<GetGroupWithTournamentQuery, GroupResponse>
     {
         private readonly IMapper _mapper;
         private readonly IGroupRepository _groupRepository;
@@ -19,11 +19,11 @@ namespace Core.Modules.GroupModule.Get
             _groupRepository = groupRepository;
         }
 
-        public async Task<Group> Handle(GetGroupWithTournamentQuery request, CancellationToken cancellationToken)
+        public async Task<GroupResponse> Handle(GetGroupWithTournamentQuery request, CancellationToken cancellationToken)
         {
             GroupEntity group = await _groupRepository.GetGroupWithTournamentAsync(request.Id);
 
-            return _mapper.Map<Group>(group);
+            return _mapper.Map<GroupResponse>(group);
         }
     }
 }

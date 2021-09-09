@@ -1,6 +1,9 @@
-﻿namespace Core.ModelResponse.One
+﻿using Web.Models;
+using Core.ModelResponse;
+
+namespace Web.ViewModel
 {
-    public class OneTeamResponse
+    public class TeamViewModel
     {
         public Team Team { get; set; }
         public ActionResponse Data { get; set; }

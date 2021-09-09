@@ -3,7 +3,7 @@ using Core.ModelResponse;
 
 namespace Core.Modules.GroupModule.Get
 {
-    public class GetGroupWithTournamentQuery : IRequest<Group>
+    public class GetGroupWithTournamentQuery : IRequest<GroupResponse>
     {
         public int Id { get; set; }
     }

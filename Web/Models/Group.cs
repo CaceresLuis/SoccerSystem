@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Core.ModelResponse
+namespace Web.Models
 {
     public class Group
     {
@@ -8,6 +8,6 @@ namespace Core.ModelResponse
         public string Name { get; set; }
         public Tournament Tournament { get; set; }
         public ICollection<Match> Matches { get; set; }
-        public ICollection<GroupDetail> GroupDetails { get; set; }
+        public ICollection<GroupDetails> GroupDetails { get; set; }
     }
 }

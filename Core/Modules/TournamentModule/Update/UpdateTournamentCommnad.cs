@@ -5,6 +5,6 @@ namespace Core.Modules.TournamentModule.Update
 {
     public class UpdateTournamentCommnad : IRequest<ActionResponse>
     {
-        public Tournament TournamentResponse { get; set; }
+        public TournamentResponse TournamentResponse { get; set; }
     }
 }

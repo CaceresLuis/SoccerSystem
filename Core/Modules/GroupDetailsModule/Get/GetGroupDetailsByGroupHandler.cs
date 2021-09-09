@@ -30,7 +30,7 @@ namespace Core.Modules.GroupDetailsModule.Get
         public async Task<GroupDetailsResponse> Handle(GetGroupDetailsByGroupQuery request, CancellationToken cancellationToken)
         {
             GroupDetailsResponse response = new GroupDetailsResponse { };
-            Group group = _mapper.Map<Group>(await _groupRepository.FindGroupByIdAsync(request.IdGroup));
+            GroupResponse group = _mapper.Map<GroupResponse>(await _groupRepository.FindGroupByIdAsync(request.IdGroup));
             response.Group = group;
 
             if (group == null)

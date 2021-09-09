@@ -10,7 +10,7 @@ using Infrastructure.Interfaces;
 
 namespace Core.Modules.GroupModule.Get
 {
-    public class GetFullGroupHandler : IRequestHandler<GetFullGroupQuery, OneGroupResponse>
+    public class GetFullGroupHandler : IRequestHandler<GetFullGroupQuery, AGroupResponse>
     {
         private readonly IMapper _mapper;
         private readonly IGroupRepository _groupRepository;
@@ -21,9 +21,9 @@ namespace Core.Modules.GroupModule.Get
             _groupRepository = groupRepository;
         }
 
-        public async Task<OneGroupResponse> Handle(GetFullGroupQuery request, CancellationToken cancellationToken)
+        public async Task<AGroupResponse> Handle(GetFullGroupQuery request, CancellationToken cancellationToken)
         {
-            OneGroupResponse response = new OneGroupResponse { };
+            AGroupResponse response = new AGroupResponse { };
 
             GroupEntity group = await _groupRepository.GetGroupTeamAndDetailsAsync(request.Id);
             if (group == null)
@@ -32,7 +32,7 @@ namespace Core.Modules.GroupModule.Get
                 return response;
             }
 
-            response.Group = _mapper.Map<Group>(group);
+            response.Group = _mapper.Map<GroupResponse>(group);
 
             return response;
         }

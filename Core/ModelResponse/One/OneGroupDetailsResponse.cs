@@ -2,7 +2,7 @@
 {
     public class OneGroupDetailsResponse
     {
-        public GroupDetail GroupDetail { get; set; }
+        public GroupDetailResponse GroupDetail { get; set; }
         public ActionResponse Data { get; set; }
     }
 }

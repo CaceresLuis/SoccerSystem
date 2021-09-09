@@ -1,6 +1,6 @@
 ﻿namespace Core.ModelResponse
 {
-    public class GroupDetail
+    public class GroupDetailResponse
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -12,7 +12,7 @@
         public int GoalsFor { get; set; }
         public int GoalsAgainst { get; set; }
         public int GoalDifference => GoalsFor - GoalsAgainst;
-        public Team Team { get; set; }
-        public Group Group { get; set; }
+        public TeamResponse Team { get; set; }
+        public GroupResponse Group { get; set; }
     }
 }

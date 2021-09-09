@@ -7,7 +7,7 @@ using Infrastructure.Interfaces;
 
 namespace Core.Modules.TeamModule.List
 {
-    public class ListTeamsHandler : IRequestHandler<ListTeamsQuery, Team[]>
+    public class ListTeamsHandler : IRequestHandler<ListTeamsQuery, TeamResponse[]>
     {
         private readonly IMapper _mapper;
         private readonly ITeamRepository _teamRepository;
@@ -18,9 +18,9 @@ namespace Core.Modules.TeamModule.List
             _teamRepository = teamRepository;
         }
 
-        public async Task<Team[]> Handle(ListTeamsQuery request, CancellationToken cancellationToken)
+        public async Task<TeamResponse[]> Handle(ListTeamsQuery request, CancellationToken cancellationToken)
         {
-            return _mapper.Map<Team[]>(await _teamRepository.GetAllTeamAsync());
+            return _mapper.Map<TeamResponse[]>(await _teamRepository.GetAllTeamAsync());
         }
     }
 }

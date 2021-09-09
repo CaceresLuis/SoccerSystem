@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Core.ModelResponse
 {
-    public class Tournament
+    public class TournamentResponse
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -27,7 +27,7 @@ namespace Core.ModelResponse
         public bool IsActive { get; set; }
 
         //se aplica "GroupEntity" que se recibio
-        public ICollection<GroupEntity> Groups { get; set; }
+        public ICollection<GroupResponse> Groups { get; set; }
 
         [Display(Name = "Start Date")]
         public DateTime StartDateLocal => StartDate.ToLocalTime();

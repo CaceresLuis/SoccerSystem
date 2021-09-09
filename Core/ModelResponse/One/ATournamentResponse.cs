@@ -1,8 +1,8 @@
 ﻿namespace Core.ModelResponse.One
 {
-    public class OneTournamentResponse
+    public class ATournamentResponse
     {
-        public Tournament Tournament { get; set; }
+        public TournamentResponse Tournament { get; set; }
         public ActionResponse Data { get; set; }
     }
 }

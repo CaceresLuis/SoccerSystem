@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Core.ModelResponse
 {
-    public class Team
+    public class TeamResponse
     {
         public int Id { get; set; }
 

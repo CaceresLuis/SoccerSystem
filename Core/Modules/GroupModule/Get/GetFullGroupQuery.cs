@@ -3,7 +3,7 @@ using Core.ModelResponse.One;
 
 namespace Core.Modules.GroupModule.Get
 {
-    public class GetFullGroupQuery : IRequest<OneGroupResponse>
+    public class GetFullGroupQuery : IRequest<AGroupResponse>
     {
         public int Id { get; set; }
     }

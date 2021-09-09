@@ -19,7 +19,7 @@ namespace Core.Modules.TeamModule.Update
 
         public async Task<ActionResponse> Handle(UpdateTeamCommand request, CancellationToken cancellationToken)
         {
-            Team upTeam = request.Team;
+            TeamResponse upTeam = request.Team;
 
             TeamEntity team = await _teamRepository.FindTeamByIdAsync(upTeam.Id);
             if(team == null)

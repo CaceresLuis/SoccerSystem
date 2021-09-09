@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Mapping\" />
     <Folder Include="Modules\GroupModule\List\" />
   </ItemGroup>
 

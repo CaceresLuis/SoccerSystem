@@ -1,4 +1,4 @@
-﻿@model Core.ModelResponse.One.OneGroupResponse
+﻿@model Web.ViewModel.GroupViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -29,6 +29,8 @@
         </form>
     </div>
 </div>
+
+<partial name="_Alert" />
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

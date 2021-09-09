@@ -5,6 +5,6 @@ namespace Core.Modules.GroupModule.Add
 {
     public class AddGroupCommand : IRequest<ActionResponse>
     {
-        public Group Group { get; set; }
+        public GroupResponse Group { get; set; }
     }
 }

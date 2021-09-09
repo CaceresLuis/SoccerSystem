@@ -5,10 +5,8 @@ using Core.ModelResponse;
 using Core.ModelResponse.One;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Core.Modules.TeamModule.Get;
 using Core.Modules.GroupModule.Get;
 using Core.Modules.TeamModule.Remove;
-using Core.Modules.TeamModule.Update;
 using Core.Modules.GroupDetailsModule.Add;
 using Core.Modules.GroupDetailsModule.Get;
 using Core.Modules.GroupDetailsModule.Update;
@@ -59,8 +57,9 @@ namespace Web.Controllers
                 return View(response);
             }
 
-            OneGroupResponse group = await _mediator.Send(new GetFullGroupQuery { Id = groupDetail.Group.Id });
-            TempData["Data"] = JsonConvert.SerializeObject(group);
+            AGroupResponse group = await _mediator.Send(new GetFullGroupQuery { Id = groupDetail.Group.Id });
+
+            TempData["Data"] = JsonConvert.SerializeObject(create);
             return RedirectToAction("Detail", "Group", new { id = group.Group.Id });
         }
 
@@ -72,7 +71,7 @@ namespace Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, GroupDetail groupDetail)
+        public async Task<ActionResult> Edit(int id, GroupDetailResponse groupDetail)
         {
             groupDetail.Id = id;
             ActionResponse update = await _mediator.Send(new UpdateGroupDetailsCommand { GroupDetail = groupDetail });
