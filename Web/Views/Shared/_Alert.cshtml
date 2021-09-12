@@ -1,17 +1,17 @@
-﻿@if (@Model.Data.Message != null)
+﻿@if (TempData["Message"] != null)
 {
-    string mesaje = @Model.Data.Message;
-    string title = @Model.Data.Title;
-    string ico = @Model.Data.State.ToString();
+    string message = TempData["Message"].ToString();
+    string title = TempData["Title"].ToString();
+    string ico = TempData["State"].ToString();
     <script type="text/javascript">
-          Swal.fire({
-              title: '<h2><strong>@mesaje</strong></h2>',
-              icon: `@ico`,
-              title: `@title`,
-              html:
-                '<h3> <b> @mesaje </b> </h3>',
-              showConfirmButton: false,
-              timer: 4500
-          })
+              Swal.fire({
+                  title: '<h2><strong>@message</strong></h2>',
+                  icon: `@ico`,
+                  title: `@title`,
+                  html:
+                    '<h3> <b> @message </b> </h3>',
+                  showConfirmButton: false,
+                  timer: 4500
+              })
     </script>
 }

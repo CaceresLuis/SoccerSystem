@@ -26,7 +26,12 @@ namespace Infrastructure.Repositories
         {
             return await _dataContext.GroupDetails.Where(gd => gd.Group.Id == idGroup).ToListAsync();
         }
-        
+
+        public async Task<GroupDetailEntity> GetGroupDetailsByTeamAsync(int teamId)
+        {
+            return await _dataContext.GroupDetails.FirstOrDefaultAsync(gd => gd.Team.Id == teamId);
+        }
+
         public async Task<GroupDetailEntity> GetGroupDetailsAsync(int id)
         {
             return await _dataContext.GroupDetails

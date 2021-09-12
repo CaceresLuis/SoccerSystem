@@ -23,7 +23,7 @@ namespace Core.Modules.GroupModule.Get
 
         public async Task<AGroupResponse> Handle(GetFullGroupQuery request, CancellationToken cancellationToken)
         {
-            AGroupResponse response = new AGroupResponse { };
+            AGroupResponse response = new AGroupResponse { Data = new ActionResponse { IsSuccess = true } };
 
             GroupEntity group = await _groupRepository.GetGroupTeamAndDetailsAsync(request.Id);
             if (group == null)

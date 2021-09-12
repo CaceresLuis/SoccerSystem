@@ -23,7 +23,7 @@ namespace Core.Modules.TournamentModule.Get
 
         public async Task<ATournamentResponse> Handle(GetTournamentQuery request, CancellationToken cancellationToken)
         {
-            ATournamentResponse response = new ATournamentResponse { };
+            ATournamentResponse response = new ATournamentResponse { Data = new ActionResponse { IsSuccess = true } };
 
             TournamentEntity tournament = await _tournamentRepository.GetTournamentDetailsAsync(request.Id);
             if(tournament == null)

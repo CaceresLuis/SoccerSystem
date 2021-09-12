@@ -11,6 +11,7 @@ namespace Infrastructure.Interfaces
         Task<GroupDetailEntity> GetGroupDetailsAsync(int id);
         Task<bool> GetGroupDetailsByGroupAdnTeamAsync(int idGroup, int idTeam);
         Task<List<GroupDetailEntity>> GetGroupDetailsByGroupAsync(int IdGroup);
+        Task<GroupDetailEntity> GetGroupDetailsByTeamAsync(int teamId);
         Task<bool> UpdateGroupDetailsAsync(GroupDetailEntity groupDetail);
     }
 }

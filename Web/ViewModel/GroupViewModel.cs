@@ -1,11 +1,14 @@
 ﻿using Web.Models;
-using Core.ModelResponse;
+using System.Collections.Generic;
 
 namespace Web.ViewModel
 {
     public class GroupViewModel
     {
-        public Group Group { get; set; }
-        public ActionResponse  Data { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public TournamentViewModel Tournament { get; set; }
+        public ICollection<GroupDetails> GroupDetails { get; set; }
+        //public ICollection<Match> Matches { get; set; }
     }
 }

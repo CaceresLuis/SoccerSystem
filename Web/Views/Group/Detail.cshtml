@@ -12,28 +12,25 @@
 
 <div id="Teams" class="w3-container w3-border city col-lg-12">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="https://localhost:44372/Tournament/Details/@Model.Group.Tournament.Id">Tournament ||<b> @Html.DisplayFor(model => model.Group.Tournament.Name) </b></a>
+        <a class="navbar-brand" href="https://localhost:44372/Tournament/Details/@Model.Tournament.Id">Tournament ||<b> @Html.DisplayFor(model => model.Tournament.Name) </b></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">Group || <b> @Html.DisplayFor(model => model.Group.Name) </b></a>
+                    <a class="nav-link" href="#">Group || <b> @Html.DisplayFor(model => model.Name) </b></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#"># Teams || <b> @Html.DisplayFor(model => model.Group.GroupDetails.Count) </b></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#Matches"># Matches || <b> @Html.DisplayFor(model => model.Group.Matches.Count) </b></a>
+                    <a class="nav-link" href="#"># Teams || <b> @Html.DisplayFor(model => model.GroupDetails.Count) </b></a>
                 </li>
             </ul>
         </div>
     </nav>
     <div class="col-md-4">
-        @if (!string.IsNullOrEmpty(Model.Group.Tournament.LogoPath))
+        @if (!string.IsNullOrEmpty(Model.Tournament.LogoPath))
         {
-            <img src="@Url.Content(Model.Group.Tournament.LogoPath)" alt="Image" style="width:100px;height:100px;max-width: 100%; height: auto;" />
+            <img src="@Url.Content(Model.Tournament.LogoPath)" alt="Image" style="width:100px;height:100px;max-width: 100%; height: auto;" />
         }
         else
         {
@@ -41,21 +38,21 @@
         }
     </div>
     <div>
-        <a asp-controller="Tournament" asp-action="Details" asp-route-id="@Model.Group.Tournament.Id" class="btn btn-default">
+        <a asp-controller="Tournament" asp-action="Details" asp-route-id="@Model.Tournament.Id" class="btn btn-default">
             <i class="bi bi-arrow-left-circle-fill"></i> Back
         </a>
-        <a asp-action="Edit" asp-route-id="@Model.Group.Id" class="btn btn-warning">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
             <i class="bi bi-pencil-square"></i> Edit
         </a>
-        <a asp-controller="GroupDetails" asp-action="Create" asp-route-id="@Model.Group.Id" class="btn btn-primary">
+        <a asp-controller="GroupDetails" asp-action="Create" asp-route-id="@Model.Id" class="btn btn-primary">
             <i class="bi bi-plus-circle-fill"></i> Add Team
         </a>
-        <a asp-controller="Match" asp-action="AddMatch" asp-route-id="@Model.Group.Id" class="btn btn-primary">
+        <a asp-controller="Match" asp-action="AddMatch" asp-route-id="@Model.Id" class="btn btn-primary">
             <i class="bi bi-plus-circle-fill"></i> Add Match
         </a>
     </div>
     <a name="Matches"></a>
-    @if (Model.Group.GroupDetails.Count != 0)
+    @if (Model.GroupDetails.Count != 0)
     {
         <div class="row">
             <div class="col-md-12">
@@ -68,7 +65,7 @@
                             <thead>
                                 <tr>
                                     <th>
-                                        @Html.DisplayNameFor(model => model.Group.GroupDetails.FirstOrDefault().Team.LogoPath)
+                                        @Html.DisplayNameFor(model => model.GroupDetails.FirstOrDefault().Team.LogoPath)
                                     </th>
                                     <th>
                                         Name
@@ -101,7 +98,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in Model.Group.GroupDetails
+                                @foreach (var item in Model.GroupDetails
                                .OrderByDescending(g => g.Points)
                                .ThenByDescending(g => g.GoalDifference)
                                .ThenByDescending(g => g.GoalsFor))

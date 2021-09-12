@@ -12,8 +12,8 @@
     <div class="col-md-4">
         <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Tournament.Id" />
-            <input type="hidden" asp-for="Tournament.LogoPath" />
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="LogoPath" />
 
             <partial name="_Tournament" />
 
@@ -28,9 +28,9 @@
         </form>
     </div>
     <div class="col-md-4">
-        @if (!string.IsNullOrEmpty(Model.Tournament.LogoPath))
+        @if (!string.IsNullOrEmpty(Model.LogoPath))
         {
-            <img src="@Url.Content(Model.Tournament.LogoPath)" alt="Image" style="width:200px;height:200px;max-width: 100%; height: auto;" />
+            <img src="@Url.Content(Model.LogoPath)" alt="Image" style="width:200px;height:200px;max-width: 100%; height: auto;" />
         }
     </div>
 </div>

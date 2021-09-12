@@ -11,11 +11,22 @@ namespace Web.Map
     {
         public MapProfile()
         {
+
+
             CreateMap<TeamEntity, TeamResponse>().ReverseMap();
-            CreateMap<MatchEntity, MatchResponse>().ReverseMap();
-            CreateMap<GroupEntity, GroupResponse>().ReverseMap();
-            CreateMap<GroupDetailEntity, AGroupDetailResponse>().ReverseMap();
+            CreateMap<TeamResponse, TeamViewModel>().ReverseMap();
+
             CreateMap<TournamentEntity, TournamentResponse>().ReverseMap();
+            CreateMap<TournamentResponse, TournamentViewModel>().ReverseMap();
+
+            CreateMap<GroupEntity, GroupResponse>().ReverseMap();
+            CreateMap<GroupResponse, GroupViewModel>().ReverseMap();
+
+
+
+
+            CreateMap<MatchEntity, MatchResponse>().ReverseMap();
+            CreateMap<GroupDetailEntity, AGroupDetailResponse>().ReverseMap();
 
 
             CreateMap<TeamResponse, Team>().ReverseMap();

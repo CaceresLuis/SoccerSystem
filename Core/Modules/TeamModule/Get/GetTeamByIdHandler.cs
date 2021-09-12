@@ -23,7 +23,7 @@ namespace Core.Modules.TeamModule.Get
 
         public async Task<ATeamResponse> Handle(GetTeamByIdQuery request, CancellationToken cancellationToken)
         {
-            ATeamResponse response = new ATeamResponse { };
+            ATeamResponse response = new ATeamResponse { Data = new ActionResponse { IsSuccess = true } };
             TeamEntity team = await _teamRepository.FindTeamByIdAsync(request.TeamId);
             if (team == null)
             {

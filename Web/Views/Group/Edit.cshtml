@@ -12,8 +12,8 @@
     <div class="col-md-4">
         <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Group.Tournament.Id" />
-            <input type="hidden" asp-for="Group.Id" />
+            <input type="hidden" asp-for="Tournament.Id" />
+            <input type="hidden" asp-for="Id" />
             <input type="hidden" name="isNew" id="isNew" value="False" />
 
             <partial name="_Group" />

@@ -1,8 +1,6 @@
 ﻿using MediatR;
 using AutoMapper;
-using Web.Models;
 using Web.ViewModel;
-using Newtonsoft.Json;
 using Core.ModelResponse;
 using Core.ModelResponse.One;
 using System.Threading.Tasks;
@@ -30,70 +28,60 @@ namespace Web.Controllers
         {
             TeamResponse[] teamResponse = await _mediator.Send(new ListTeamsQuery());
 
-            Team[] team = _mapper.Map<Team[]>(teamResponse);
+            TeamViewModel[] teamView = _mapper.Map<TeamViewModel[]>(teamResponse);
 
-            ListTeamViewModel response = new ListTeamViewModel { Teams = team };
-            response.Data = new ActionResponse { };
-
-            if(teamResponse.Length <= 1)
-                return View(response);
-
-
-            if (TempData["Data"] != null)
-                response.Data = JsonConvert.DeserializeObject<ActionResponse>((string)TempData["Data"]);
-
-            return View(response);
+            return View(teamView);
         }
 
         public ActionResult Create()
         {
-            TeamViewModel response = new TeamViewModel { };
-            response.Data = new ActionResponse { };
-            return View(response);
+            return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(Team team)
+        public async Task<ActionResult> Create(TeamViewModel teamView)
         {
-            TeamResponse teamResponse = _mapper.Map<TeamResponse>(team);
+            TeamResponse teamResponse = _mapper.Map<TeamResponse>(teamView);
             ActionResponse create = await _mediator.Send(new AddTeamCommand { Team = teamResponse });
-            if (!create.IsSuccess)
-            {
-                TeamViewModel response = new TeamViewModel { };
-                response.Data = create;
-                return View(response);
-            }
+            TempData["Title"] = create.Title;
+            TempData["Message"] = create.Message;
+            TempData["State"] = create.State.ToString();
 
-            TempData["Data"] = JsonConvert.SerializeObject(create);
+            if (!create.IsSuccess)
+                return View();
+
             return RedirectToAction(nameof(Index));
         }
 
         public async Task<ActionResult> Edit(int id)
         {
-            if (id < 1) return NotFound();
 
             ATeamResponse teamResponse = await _mediator.Send(new GetTeamByIdQuery { TeamId = id });
+            TempData["Title"] = teamResponse.Data.Title;
+            TempData["Message"] = teamResponse.Data.Message;
+            TempData["State"] = teamResponse.Data.State.ToString();
 
-            TeamViewModel teamView = new TeamViewModel { Team = _mapper.Map<Team>(teamResponse.Team), Data = teamResponse.Data };
+            if (!teamResponse.Data.IsSuccess)
+                return RedirectToAction(nameof(Index));
 
+            TeamViewModel teamView = _mapper.Map<TeamViewModel>(teamResponse.Team);
             return View(teamView);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, TeamResponse team)
+        public async Task<ActionResult> Edit(TeamViewModel teamView)
         {
-            team.Id = id;
-            ActionResponse update = await _mediator.Send(new UpdateTeamCommand { Team = team });
-            if (!update.IsSuccess)
-            {
-                ATeamResponse response = await _mediator.Send(new GetTeamByIdQuery { TeamId = id });
-                TeamViewModel teamView = new TeamViewModel { Team = _mapper.Map<Team>(response.Team), Data = update };
-                return View(teamView);
-            }
+            TeamResponse teamResponse = _mapper.Map<TeamResponse>(teamView);
+            ActionResponse update = await _mediator.Send(new UpdateTeamCommand { Team = teamResponse });
+            TempData["Title"] = update.Title;
+            TempData["Message"] = update.Message;
+            TempData["State"] = update.State.ToString();
 
-            TempData["Data"] = JsonConvert.SerializeObject(update);
+            if (!update.IsSuccess)
+                return View(teamView);
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -101,14 +89,11 @@ namespace Web.Controllers
         {
             if (id < 1) return NotFound();
 
-            ActionResponse response = await _mediator.Send(new RemoveTeamCommand { IdTeam = id });
-            if (response.IsSuccess)
-            {
-                TempData["Data"] = JsonConvert.SerializeObject(response);
-                return RedirectToAction(nameof(Index));
-            }
+            ActionResponse delete = await _mediator.Send(new RemoveTeamCommand { IdTeam = id });
+            TempData["Title"] = delete.Title;
+            TempData["Message"] = delete.Message;
+            TempData["State"] = delete.State.ToString();
 
-            TempData["Data"] = JsonConvert.SerializeObject(response);
             return RedirectToAction(nameof(Index));
         }
     }
