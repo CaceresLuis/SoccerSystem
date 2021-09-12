@@ -22,9 +22,13 @@ namespace Infrastructure.Repositories
             return await _dataContext.SaveChangesAsync() > 0;
         }
 
-        public async Task<List<GroupDetailEntity>> GetGroupDetailsByGroupAsync(int idGroup)
+        public async Task<List<GroupDetailEntity>> GetGroupsDetailsByGroupAsync(int idGroup)
         {
             return await _dataContext.GroupDetails.Where(gd => gd.Group.Id == idGroup).ToListAsync();
+        }
+        public async Task<GroupDetailEntity> GetGroupDetailsByGroupAsync(int idGroup)
+        {
+            return await _dataContext.GroupDetails.FirstOrDefaultAsync(gb => gb.Group.Id == idGroup);
         }
 
         public async Task<GroupDetailEntity> GetGroupDetailsByTeamAsync(int teamId)
@@ -35,8 +39,9 @@ namespace Infrastructure.Repositories
         public async Task<GroupDetailEntity> GetGroupDetailsAsync(int id)
         {
             return await _dataContext.GroupDetails
-                .Include(gd => gd.Group)
                 .Include(gd => gd.Team)
+                .Include(gd => gd.Group)
+                .ThenInclude(g => g.Tournament)
                 .FirstOrDefaultAsync(gd => gd.Id == id);
         }
 

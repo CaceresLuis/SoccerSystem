@@ -1,7 +1,6 @@
 ﻿@model Web.ViewModel.GroupViewModel
 
 @{
-    var url = "https://localhost:44372/Group/EditGroupDetail";
     ViewData["Title"] = "Details";
 }
 
@@ -41,13 +40,16 @@
         <a asp-controller="Tournament" asp-action="Details" asp-route-id="@Model.Tournament.Id" class="btn btn-default">
             <i class="bi bi-arrow-left-circle-fill"></i> Back
         </a>
+        <a asp-controller="Match" asp-action="ListMatch" asp-route-id="@Model.Id" class="btn btn-secondary">
+            <i class="bi bi-plus-circle-fill"></i> View Match
+        </a>
         <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
-            <i class="bi bi-pencil-square"></i> Edit
+            <i class="bi bi-pencil-square"></i> Edit Group
         </a>
         <a asp-controller="GroupDetails" asp-action="Create" asp-route-id="@Model.Id" class="btn btn-primary">
             <i class="bi bi-plus-circle-fill"></i> Add Team
         </a>
-        <a asp-controller="Match" asp-action="AddMatch" asp-route-id="@Model.Id" class="btn btn-primary">
+        <a asp-controller="Match" asp-action="Create" asp-route-id="@Model.Id" class="btn btn-primary">
             <i class="bi bi-plus-circle-fill"></i> Add Match
         </a>
     </div>
@@ -104,7 +106,7 @@
                                .ThenByDescending(g => g.GoalsFor))
                                 {
                                     <tr>
-                                        <td class='clickable-row' data-href='@url/@item.Id'>
+                                        <td>
                                             @if (!string.IsNullOrEmpty(item.Team.LogoPath))
                                             {
                                                 <img src="@Url.Content(item.Team.LogoPath)" alt="Image" style="width:50px;height:50px;max-width: 100%; height: auto;" />
@@ -142,9 +144,6 @@
                                             @Html.DisplayFor(modelItem => item.GoalDifference)
                                         </td>
                                         <td>
-                                            <a asp-controller="GroupDetails" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </a>
                                             <button data-id="@item.Id" class="btn btn-danger deleteItem" data-toggle="modal" data-target="#deleteDialog"><i class="bi bi-trash-fill"></i></button>
                                         </td>
                                     </tr>
@@ -178,7 +177,7 @@
             });
 
             $("#btnYesDelete").click(function () {
-                window.location.href = '/GroupDetail/DeleteGroupDetail/' + item_to_delete;
+                window.location.href = '/GroupDetails/Delete/' + item_to_delete;
             });
         });
     </script>

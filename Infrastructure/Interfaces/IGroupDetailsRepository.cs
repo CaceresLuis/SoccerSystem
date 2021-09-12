@@ -10,8 +10,9 @@ namespace Infrastructure.Interfaces
         Task<bool> DeleteGroupDetailsAsync(GroupDetailEntity groupDetail);
         Task<GroupDetailEntity> GetGroupDetailsAsync(int id);
         Task<bool> GetGroupDetailsByGroupAdnTeamAsync(int idGroup, int idTeam);
-        Task<List<GroupDetailEntity>> GetGroupDetailsByGroupAsync(int IdGroup);
+        Task<List<GroupDetailEntity>> GetGroupsDetailsByGroupAsync(int IdGroup);
         Task<GroupDetailEntity> GetGroupDetailsByTeamAsync(int teamId);
         Task<bool> UpdateGroupDetailsAsync(GroupDetailEntity groupDetail);
+        Task<GroupDetailEntity> GetGroupDetailsByGroupAsync(int idGroup);
     }
 }

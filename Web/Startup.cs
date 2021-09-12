@@ -42,6 +42,7 @@ namespace Web
             //Inyection of Repositories
             services.AddScoped<ITeamRepository, TeamRepository>();
             services.AddScoped<IGroupRepository, GroupRepository>();
+            services.AddScoped<IMatchRepository, MatchRepository>();
             services.AddScoped<ITournamentRepository, TournamentRepository>();
             services.AddScoped<IGroupDetailsRepository, GroupDetailsRepository>();
         }

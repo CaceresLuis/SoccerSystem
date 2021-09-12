@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Core.Dtos;
+using AutoMapper;
 using Web.Models;
 using Web.ViewModel;
 using Core.ModelResponse;
@@ -11,6 +12,15 @@ namespace Web.Map
     {
         public MapProfile()
         {
+            CreateMap<GroupEntity, GroupDto>().ReverseMap();
+            CreateMap<GroupEntity, GroupMatchsDto>().ReverseMap();
+            CreateMap<GroupEntity, GroupMatchDto>().ReverseMap();
+            CreateMap<GroupEntity, GroupDetailEntity>().ReverseMap();
+
+
+            CreateMap<MatchEntity, MatchDto>();
+            CreateMap<TeamEntity, TeamDto>().ReverseMap();
+
 
 
             CreateMap<TeamEntity, TeamResponse>().ReverseMap();

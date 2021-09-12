@@ -29,7 +29,7 @@ namespace Core.Modules.GroupDetailsModule.Get
 
         public async Task<GroupDetailsResponse> Handle(GetGroupDetailsByGroupQuery request, CancellationToken cancellationToken)
         {
-            GroupDetailsResponse response = new GroupDetailsResponse { };
+            GroupDetailsResponse response = new GroupDetailsResponse { Data = new ActionResponse { IsSuccess = true } };
             GroupResponse group = _mapper.Map<GroupResponse>(await _groupRepository.FindGroupByIdAsync(request.IdGroup));
             response.Group = group;
 
@@ -40,7 +40,7 @@ namespace Core.Modules.GroupDetailsModule.Get
             }
 
             List<TeamEntity> teams = await _teamRepository.GetAllTeamAsync();
-            List<GroupDetailEntity> groupDetails = await _groupDetailsRepository.GetGroupDetailsByGroupAsync(group.Id);
+            List<GroupDetailEntity> groupDetails = await _groupDetailsRepository.GetGroupsDetailsByGroupAsync(group.Id);
 
             foreach (GroupDetailEntity groupDetail in groupDetails)
             {

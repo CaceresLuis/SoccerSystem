@@ -59,9 +59,6 @@ namespace Web.Controllers
         public async Task<ActionResult> Detail(int id)
         {
             AGroupResponse aGroupResponse = await _mediator.Send(new GetFullGroupQuery { Id = id });
-            TempData["Title"] = aGroupResponse.Data.Title;
-            TempData["Message"] = aGroupResponse.Data.Message;
-            TempData["State"] = aGroupResponse.Data.State.ToString();
 
             if (!aGroupResponse.Data.IsSuccess)
                 return RedirectToAction("Details", "Tournament", new { Id = id });
@@ -73,15 +70,15 @@ namespace Web.Controllers
 
         public async Task<ActionResult> Edit(int id)
         {
-            AGroupResponse aGroupResponse = await _mediator.Send(new GetFullGroupQuery { Id = id });
-            TempData["Title"] = aGroupResponse.Data.Title;
-            TempData["Message"] = aGroupResponse.Data.Message;
-            TempData["State"] = aGroupResponse.Data.State.ToString();
+            AGroupResponse AgroupResponse = await _mediator.Send(new GetFullGroupQuery { Id = id });
+            TempData["Title"] = AgroupResponse.Data.Title;
+            TempData["Message"] = AgroupResponse.Data.Message;
+            TempData["State"] = AgroupResponse.Data.State.ToString();
 
-            if (!aGroupResponse.Data.IsSuccess)
+            if (!AgroupResponse.Data.IsSuccess)
                 return RedirectToAction("Details", "Tournament", new { Id = id });
 
-            GroupViewModel groupView = _mapper.Map<GroupViewModel>(aGroupResponse.Group);
+            GroupViewModel groupView = _mapper.Map<GroupViewModel>(AgroupResponse.Group);
 
             return View(groupView);
         }
