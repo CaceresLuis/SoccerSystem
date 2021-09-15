@@ -1,4 +1,5 @@
 ﻿using Infrastructure.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Interfaces
@@ -12,7 +13,8 @@ namespace Infrastructure.Interfaces
         Task<GroupEntity[]> GetAllGroupOfTournamentAsync(int idTournamnet);
         Task<bool> UpdateGroupAsync(GroupEntity group);
         Task<GroupEntity> GetGroupWithTournamentAsync(int id);
-        Task<GroupEntity> GetFullGroupAsync(int id);
+        Task<GroupEntity> GetGroupMatchsAsync(int id);
         Task<GroupEntity> GetGroupTeamAndDetailsAsync(int id);
+        Task<List<GroupEntity>> GetGroupTeamTournamentsAsync();
     }
 }

@@ -28,7 +28,7 @@ namespace Web.Controllers
         {
             TeamResponse[] teamResponse = await _mediator.Send(new ListTeamsQuery());
 
-            TeamViewModel[] teamView = _mapper.Map<TeamViewModel[]>(teamResponse);
+            TeamViewModels[] teamView = _mapper.Map<TeamViewModels[]>(teamResponse);
 
             return View(teamView);
         }
@@ -40,7 +40,7 @@ namespace Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(TeamViewModel teamView)
+        public async Task<ActionResult> Create(TeamViewModels teamView)
         {
             TeamResponse teamResponse = _mapper.Map<TeamResponse>(teamView);
             ActionResponse create = await _mediator.Send(new AddTeamCommand { Team = teamResponse });
@@ -65,13 +65,13 @@ namespace Web.Controllers
             if (!teamResponse.Data.IsSuccess)
                 return RedirectToAction(nameof(Index));
 
-            TeamViewModel teamView = _mapper.Map<TeamViewModel>(teamResponse.Team);
+            TeamViewModels teamView = _mapper.Map<TeamViewModels>(teamResponse.Team);
             return View(teamView);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(TeamViewModel teamView)
+        public async Task<ActionResult> Edit(TeamViewModels teamView)
         {
             TeamResponse teamResponse = _mapper.Map<TeamResponse>(teamView);
             ActionResponse update = await _mediator.Send(new UpdateTeamCommand { Team = teamResponse });

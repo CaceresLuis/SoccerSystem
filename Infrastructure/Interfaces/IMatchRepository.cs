@@ -9,6 +9,7 @@ namespace Infrastructure.Interfaces
         Task<bool> AddMatchAsync(MatchEntity match);
         Task<bool> DeleteMatchAsync(MatchEntity match);
         Task<MatchEntity> FindMatchByIdAsync(int matchId);
+        Task<MatchEntity> GetMatchAsync(int id);
         Task<List<MatchEntity>> GetMatchByGroupAsync(int idGroup);
         Task<bool> UpdateMatchAsync(MatchEntity match);
     }

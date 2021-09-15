@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Web.ViewModel
 {
-    public class CreateGroupDetailsViewModel
+    public class CreateGroupDetailsViewModels
     {
         public int TeamId { get; set; }
         public Group Group { get; set; }

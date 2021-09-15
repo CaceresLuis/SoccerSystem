@@ -2,6 +2,7 @@
 using AutoMapper;
 using Web.Models;
 using Web.ViewModel;
+using Web.ModelsView;
 using Core.ModelResponse;
 using Infrastructure.Models;
 using Core.ModelResponse.One;
@@ -13,30 +14,36 @@ namespace Web.Map
         public MapProfile()
         {
             CreateMap<GroupEntity, GroupDto>().ReverseMap();
-            CreateMap<GroupEntity, GroupMatchsDto>().ReverseMap();
             CreateMap<GroupEntity, GroupMatchDto>().ReverseMap();
-            CreateMap<GroupEntity, GroupDetailEntity>().ReverseMap();
+            CreateMap<GroupEntity, GroupMatchsDto>().ReverseMap();
+            //CreateMap<GroupEntity, GroupDetailEntity>().ReverseMap();
 
 
             CreateMap<MatchEntity, MatchDto>();
             CreateMap<TeamEntity, TeamDto>().ReverseMap();
 
 
+            CreateMap<AddMatchDto, AddMatchViewModel>();
+            CreateMap<GroupDto, GroupViewModel>().ReverseMap();
+
+
+
+
 
             CreateMap<TeamEntity, TeamResponse>().ReverseMap();
-            CreateMap<TeamResponse, TeamViewModel>().ReverseMap();
+            CreateMap<TeamResponse, TeamViewModels>().ReverseMap();
 
             CreateMap<TournamentEntity, TournamentResponse>().ReverseMap();
-            CreateMap<TournamentResponse, TournamentViewModel>().ReverseMap();
+            CreateMap<TournamentResponse, TournamentViewModels>().ReverseMap();
 
             CreateMap<GroupEntity, GroupResponse>().ReverseMap();
-            CreateMap<GroupResponse, GroupViewModel>().ReverseMap();
+            CreateMap<GroupResponse, GroupViewModels>().ReverseMap();
 
 
 
 
             CreateMap<MatchEntity, MatchResponse>().ReverseMap();
-            CreateMap<GroupDetailEntity, AGroupDetailResponse>().ReverseMap();
+            CreateMap<GroupTeamEntity, AGroupDetailResponse>().ReverseMap();
 
 
             CreateMap<TeamResponse, Team>().ReverseMap();
@@ -44,7 +51,7 @@ namespace Web.Map
             CreateMap<GroupResponse, Group>().ReverseMap();
             CreateMap<TournamentResponse, Tournament>().ReverseMap();
             CreateMap<AGroupDetailResponse, GroupDetails>().ReverseMap();
-            CreateMap<GroupDetailsResponse, CreateGroupDetailsViewModel>().ReverseMap();
+            CreateMap<GroupDetailsResponse, CreateGroupDetailsViewModels>().ReverseMap();
         }
     }
 }

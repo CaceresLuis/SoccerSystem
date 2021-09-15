@@ -29,14 +29,14 @@ namespace Web.Controllers
             TempData["Message"] = groupDetailsResponse.Data.Message;
             TempData["State"] = groupDetailsResponse.Data.State.ToString();
 
-            CreateGroupDetailsViewModel detailsViewModel = _mapper.Map<CreateGroupDetailsViewModel>(groupDetailsResponse);
+            CreateGroupDetailsViewModels detailsViewModel = _mapper.Map<CreateGroupDetailsViewModels>(groupDetailsResponse);
 
             return View(detailsViewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(CreateGroupDetailsViewModel groupDetail)
+        public async Task<ActionResult> Create(CreateGroupDetailsViewModels groupDetail)
         {
             GroupDetailsResponse groupDetailsResponse = _mapper.Map<GroupDetailsResponse>(groupDetail);
             ActionResponse create = await _mediator.Send(new AddGroupDetailsCommand { GroupDetail = groupDetailsResponse });
@@ -49,37 +49,6 @@ namespace Web.Controllers
 
             return RedirectToAction("Detail", "Group", new { id = groupDetail.Group.Id });
         }
-
-        //public async Task<ActionResult> Edit(int id)
-        //{
-        //    OneGroupDetailsResponse groupDetailsResponse = await _mediator.Send(new GetGroupDetailsQuery { Id = id });
-        //    TempData["Title"] = groupDetailsResponse.Data.Title;
-        //    TempData["Message"] = groupDetailsResponse.Data.Message;
-        //    TempData["State"] = groupDetailsResponse.Data.State.ToString();
-        //    if (!groupDetailsResponse.Data.IsSuccess)
-        //        return RedirectToAction("Details", "Tournament", new { Id = id });
-
-        //    GroupViewModel groupView = _mapper.Map<GroupViewModel>(groupDetailsResponse.Group);
-
-        //    return View(groupView);
-        //}
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<ActionResult> Edit(AGroupDetailResponse groupDetail)
-        //{
-        //    ActionResponse update = await _mediator.Send(new UpdateGroupDetailsCommand { GroupDetail = groupDetail });
-
-        //    if (!update.IsSuccess)
-        //    {
-        //        OneGroupDetailsResponse response = await _mediator.Send(new GetGroupDetailsQuery { Id = id });
-        //        response.Data = update;
-        //        return View(response);
-        //    }
-
-        //    TempData["Data"] = JsonConvert.SerializeObject(update);
-        //    return RedirectToAction("Detail", "Group", new { id = groupDetail.Group.Id });
-        //}
 
         public async Task<ActionResult> Delete(int id)
         {

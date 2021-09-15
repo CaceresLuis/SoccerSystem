@@ -6,6 +6,6 @@ namespace Core.Modules.MatchModule.Add
 {
     public class AddMatchCommand : IRequest<ActionResponse>
     {
-        public MatchDto MatchDto { get; set; }
+        public AddMatchDto AddMatchDto { get; set; }
     }
 }

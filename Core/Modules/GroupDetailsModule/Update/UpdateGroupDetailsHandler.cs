@@ -11,9 +11,9 @@ namespace Core.Modules.GroupDetailsModule.Update
 {
     public class UpdateGroupDetailsHandler : IRequestHandler<UpdateGroupDetailsCommand, ActionResponse>
     {
-        private readonly IGroupDetailsRepository _groupDetailsRepository;
+        private readonly IGroupTeamsRepository _groupDetailsRepository;
 
-        public UpdateGroupDetailsHandler(IGroupDetailsRepository groupDetailsRepository)
+        public UpdateGroupDetailsHandler(IGroupTeamsRepository groupDetailsRepository)
         {
             _groupDetailsRepository = groupDetailsRepository;
         }
@@ -21,7 +21,7 @@ namespace Core.Modules.GroupDetailsModule.Update
         public async Task<ActionResponse> Handle(UpdateGroupDetailsCommand request, CancellationToken cancellationToken)
         {
             AGroupDetailResponse groupDetail = request.GroupDetail;
-            GroupDetailEntity entity = await _groupDetailsRepository.GetGroupDetailsAsync(groupDetail.Id);
+            GroupTeamEntity entity = await _groupDetailsRepository.GetGroupDetailsAsync(groupDetail.Id);
             if (entity == null)
                 return new ActionResponse { IsSuccess = false, Title = "Error", Message = "The groupDetails does not exist", State = State.error };
 

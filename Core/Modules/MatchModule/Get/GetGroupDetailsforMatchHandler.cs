@@ -36,9 +36,14 @@ namespace Core.Modules.MatchModule.Get
             })
                 .OrderBy(t => t.Text)
                 .ToList();
+            selectTeam.Insert(0, new SelectListItem
+            {
+                Text = "[Select a team...]",
+                Value = "0"
+            });
             GroupDto groupDto = _mapper.Map<GroupDto>(groupEntity);
 
-            return new AddMatchDto { GroupDto = groupDto, SelectLocal = selectTeam, SelectVisitor = selectTeam };
+            return new AddMatchDto { Group = groupDto, Team = selectTeam};
         }
     }
 }

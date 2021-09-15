@@ -6,6 +6,7 @@ namespace Core.Dtos
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
+        public DateTime Hour { get; set; }
         public int GoalsLocal { get; set; }
         public int GoalsVisitor { get; set; }
         public bool IsClosed { get; set; }

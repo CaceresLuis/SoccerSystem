@@ -11,9 +11,9 @@ namespace Core.Modules.TeamModule.Remove
     public class RemoveTeamHandler : IRequestHandler<RemoveTeamCommand, ActionResponse>
     {
         private readonly ITeamRepository _teamRepository;
-        private readonly IGroupDetailsRepository _groupDetailsRepository;
+        private readonly IGroupTeamsRepository _groupDetailsRepository;
 
-        public RemoveTeamHandler(ITeamRepository teamRepository, IGroupDetailsRepository groupDetailsRepository)
+        public RemoveTeamHandler(ITeamRepository teamRepository, IGroupTeamsRepository groupDetailsRepository)
         {
             _teamRepository = teamRepository;
             _groupDetailsRepository = groupDetailsRepository;

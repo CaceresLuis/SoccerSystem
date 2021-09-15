@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Web.ViewModel
 {
-    public class TournamentViewModel
+    public class TournamentViewModels
     {
         public int Id { get; set; }
         public string Name { get; set; }

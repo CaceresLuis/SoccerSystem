@@ -2,7 +2,7 @@
 
 namespace Web.ViewModel
 {
-    public class TeamViewModel
+    public class TeamViewModels
     {
         public int Id { get; set; }
         public IFormFile LogoFile { get; set; }

@@ -33,9 +33,14 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
         }
 
-
-
-
+        public async Task<MatchEntity> GetMatchAsync(int id)
+        {
+            return await _dataContext.Matchs
+                .Include(m => m.Group)
+                .Include(m => m.Visitor)
+                .Include(m => m.Local)
+                .FirstOrDefaultAsync(m => m.Id == id);
+        }
 
         public async Task<MatchEntity> FindMatchByIdAsync(int matchId)
         {

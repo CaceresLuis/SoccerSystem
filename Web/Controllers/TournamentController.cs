@@ -28,7 +28,7 @@ namespace Web.Controllers
         {
             TournamentResponse[] tournaments = await _mediator.Send(new ListTournamentsQuery());
 
-            TournamentViewModel[] tournamentViews = _mapper.Map<TournamentViewModel[]>(tournaments);
+            TournamentViewModels[] tournamentViews = _mapper.Map<TournamentViewModels[]>(tournaments);
 
             return View(tournamentViews);
         }
@@ -40,7 +40,7 @@ namespace Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(TournamentViewModel tournamentView)
+        public async Task<ActionResult> Create(TournamentViewModels tournamentView)
         {
             TournamentResponse tournamentResponse = _mapper.Map<TournamentResponse>(tournamentView);
             ActionResponse create = await _mediator.Send(new AddTournamentCommand { Tournament = tournamentResponse });
@@ -62,7 +62,7 @@ namespace Web.Controllers
             if (!tournamentResponse.Data.IsSuccess)
                 return RedirectToAction(nameof(Index));
 
-            TournamentViewModel tournamentView = _mapper.Map<TournamentViewModel>(tournamentResponse.Tournament);
+            TournamentViewModels tournamentView = _mapper.Map<TournamentViewModels>(tournamentResponse.Tournament);
             return View(tournamentView);
         }
 
@@ -76,13 +76,13 @@ namespace Web.Controllers
             if (!tournamentResponse.Data.IsSuccess)
                 return RedirectToAction(nameof(Index));
 
-            TournamentViewModel tournamentView = _mapper.Map<TournamentViewModel>(tournamentResponse.Tournament);
+            TournamentViewModels tournamentView = _mapper.Map<TournamentViewModels>(tournamentResponse.Tournament);
             return View(tournamentView);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(TournamentViewModel tournamentView)
+        public async Task<ActionResult> Edit(TournamentViewModels tournamentView)
         {
             TournamentResponse tournamentResponse = _mapper.Map<TournamentResponse>(tournamentView);
             ActionResponse update = await _mediator.Send(new UpdateTournamentCommnad { TournamentResponse = tournamentResponse });

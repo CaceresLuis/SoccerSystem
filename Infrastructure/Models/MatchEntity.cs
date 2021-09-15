@@ -8,9 +8,13 @@ namespace Infrastructure.Models
     {
         public int Id { get; set; }
 
-        [DataType(DataType.DateTime)]
-        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd HH:mm}", ApplyFormatInEditMode = false)]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}", ApplyFormatInEditMode = false)]
         public DateTime Date { get; set; }
+
+        [DataType(DataType.Time)]
+        [DisplayFormat(DataFormatString = "{HH:mm}", ApplyFormatInEditMode = false)]
+        public DateTime Hour { get; set; }
 
         public DateTime DateLocal => Date.ToLocalTime();
 

@@ -10,7 +10,7 @@ namespace Infrastructure
         {
         }
 
-       public DbSet<GroupDetailEntity> GroupDetails { get; set; }
+       public DbSet<GroupTeamEntity> GroupTeams { get; set; }
        public DbSet<GroupEntity> Groups { get; set; }
        public DbSet<MatchEntity> Matchs { get; set; }
        public DbSet<PredictionEntity> Predictions { get; set; }

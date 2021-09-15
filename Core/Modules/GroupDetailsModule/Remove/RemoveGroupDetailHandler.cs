@@ -11,16 +11,16 @@ namespace Core.Modules.GroupDetailsModule.Remove
 {
     public class RemoveGroupDetailHandler : IRequestHandler<RemoveGroupDetailCommand, RGroupDetailsResponse>
     {
-        private readonly IGroupDetailsRepository _groupDetailsRepository;
+        private readonly IGroupTeamsRepository _groupDetailsRepository;
 
-        public RemoveGroupDetailHandler(IGroupDetailsRepository groupDetailsRepository)
+        public RemoveGroupDetailHandler(IGroupTeamsRepository groupDetailsRepository)
         {
             _groupDetailsRepository = groupDetailsRepository;
         }
 
         public async Task<RGroupDetailsResponse> Handle(RemoveGroupDetailCommand request, CancellationToken cancellationToken)
         {
-            GroupDetailEntity groupDetailEntity = await _groupDetailsRepository.GetGroupDetailsAsync(request.Id);
+            GroupTeamEntity groupDetailEntity = await _groupDetailsRepository.GetGroupDetailsAsync(request.Id);
 
             RGroupDetailsResponse response = new RGroupDetailsResponse {  };
             if (groupDetailEntity == null)

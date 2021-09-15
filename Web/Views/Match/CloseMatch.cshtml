@@ -1,0 +1,68 @@
+﻿@model Core.Dtos.MatchDto
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h2>Close Match</h2>
+<h3>Date @Model.Date.ToString("MMM dd, yyyy") || @Model.Hour.ToString("HH:mm")</h3>
+<hr />
+<form asp-action="CloseMatch" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="GroupId" />
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="Local.Id" />
+    <input type="hidden" asp-for="Visitor.Id" />
+
+    <div class="row">
+        <div class="col-md-2 text-center">
+            <h4>@Model.Local.Name</h4>
+            @if (!string.IsNullOrEmpty(Model.Local.LogoPath))
+            {
+                <img src="@Url.Content(Model.Local.LogoPath)" alt="Image" style="width:300px;height:300px;max-width: 100%; height: auto;" />
+            }
+            else
+            {
+                <img src="~/images/noimage.jpeg" alt="Image" style="width:300px;height:300px;max-width: 100%; height: auto;" />
+            }
+        </div>
+
+        <div class="col-md-4">
+            <div class="form-group text-center">
+                <label class="control-label">Goals Local</label>
+                <input asp-for="GoalsLocal" min="0" placeholder="@Model.GoalsLocal" class="form-control" />
+                <span asp-validation-for="GoalsLocal" class="text-danger"></span>
+            </div>
+
+            <div class="form-group text-center">
+                <label class="control-label">Goals Visitor</label>
+                <input asp-for="GoalsVisitor" min="0" placeholder="@Model.GoalsVisitor" class="form-control" />
+                <span asp-validation-for="GoalsVisitor" class="text-danger"></span>
+            </div>
+
+            <div class="form-group text-center">
+                <a asp-controller="Match" asp-action="Matchs" asp-route-id="@Model.GroupId" class="btn btn-default">
+                    <i class="bi bi-arrow-left-circle-fill"></i> Back
+                </a>
+                <button type="submit" value="CloseMatch" class="btn btn-primary">
+                    <i class="bi bi-save2-fill"></i> Close Match
+                </button>
+            </div>
+        </div>
+        <div class="col-md-2 text-center">
+            <h4>@Model.Visitor.Name</h4>
+            @if (!string.IsNullOrEmpty(Model.Visitor.LogoPath))
+            {
+                <img src="@Url.Content(Model.Visitor.LogoPath)" alt="Image" style="width:300px;height:300px;max-width: 100%; height: auto;" />
+            }
+            else
+            {
+                <img src="~/images/noimage.jpeg" alt="Image" style="width:300px;height:300px;max-width: 100%; height: auto;" />
+            }
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace Web.ViewModel
 {
-    public class ListTeamViewModel
+    public class ListTournamentViewModels
     {
-        public IEnumerable<Team> Teams { get; set; }
+        public IEnumerable<Tournament> Tournaments { get; set; }
         public ActionResponse Data { get; set; }
     }
 }

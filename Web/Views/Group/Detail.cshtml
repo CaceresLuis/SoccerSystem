@@ -1,4 +1,4 @@
-﻿@model Web.ViewModel.GroupViewModel
+﻿@model Web.ViewModel.GroupViewModels
 
 @{
     ViewData["Title"] = "Details";
@@ -40,7 +40,7 @@
         <a asp-controller="Tournament" asp-action="Details" asp-route-id="@Model.Tournament.Id" class="btn btn-default">
             <i class="bi bi-arrow-left-circle-fill"></i> Back
         </a>
-        <a asp-controller="Match" asp-action="ListMatch" asp-route-id="@Model.Id" class="btn btn-secondary">
+        <a asp-controller="Match" asp-action="Matchs" asp-route-id="@Model.Id" class="btn btn-secondary">
             <i class="bi bi-plus-circle-fill"></i> View Match
         </a>
         <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">

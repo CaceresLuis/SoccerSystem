@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Models
 {
-    public class GroupDetailEntity
+    public class GroupTeamEntity
     {
         public int Id { get; set; }
 

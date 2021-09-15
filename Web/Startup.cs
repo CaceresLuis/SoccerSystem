@@ -44,7 +44,7 @@ namespace Web
             services.AddScoped<IGroupRepository, GroupRepository>();
             services.AddScoped<IMatchRepository, MatchRepository>();
             services.AddScoped<ITournamentRepository, TournamentRepository>();
-            services.AddScoped<IGroupDetailsRepository, GroupDetailsRepository>();
+            services.AddScoped<IGroupTeamsRepository, GroupTeamsRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

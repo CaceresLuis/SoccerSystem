@@ -17,9 +17,9 @@ namespace Core.Modules.GroupDetailsModule.Get
         private readonly IMapper _mapper;
         private readonly ITeamRepository _teamRepository;
         private readonly IGroupRepository _groupRepository;
-        private readonly IGroupDetailsRepository _groupDetailsRepository;
+        private readonly IGroupTeamsRepository _groupDetailsRepository;
 
-        public GetGroupDetailsByGroupHandler(IMapper mapper, IGroupRepository groupRepository, ITeamRepository teamRepository, IGroupDetailsRepository groupDetailsRepository)
+        public GetGroupDetailsByGroupHandler(IMapper mapper, IGroupRepository groupRepository, ITeamRepository teamRepository, IGroupTeamsRepository groupDetailsRepository)
         {
             _mapper = mapper;
             _teamRepository = teamRepository;
@@ -40,9 +40,9 @@ namespace Core.Modules.GroupDetailsModule.Get
             }
 
             List<TeamEntity> teams = await _teamRepository.GetAllTeamAsync();
-            List<GroupDetailEntity> groupDetails = await _groupDetailsRepository.GetGroupsDetailsByGroupAsync(group.Id);
+            List<GroupTeamEntity> groupDetails = await _groupDetailsRepository.GetGroupsDetailsByGroupAsync(group.Id);
 
-            foreach (GroupDetailEntity groupDetail in groupDetails)
+            foreach (GroupTeamEntity groupDetail in groupDetails)
             {
                 bool exist = teams.Where(t => t.Id == groupDetail.Team.Id).Any();
                 if (exist)

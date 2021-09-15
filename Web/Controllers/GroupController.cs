@@ -33,15 +33,15 @@ namespace Web.Controllers
             if (tournamentResponse == null)
                 return RedirectToAction("Details", "Tournament", new { Id = id });
 
-            TournamentViewModel tournament = _mapper.Map<TournamentViewModel>(tournamentResponse.Tournament);
-            GroupViewModel groupView = new GroupViewModel { Tournament = tournament };
+            TournamentViewModels tournament = _mapper.Map<TournamentViewModels>(tournamentResponse.Tournament);
+            GroupViewModels groupView = new GroupViewModels { Tournament = tournament };
 
             return View(groupView);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(GroupViewModel groupView)
+        public async Task<ActionResult> Create(GroupViewModels groupView)
         {
             groupView.Id = 0;
             GroupResponse groupResponse = _mapper.Map<GroupResponse>(groupView);
@@ -63,7 +63,7 @@ namespace Web.Controllers
             if (!aGroupResponse.Data.IsSuccess)
                 return RedirectToAction("Details", "Tournament", new { Id = id });
 
-            GroupViewModel groupView = _mapper.Map<GroupViewModel>(aGroupResponse.Group);
+            GroupViewModels groupView = _mapper.Map<GroupViewModels>(aGroupResponse.Group);
 
             return View(groupView);
         }
@@ -78,14 +78,14 @@ namespace Web.Controllers
             if (!AgroupResponse.Data.IsSuccess)
                 return RedirectToAction("Details", "Tournament", new { Id = id });
 
-            GroupViewModel groupView = _mapper.Map<GroupViewModel>(AgroupResponse.Group);
+            GroupViewModels groupView = _mapper.Map<GroupViewModels>(AgroupResponse.Group);
 
             return View(groupView);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(GroupViewModel groupView)
+        public async Task<ActionResult> Edit(GroupViewModels groupView)
         {
             GroupResponse groupResponse = _mapper.Map<GroupResponse>(groupView);
             ActionResponse update = await _mediator.Send(new UpdateGroupCommand { Group = groupResponse });
