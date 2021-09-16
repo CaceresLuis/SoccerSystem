@@ -19,7 +19,32 @@ namespace Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Infrastructure.Models.GroupDetailEntity", b =>
+            modelBuilder.Entity("Infrastructure.Models.GroupEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(30)")
+                        .HasMaxLength(30);
+
+                    b.Property<int?>("TournamentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TournamentId");
+
+                    b.ToTable("Groups");
+                });
+
+            modelBuilder.Entity("Infrastructure.Models.GroupTeamEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -56,29 +81,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TeamId");
 
-                    b.ToTable("GroupDetails");
-                });
-
-            modelBuilder.Entity("Infrastructure.Models.GroupEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(30)")
-                        .HasMaxLength(30);
-
-                    b.Property<int?>("TournamentId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TournamentId");
-
-                    b.ToTable("Groups");
+                    b.ToTable("GroupTeams");
                 });
 
             modelBuilder.Entity("Infrastructure.Models.MatchEntity", b =>
@@ -91,14 +94,17 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("GoalsLocal")
+                    b.Property<int>("GoalsLocal")
                         .HasColumnType("int");
 
-                    b.Property<int?>("GoalsVisitor")
+                    b.Property<int>("GoalsVisitor")
                         .HasColumnType("int");
 
                     b.Property<int?>("GroupId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("Hour")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsClosed")
                         .HasColumnType("bit");
@@ -429,7 +435,14 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Infrastructure.Models.GroupDetailEntity", b =>
+            modelBuilder.Entity("Infrastructure.Models.GroupEntity", b =>
+                {
+                    b.HasOne("Infrastructure.Models.TournamentEntity", "Tournament")
+                        .WithMany("Groups")
+                        .HasForeignKey("TournamentId");
+                });
+
+            modelBuilder.Entity("Infrastructure.Models.GroupTeamEntity", b =>
                 {
                     b.HasOne("Infrastructure.Models.GroupEntity", "Group")
                         .WithMany("GroupDetails")
@@ -438,13 +451,6 @@ namespace Infrastructure.Migrations
                     b.HasOne("Infrastructure.Models.TeamEntity", "Team")
                         .WithMany("GroupDetails")
                         .HasForeignKey("TeamId");
-                });
-
-            modelBuilder.Entity("Infrastructure.Models.GroupEntity", b =>
-                {
-                    b.HasOne("Infrastructure.Models.TournamentEntity", "Tournament")
-                        .WithMany("Groups")
-                        .HasForeignKey("TournamentId");
                 });
 
             modelBuilder.Entity("Infrastructure.Models.MatchEntity", b =>

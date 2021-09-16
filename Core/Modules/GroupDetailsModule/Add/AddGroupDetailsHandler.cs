@@ -12,9 +12,9 @@ namespace Core.Modules.GroupDetailsModule.Add
     {
         private readonly ITeamRepository _teamRepository;
         private readonly IGroupRepository _groupRepository;
-        private readonly IGroupDetailsRepository _groupDetailsRepository;
+        private readonly IGroupTeamsRepository _groupDetailsRepository;
 
-        public AddGroupDetailsHandler(IGroupDetailsRepository groupDetailsRepository, ITeamRepository teamRepository = null, IGroupRepository groupRepository = null)
+        public AddGroupDetailsHandler(IGroupTeamsRepository groupDetailsRepository, ITeamRepository teamRepository = null, IGroupRepository groupRepository = null)
         {
             _teamRepository = teamRepository;
             _groupRepository = groupRepository;
@@ -28,7 +28,7 @@ namespace Core.Modules.GroupDetailsModule.Add
             if(team == null || group == null)
                 return new ActionResponse { IsSuccess = false, Title = "Error", Message = "Something has gone wrong", State = State.error };
 
-            GroupDetailEntity groupDetail = new GroupDetailEntity { Group = group, Team = team };
+            GroupTeamEntity groupDetail = new GroupTeamEntity { Group = group, Team = team };
 
             if (!await _groupDetailsRepository.AddGroupDetailsAsync(groupDetail))
                 return new ActionResponse { IsSuccess = false, Title = "Error", Message = "Something has gone wrong", State = State.error }; ;

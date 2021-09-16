@@ -1,17 +1,16 @@
 ﻿using MediatR;
-using Shared.ViewModel;
+using AutoMapper;
+using Shared.Enums;
 using System.Threading;
+using Core.ModelResponse;
+using Infrastructure.Models;
+using Core.ModelResponse.One;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
-using Core.ModelResponse.One;
-using Infrastructure.Models;
-using Core.ModelResponse;
-using Shared.Enums;
-using AutoMapper;
 
 namespace Core.Modules.TeamModule.Get
 {
-    public class GetTeamByIdHandler : IRequestHandler<GetTeamByIdQuery, OneTeamResponse>
+    public class GetTeamByIdHandler : IRequestHandler<GetTeamByIdQuery, ATeamResponse>
     {
         private readonly IMapper _mapper;
         private readonly ITeamRepository _teamRepository;
@@ -22,9 +21,9 @@ namespace Core.Modules.TeamModule.Get
             _teamRepository = teamRepository;
         }
 
-        public async Task<OneTeamResponse> Handle(GetTeamByIdQuery request, CancellationToken cancellationToken)
+        public async Task<ATeamResponse> Handle(GetTeamByIdQuery request, CancellationToken cancellationToken)
         {
-            OneTeamResponse response = new OneTeamResponse { };
+            ATeamResponse response = new ATeamResponse { Data = new ActionResponse { IsSuccess = true } };
             TeamEntity team = await _teamRepository.FindTeamByIdAsync(request.TeamId);
             if (team == null)
             {
@@ -32,7 +31,7 @@ namespace Core.Modules.TeamModule.Get
                 return response;
             }
 
-            response.Team = _mapper.Map<Team>(team);
+            response.Team = _mapper.Map<TeamResponse>(team);
 
             return response;
         }

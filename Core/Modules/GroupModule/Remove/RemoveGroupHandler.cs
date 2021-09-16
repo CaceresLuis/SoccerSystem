@@ -10,8 +10,8 @@ namespace Core.Modules.GroupModule.Remove
     public class RemoveGroupHandler : IRequestHandler<RemoveGroupCommand, ActionResponse>
     {
         private readonly IGroupRepository _groupRepository;
-        private readonly IGroupDetailsRepository _groupDetailsRepository;
-        public RemoveGroupHandler(IGroupRepository groupRepository, IGroupDetailsRepository groupDetailsRepository)
+        private readonly IGroupTeamsRepository _groupDetailsRepository;
+        public RemoveGroupHandler(IGroupRepository groupRepository, IGroupTeamsRepository groupDetailsRepository)
         {
             _groupRepository = groupRepository;
             _groupDetailsRepository = groupDetailsRepository;

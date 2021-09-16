@@ -1,4 +1,4 @@
-﻿@model Core.ModelResponse.One.OneTournamentResponse
+﻿@model Web.ViewModel.TournamentViewModels
 
 @{
     var url = "https://localhost:44372/Group/Detail";
@@ -10,32 +10,32 @@
     <h4>Tournament</h4>
     <hr />
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="https://localhost:44372/Tournament/Details/">Tournament ||<b> @Model.Tournament.Name </b></a>
+        <a class="navbar-brand" href="https://localhost:44372/Tournament/Details/">Tournament ||<b> @Model.Name </b></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item active">
-                    <a> Start Date  || <b> @Model.Tournament.StartDateLocal </b></a>
+                    <a> Start Date  || <b> @Model.StartDateLocal </b></a>
                 </li>
                 <li class="nav-item">
-                    <a> End Date || <b> @Model.Tournament.EndDateLocal </b></a>
+                    <a> End Date || <b> @Model.EndDateLocal </b></a>
                 </li>
                 <li class="nav-item">
-                    <a> Is Active? || <b> @Model.Tournament.IsActive </b></a>
+                    <a> Is Active? || <b> @Model.IsActive </b></a>
                 </li>
                 <li class="nav-item">
-                    <a> # Groups || <b> @Model.Tournament.Groups.Count </b></a>
+                    <a> # Groups || <b> @Model.Groups.Count </b></a>
                 </li>
             </ul>
         </div>
     </nav>
     <div class="row">
         <div class="col-md-4">
-            @if (!string.IsNullOrEmpty(Model.Tournament.LogoPath))
+            @if (!string.IsNullOrEmpty(Model.LogoPath))
             {
-                <img src="@Url.Content(Model.Tournament.LogoPath)" alt="Image" style="width:150px;height:150px;max-width: 100%; height: auto;" />
+                <img src="@Url.Content(Model.LogoPath)" alt="Image" style="width:150px;height:150px;max-width: 100%; height: auto;" />
             }
         </div>
     </div>
@@ -43,10 +43,10 @@
     <a asp-action="Index" class="btn btn-default">
         <i class="bi bi-arrow-left-circle-fill"></i> Back
     </a>
-    <a asp-action="Edit" asp-route-id="@Model.Tournament.Id" class="btn btn-warning">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
         <i class="bi bi-pencil-square"></i> Edit
     </a>
-    <a asp-controller="Group" asp-action="Create" asp-route-id="@Model.Tournament.Id" class="btn btn-primary">
+    <a asp-controller="Group" asp-action="Create" asp-route-id="@Model.Id" class="btn btn-primary">
         <i class="bi bi-plus-circle-fill"></i> Add Group
     </a>
 </div>
@@ -71,12 +71,15 @@
                                 # Matches
                             </th>
                             <th>
+                                Is Active
+                            </th>
+                            <th>
                                 Actions
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model.Tournament.Groups.OrderBy(g => g.Name))
+                        @foreach (var item in Model.Groups.OrderBy(g => g.Name))
                         {
                             <tr>
                                 <td class='clickable-row' data-href='@url/@item.Id'>
@@ -87,6 +90,9 @@
                                 </td>
                                 <td class='clickable-row' data-href='@url/@item.Id'>
                                     @item.Matches.Count
+                                </td>
+                                <td class='clickable-row' data-href='@url/@item.Id'>
+                                    @item.IsActive
                                 </td>
                                 <td>
                                     <a asp-controller="Group" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">

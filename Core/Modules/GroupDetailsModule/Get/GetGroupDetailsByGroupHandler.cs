@@ -17,9 +17,9 @@ namespace Core.Modules.GroupDetailsModule.Get
         private readonly IMapper _mapper;
         private readonly ITeamRepository _teamRepository;
         private readonly IGroupRepository _groupRepository;
-        private readonly IGroupDetailsRepository _groupDetailsRepository;
+        private readonly IGroupTeamsRepository _groupDetailsRepository;
 
-        public GetGroupDetailsByGroupHandler(IMapper mapper, IGroupRepository groupRepository, ITeamRepository teamRepository, IGroupDetailsRepository groupDetailsRepository)
+        public GetGroupDetailsByGroupHandler(IMapper mapper, IGroupRepository groupRepository, ITeamRepository teamRepository, IGroupTeamsRepository groupDetailsRepository)
         {
             _mapper = mapper;
             _teamRepository = teamRepository;
@@ -29,8 +29,11 @@ namespace Core.Modules.GroupDetailsModule.Get
 
         public async Task<GroupDetailsResponse> Handle(GetGroupDetailsByGroupQuery request, CancellationToken cancellationToken)
         {
-            GroupDetailsResponse response = new GroupDetailsResponse { };
-            Group group = _mapper.Map<Group>(await _groupRepository.FindGroupByIdAsync(request.IdGroup));
+            GroupDetailsResponse response = new GroupDetailsResponse { Data = new ActionResponse { IsSuccess = true } };
+            List<GroupEntity> ListGroup = await _groupRepository.GetAllGroupOfTournamentAsync(request.IdTournament);
+
+            GroupEntity groupEntity = await _groupRepository.GetGroupWithTournamentAsync(request.IdGroup);
+            GroupResponse group = _mapper.Map<GroupResponse>(groupEntity);
             response.Group = group;
 
             if (group == null)
@@ -40,21 +43,27 @@ namespace Core.Modules.GroupDetailsModule.Get
             }
 
             List<TeamEntity> teams = await _teamRepository.GetAllTeamAsync();
-            List<GroupDetailEntity> groupDetails = await _groupDetailsRepository.GetGroupDetailsByGroupAsync(group.Id);
 
-            foreach (GroupDetailEntity groupDetail in groupDetails)
+            List<SelectListItem> teamList = new List<SelectListItem>();
+            foreach (var teambygroup in ListGroup)
             {
-                bool exist = teams.Where(t => t.Id == groupDetail.Team.Id).Any();
-                if (exist)
-                    teams.Remove(groupDetail.Team);
-            }
-            List<SelectListItem> teamList = teams.Select(t => new SelectListItem
-            {
-                Text = t.Name,
-                Value = $"{t.Id}"
-            })
+                List<GroupTeamEntity> groupDetails = await _groupDetailsRepository.GetGroupsDetailsByGroupAsync(teambygroup.Id);
+                foreach (GroupTeamEntity groupDetail in groupDetails)
+                {
+                    bool exist = teams.Where(t => t.Id == groupDetail.Team.Id).Any();
+                    if (exist)
+                        teams.Remove(groupDetail.Team);
+                }
+                teamList = teams.Select(t => new SelectListItem
+                {
+                    Text = t.Name,
+                    Value = $"{t.Id}"
+                })
                 .OrderBy(t => t.Text)
                 .ToList();
+            }
+            
+            
 
             response.SelectTeam = teamList;
             return response;

@@ -3,6 +3,7 @@ using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace Infrastructure.Repositories
 {
@@ -39,12 +40,12 @@ namespace Infrastructure.Repositories
                 .Where(g => g.Tournament.Id == idTournament && g.Name == groupName).FirstOrDefaultAsync();
         }
 
-        public async Task<GroupEntity[]> GetAllGroupOfTournamentAsync(int idTournamnet)
+        public async Task<List<GroupEntity>> GetAllGroupOfTournamentAsync(int idTournamnet)
         {
-            return await _dataContext.Groups.Include(g => g.Tournament).Where(g => g.Tournament.Id == idTournamnet).ToArrayAsync();
+            return await _dataContext.Groups.Include(g => g.Tournament).Where(g => g.Tournament.Id == idTournamnet && g.IsActive == true).ToListAsync();
         }
 
-        public async Task<GroupEntity> GetFullGroupAsync(int id)
+        public async Task<GroupEntity> GetGroupMatchsAsync(int id)
         {
             return await _dataContext.Groups
                 .Include(g => g.Matches)
@@ -52,8 +53,6 @@ namespace Infrastructure.Repositories
                 .Include(g => g.Matches)
                 .ThenInclude(g => g.Visitor)
                 .Include(g => g.Tournament)
-                .Include(g => g.GroupDetails)
-                .ThenInclude(gd => gd.Team)
                 .FirstOrDefaultAsync(g => g.Id == id);
         }
 
@@ -65,6 +64,17 @@ namespace Infrastructure.Repositories
                 .ThenInclude(gd => gd.Team)
                 .Include(g => g.Matches)
                 .FirstOrDefaultAsync(g => g.Id == id);
+        }
+
+        public async Task<List<GroupEntity>> GetGroupTeamTournamentsAsync()
+        {
+            return await _dataContext.Groups
+                .Include(g => g.Tournament)
+                .Include(g => g.GroupDetails)
+                .ThenInclude(gd => gd.Team)
+                .Include(g => g.Matches)
+                .Where(g => g.Tournament.IsActive == true)
+                .ToListAsync();
         }
 
         public async Task<bool> UpdateGroupAsync(GroupEntity group)

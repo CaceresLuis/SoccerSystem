@@ -1,4 +1,4 @@
-﻿@model Core.ModelResponse.One.OneGroupResponse
+﻿@model Web.ViewModel.GroupViewModels
 
 @{
     ViewData["Title"] = "Edit";
@@ -12,9 +12,22 @@
     <div class="col-md-4">
         <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Group.Tournament.Id" />
-            <input type="hidden" asp-for="Group.Id" />
+            <input type="hidden" asp-for="Tournament.Id" />
+            <input type="hidden" asp-for="Id" />
             <input type="hidden" name="isNew" id="isNew" value="False" />
+            <div class="form-group">
+                <label class="control-label">State of Group :</label>
+                @if (Model.IsActive)
+                {
+                    <i class="alert-success bi bi-check-circle-fill"> Active</i>
+                }
+                else
+                {
+                    <i class="alert-danger bi bi-x-circle-fill"> Disable</i>
+                }
+                <input asp-for="IsActive" class="form-control" />
+                <span asp-validation-for="IsActive" class="text-danger"></span>
+            </div>
 
             <partial name="_Group" />
 
@@ -29,6 +42,8 @@
         </form>
     </div>
 </div>
+
+<partial name="_Alert" />
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

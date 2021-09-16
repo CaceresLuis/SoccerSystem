@@ -4,23 +4,24 @@ using System.Threading;
 using Core.ModelResponse;
 using Infrastructure.Models;
 using System.Threading.Tasks;
+using Core.ModelResponse.One;
 using Infrastructure.Interfaces;
 
 namespace Core.Modules.GroupDetailsModule.Update
 {
     public class UpdateGroupDetailsHandler : IRequestHandler<UpdateGroupDetailsCommand, ActionResponse>
     {
-        private readonly IGroupDetailsRepository _groupDetailsRepository;
+        private readonly IGroupTeamsRepository _groupDetailsRepository;
 
-        public UpdateGroupDetailsHandler(IGroupDetailsRepository groupDetailsRepository)
+        public UpdateGroupDetailsHandler(IGroupTeamsRepository groupDetailsRepository)
         {
             _groupDetailsRepository = groupDetailsRepository;
         }
 
         public async Task<ActionResponse> Handle(UpdateGroupDetailsCommand request, CancellationToken cancellationToken)
         {
-            GroupDetail groupDetail = request.GroupDetail;
-            GroupDetailEntity entity = await _groupDetailsRepository.GetGroupDetailsAsync(groupDetail.Id);
+            AGroupDetailResponse groupDetail = request.GroupDetail;
+            GroupTeamEntity entity = await _groupDetailsRepository.GetGroupDetailsAsync(groupDetail.Id);
             if (entity == null)
                 return new ActionResponse { IsSuccess = false, Title = "Error", Message = "The groupDetails does not exist", State = State.error };
 

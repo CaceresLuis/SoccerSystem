@@ -1,4 +1,4 @@
-﻿@model Core.ModelResponse.One.OneTeamResponse
+﻿@model Web.ViewModel.TeamViewModels
 
 @{ ViewData["Title"] = "Create"; }
 
@@ -10,7 +10,6 @@
     <div class="col-md-4">
         <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" name="isNew" id="isNew" value="True" />  @*TODO*@
 
             <partial name="_Team" />
 

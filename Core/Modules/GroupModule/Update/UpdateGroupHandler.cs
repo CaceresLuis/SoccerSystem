@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using AutoMapper;
 using Shared.Enums;
 using System.Threading;
 using Core.ModelResponse;
@@ -11,12 +10,10 @@ namespace Core.Modules.GroupModule.Update
 {
     public class UpdateGroupHandler : IRequestHandler<UpdateGroupCommand, ActionResponse>
     {
-        private readonly IMapper _mapper;
         private readonly IGroupRepository _groupRepository;
 
-        public UpdateGroupHandler(IMapper mapper, IGroupRepository groupRepository)
+        public UpdateGroupHandler(IGroupRepository groupRepository)
         {
-            _mapper = mapper;
             _groupRepository = groupRepository;
         }
 
@@ -25,14 +22,16 @@ namespace Core.Modules.GroupModule.Update
             GroupEntity group = await _groupRepository.GetGroupWithTournamentAsync(request.Group.Id);
             if (group == null)
                 return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"The group does not exist", State = State.error };
-            
-            if(request.Group.Name == group.Name)
-                return new ActionResponse { IsSuccess = true, Title = "Success", Message = $"no changes were made", State = State.info };
 
-            if (await _groupRepository.GetGroupByNameAndTournamentAsync(group.Tournament.Id, request.Group.Name) != null)
-                return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"The {group.Name} is already registered in this tournament", State = State.error };
+            if (request.Group.Name != group.Name)
+            {
+                if (await _groupRepository.GetGroupByNameAndTournamentAsync(group.Tournament.Id, request.Group.Name) != null)
+                return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"The {request.Group.Name} is already registered in this tournament", State = State.error };
+            }
 
             group.Name = request.Group.Name ?? group.Name;
+
+            group.IsActive = request.Group.IsActive;
 
             if (!await _groupRepository.UpdateGroupAsync(group))
                 return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"Something has gone wrong", State = State.error };

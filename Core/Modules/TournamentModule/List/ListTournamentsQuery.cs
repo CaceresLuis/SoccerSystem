@@ -3,7 +3,7 @@ using Core.ModelResponse;
 
 namespace Core.Modules.TournamentModule.List
 {
-    public class ListTournamentsQuery : IRequest<Tournament[]>
+    public class ListTournamentsQuery : IRequest<TournamentResponse[]>
     {
     }
 }

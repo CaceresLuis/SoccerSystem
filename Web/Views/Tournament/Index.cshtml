@@ -1,4 +1,4 @@
-﻿@model Core.ModelResponse.Lists.ListTournamentResponse
+﻿@model ICollection<Web.ViewModel.TournamentViewModels>
 
 @{
     var url = "https://localhost:44372/Tournament/Details";
@@ -19,7 +19,6 @@
 }
 else
 {
-    <h1>@Model.Data.Message</h1>
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-default">
@@ -54,7 +53,7 @@ else
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in Model.Tournaments)
+                            @foreach (var item in Model)
                             {
                                 <tr>
                                     <td class='clickable-row' data-href='@url/@item.Id'>

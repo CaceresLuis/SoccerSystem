@@ -10,7 +10,7 @@ using Infrastructure.Interfaces;
 
 namespace Core.Modules.TournamentModule.Get
 {
-    public class GetTournamentHandler : IRequestHandler<GetTournamentQuery, OneTournamentResponse>
+    public class GetTournamentHandler : IRequestHandler<GetTournamentQuery, ATournamentResponse>
     {
         private readonly IMapper _mapper;
         private readonly ITournamentRepository _tournamentRepository;
@@ -21,9 +21,9 @@ namespace Core.Modules.TournamentModule.Get
             _tournamentRepository = tournamentRepository;
         }
 
-        public async Task<OneTournamentResponse> Handle(GetTournamentQuery request, CancellationToken cancellationToken)
+        public async Task<ATournamentResponse> Handle(GetTournamentQuery request, CancellationToken cancellationToken)
         {
-            OneTournamentResponse response = new OneTournamentResponse { };
+            ATournamentResponse response = new ATournamentResponse { Data = new ActionResponse { IsSuccess = true } };
 
             TournamentEntity tournament = await _tournamentRepository.GetTournamentDetailsAsync(request.Id);
             if(tournament == null)
@@ -32,7 +32,7 @@ namespace Core.Modules.TournamentModule.Get
                 return response;
             }
 
-            response.Tournament = _mapper.Map<Tournament>(tournament);
+            response.Tournament = _mapper.Map<TournamentResponse>(tournament);
             return response;
         }
     }

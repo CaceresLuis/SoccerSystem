@@ -2,6 +2,7 @@
 using Shared.Enums;
 using System.Threading;
 using Core.ModelResponse;
+using Shared.Helpers.Image;
 using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
@@ -10,16 +11,20 @@ namespace Core.Modules.TeamModule.Update
 {
     public class UpdateTeamHandler : IRequestHandler<UpdateTeamCommand, ActionResponse>
     {
+        private readonly IIMageHelper _iMageHelper;
         private readonly ITeamRepository _teamRepository;
 
-        public UpdateTeamHandler(ITeamRepository teamRepository)
+        public UpdateTeamHandler(ITeamRepository teamRepository, IIMageHelper iMageHelper)
         {
+            _iMageHelper = iMageHelper;
             _teamRepository = teamRepository;
         }
 
         public async Task<ActionResponse> Handle(UpdateTeamCommand request, CancellationToken cancellationToken)
         {
-            Team upTeam = request.Team;
+            TeamResponse upTeam = request.Team;
+            if(upTeam.LogoFile != null)
+                upTeam.LogoPath = await _iMageHelper.UploadImageAsync(upTeam.LogoFile, "Teams");
 
             TeamEntity team = await _teamRepository.FindTeamByIdAsync(upTeam.Id);
             if(team == null)

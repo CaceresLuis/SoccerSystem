@@ -1,4 +1,4 @@
-﻿@model Core.ModelResponse.One.OneGroupResponse
+﻿@model Web.ViewModel.GroupViewModels
 
 @{
     ViewData["Title"] = "Create";
@@ -6,19 +6,18 @@
 
 <h2>Create</h2>
 
-<h4>Group to tournament: @Model.Group.Tournament.Name</h4>
+<h4>Group to tournament: @Model.Tournament.Name</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Group.Tournament.Id" />
-            <input type="hidden" name="isNew" id="isNew" value="True" />
+            <input type="hidden" asp-for="Tournament.Id" />
 
             <partial name="_Group" />
 
             <div class="form-group">
-                <a asp-controller="Tournament" asp-action="Details" asp-route-id="@Model.Group.Tournament.Id" class="btn btn-default">
+                <a asp-controller="Tournament" asp-action="Details" asp-route-id="@Model.Tournament.Id" class="btn btn-default">
                     <i class="bi bi-arrow-left-circle-fill"></i> Back
                 </a>
                 <button type="submit" value="Create" class="btn btn-primary">
@@ -28,6 +27,8 @@
         </form>
     </div>
 </div>
+
+<partial name="_Alert" />
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

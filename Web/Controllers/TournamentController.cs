@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using Newtonsoft.Json;
+using AutoMapper;
+using Web.ViewModel;
 using Core.ModelResponse;
 using System.Threading.Tasks;
 using Core.ModelResponse.One;
-using Core.ModelResponse.Lists;
 using Microsoft.AspNetCore.Mvc;
 using Core.Modules.TournamentModule.Add;
 using Core.Modules.TournamentModule.Get;
@@ -15,108 +15,94 @@ namespace Web.Controllers
 {
     public class TournamentController : Controller
     {
+        private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
-        public TournamentController(IMediator mediator)
+        public TournamentController(IMediator mediator, IMapper mapper)
         {
+            _mapper = mapper;
             _mediator = mediator;
         }
 
         public async Task<ActionResult> Index()
         {
-            Tournament[] tournaments = await _mediator.Send(new ListTournamentsQuery());
-            ListTournamentResponse response = new ListTournamentResponse{ Tournaments = tournaments };
-            response.Data = new ActionResponse { };
+            TournamentResponse[] tournaments = await _mediator.Send(new ListTournamentsQuery());
 
-            if (tournaments.Length < 1)
-                return View(response);
+            TournamentViewModels[] tournamentViews = _mapper.Map<TournamentViewModels[]>(tournaments);
 
-
-            if (TempData["Data"] != null)
-                response.Data = JsonConvert.DeserializeObject<ActionResponse>((string)TempData["Data"]);
-
-            return View(response);
+            return View(tournamentViews);
         }
 
         public ActionResult Create()
         {
-            OneTournamentResponse response = new OneTournamentResponse { };
-            response.Data = new ActionResponse { };
-            return View(response);
+            return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(Tournament tournament)
+        public async Task<ActionResult> Create(TournamentViewModels tournamentView)
         {
-            ActionResponse create = await _mediator.Send(new AddTournamentCommand { Tournament = tournament });
+            TournamentResponse tournamentResponse = _mapper.Map<TournamentResponse>(tournamentView);
+            ActionResponse create = await _mediator.Send(new AddTournamentCommand { Tournament = tournamentResponse });
+
+            TempData["Title"] = create.Title;
+            TempData["Message"] = create.Message;
+            TempData["State"] = create.State.ToString();
 
             if (!create.IsSuccess)
-            {
-                OneTournamentResponse response = new OneTournamentResponse { };
-                response.Data = create;
-                return View(response);
-            }
+                return View();
                 
-            TempData["Data"] = JsonConvert.SerializeObject(create);
             return RedirectToAction(nameof(Index));
         }
 
         public async Task<ActionResult> Details(int id)
         {
-            if (id < 1) return NotFound();
-            OneTournamentResponse response = await _mediator.Send(new GetTournamentQuery { Id = id });
-            response.Data = new ActionResponse { };
+            ATournamentResponse tournamentResponse = await _mediator.Send(new GetTournamentQuery { Id = id });
 
-            if (TempData["Data"] != null)
-                response.Data = JsonConvert.DeserializeObject<ActionResponse>((string)TempData["Data"]);
+            if (!tournamentResponse.Data.IsSuccess)
+                return RedirectToAction(nameof(Index));
 
-            return View(response);
+            TournamentViewModels tournamentView = _mapper.Map<TournamentViewModels>(tournamentResponse.Tournament);
+            return View(tournamentView);
         }
 
         public async Task<ActionResult> Edit(int id)
         {
-            if (id < 1) return NotFound();
+            ATournamentResponse tournamentResponse = await _mediator.Send(new GetTournamentQuery { Id = id });
+            TempData["Title"] = tournamentResponse.Data.Title;
+            TempData["Message"] = tournamentResponse.Data.Message;
+            TempData["State"] = tournamentResponse.Data.State.ToString();
 
-            OneTournamentResponse response = await _mediator.Send(new GetTournamentQuery { Id = id });
-            response.Data = new ActionResponse { };
+            if (!tournamentResponse.Data.IsSuccess)
+                return RedirectToAction(nameof(Index));
 
-            if (TempData["Data"] != null)
-                response.Data = JsonConvert.DeserializeObject<ActionResponse>((string)TempData["Data"]);
-
-            return View(response);
+            TournamentViewModels tournamentView = _mapper.Map<TournamentViewModels>(tournamentResponse.Tournament);
+            return View(tournamentView);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, Tournament tournament)
+        public async Task<ActionResult> Edit(TournamentViewModels tournamentView)
         {
-            tournament.Id = id;
-            ActionResponse update = await _mediator.Send(new UpdateTournamentCommnad { TournamentResponse = tournament });
-            if (!update.IsSuccess)
-            {
-                //Preparamos toda el modelo para reenviar a la vista
-                OneTournamentResponse response = await _mediator.Send(new GetTournamentQuery { Id = id });
-                response.Data = update;
-                return View(response);
-            }
+            TournamentResponse tournamentResponse = _mapper.Map<TournamentResponse>(tournamentView);
+            ActionResponse update = await _mediator.Send(new UpdateTournamentCommnad { TournamentResponse = tournamentResponse });
+            TempData["Title"] = update.Title;
+            TempData["Message"] = update.Message;
+            TempData["State"] = update.State.ToString();
 
-            TempData["Data"] = JsonConvert.SerializeObject(update);
+            if (!update.IsSuccess)
+                return View(tournamentView);
+
             return  RedirectToAction(nameof(Index));
         }
 
         public async Task<ActionResult> Delete(int id)
         {
-            if (id < 1) return NotFound();
+            ActionResponse delete = await _mediator.Send(new RemoveTournamentCommand { Id = id });
+            TempData["Title"] = delete.Title;
+            TempData["Message"] = delete.Message;
+            TempData["State"] = delete.State.ToString();
 
-            ActionResponse response = await _mediator.Send(new RemoveTournamentCommand { Id = id });
-            if (!response.IsSuccess)
-            {
-                TempData["Data"] = JsonConvert.SerializeObject(response);
-                return RedirectToAction(nameof(Index));
-            }
-
-            TempData["Data"] = JsonConvert.SerializeObject(response);
             return RedirectToAction(nameof(Index));
         }
     }

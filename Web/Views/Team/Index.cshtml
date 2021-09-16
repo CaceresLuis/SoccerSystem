@@ -1,7 +1,6 @@
-﻿@model Core.ModelResponse.Lists.ListTeamResponse
+﻿@model IEnumerable<Web.ViewModel.TeamViewModels>
 
 @{ 
-    var url = "https://localhost:44372/Tournament/Details";
     ViewData["Title"] = "Teams";
     var num = 1;
     }
@@ -50,7 +49,7 @@ else
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in Model.Teams)
+                            @foreach (var item in Model)
                             {
                                 <tr>
                                     <td>

@@ -1,0 +1,55 @@
+﻿@model Core.Dtos.AddMatchDto
+
+@{
+    ViewData["Title"] = "Create";
+    var fecha = DateTime.Now;
+}
+
+<h2>Add</h2>
+
+<h4>Match to group: @Model.Group.Name</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Group.Id" />
+
+            <div class="form-group">
+                <label asp-for="Date" class="control-label"></label>
+                <input asp-for="Date" value="" type="date" class="form-control" />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Hour" class="control-label"></label>
+                <input asp-for="Hour" value="11:45:00"  type="time" class="form-control" />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="LocalId" class="control-label"></label>
+                <select asp-for="LocalId" asp-items="Model.Team" class="form-control"></select>
+                <span asp-validation-for="LocalId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="VisitorId" aria-checked="true" class="control-label"></label>
+                <select asp-for="VisitorId" asp-items="Model.Team" class="form-control"></select>
+                <span asp-validation-for="VisitorId" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <a asp-controller="Group" asp-action="Detail" asp-route-id="@Model.Group.Id" class="btn btn-default">
+                    <i class="bi bi-arrow-left-circle-fill"></i> Back
+                </a>
+                <button type="submit" value="Create" class="btn btn-primary">
+                    <i class="bi bi-save2-fill"></i> Create
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

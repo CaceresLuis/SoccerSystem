@@ -5,6 +5,6 @@ namespace Core.Modules.TeamModule.Add
 {
     public class AddTeamCommand : IRequest<ActionResponse>
     {
-        public Team Team { get; set; }
+        public TeamResponse Team { get; set; }
     }
 }

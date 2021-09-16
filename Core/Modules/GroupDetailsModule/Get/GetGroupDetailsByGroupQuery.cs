@@ -6,5 +6,6 @@ namespace Core.Modules.GroupDetailsModule.Get
     public class GetGroupDetailsByGroupQuery : IRequest<GroupDetailsResponse>
     {
         public int IdGroup { get; set; }
+        public int IdTournament { get; set; }
     }
 }
