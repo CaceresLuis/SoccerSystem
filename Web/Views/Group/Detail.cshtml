@@ -46,13 +46,18 @@
         <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
             <i class="bi bi-pencil-square"></i> Edit Group
         </a>
-        <a asp-controller="GroupDetails" asp-action="Create" asp-route-id="@Model.Id" class="btn btn-primary">
-            <i class="bi bi-plus-circle-fill"></i> Add Team
-        </a>
         <a asp-controller="Match" asp-action="Create" asp-route-id="@Model.Id" class="btn btn-primary">
             <i class="bi bi-plus-circle-fill"></i> Add Match
         </a>
     </div>
+    <br />
+    <form asp-controller="GroupDetails" asp-action="Create" method="get">
+        <input type="hidden" name="idTournament" asp-for="Tournament.Id" />
+        <input type="hidden" name="idGroup" asp-for="Id" />
+        <button type="submit" value="Save" class="btn btn-primary">
+            <i class="bi bi-plus-circle-fill"></i> Add Team
+        </button>
+    </form>
     <a name="Matches"></a>
     @if (Model.GroupDetails.Count != 0)
     {
@@ -101,9 +106,9 @@
                             </thead>
                             <tbody>
                                 @foreach (var item in Model.GroupDetails
-                               .OrderByDescending(g => g.Points)
-                               .ThenByDescending(g => g.GoalDifference)
-                               .ThenByDescending(g => g.GoalsFor))
+                              .OrderByDescending(g => g.Points)
+                              .ThenByDescending(g => g.GoalDifference)
+                              .ThenByDescending(g => g.GoalsFor))
                                 {
                                     <tr>
                                         <td>

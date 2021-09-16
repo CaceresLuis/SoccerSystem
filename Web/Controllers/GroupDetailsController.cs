@@ -22,9 +22,10 @@ namespace Web.Controllers
             _mediator = mediator;
         }
 
-        public async Task<ActionResult> Create(int id)
+        public async Task<ActionResult> Create(int idGroup, int idTournament)
         {
-            GroupDetailsResponse groupDetailsResponse = await _mediator.Send(new GetGroupDetailsByGroupQuery { IdGroup = id });
+            //TODO: verificar que los grupos del torneo estan activos y quitar los team
+            GroupDetailsResponse groupDetailsResponse = await _mediator.Send(new GetGroupDetailsByGroupQuery { IdGroup = idGroup, IdTournament = idTournament });
             TempData["Title"] = groupDetailsResponse.Data.Title;
             TempData["Message"] = groupDetailsResponse.Data.Message;
             TempData["State"] = groupDetailsResponse.Data.State.ToString();

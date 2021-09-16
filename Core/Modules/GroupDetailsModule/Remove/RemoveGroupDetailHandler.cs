@@ -21,17 +21,19 @@ namespace Core.Modules.GroupDetailsModule.Remove
         public async Task<RGroupDetailsResponse> Handle(RemoveGroupDetailCommand request, CancellationToken cancellationToken)
         {
             GroupTeamEntity groupDetailEntity = await _groupDetailsRepository.GetGroupDetailsAsync(request.Id);
-
             RGroupDetailsResponse response = new RGroupDetailsResponse {  };
-            if (groupDetailEntity == null)
+            response.GroupId = groupDetailEntity.Group.Id;
+            if (groupDetailEntity.MatchesPlayed > 0)
+            {
                 response.Data = new ActionResponse { IsSuccess = false, Title = "Error", Message = "The team does not exist", State = State.error };
-
-
+                return response;
+            }
+               
             if (!await _groupDetailsRepository.DeleteGroupDetailsAsync(groupDetailEntity))
                 response.Data = new ActionResponse { IsSuccess = false, Title = "Error", Message = "Something has gone wrong", State = State.error };
 
             response.Data = new ActionResponse { IsSuccess = false, Title = "Deleted!", Message = $"Team {groupDetailEntity.Team.Name} has been deleted!", State = State.success };
-            response.GroupId = groupDetailEntity.Group.Id;
+            
             return response; 
         }
     }

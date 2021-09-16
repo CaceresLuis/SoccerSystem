@@ -7,6 +7,7 @@ namespace Web.ViewModel
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public bool IsActive { get; set; }
         public TournamentViewModels Tournament { get; set; }
         public ICollection<GroupDetails> GroupDetails { get; set; }
         //public ICollection<Match> Matches { get; set; }

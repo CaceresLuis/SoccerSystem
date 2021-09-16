@@ -35,11 +35,12 @@ namespace Infrastructure.Repositories
 
         public async Task<MatchEntity> GetMatchAsync(int id)
         {
-            return await _dataContext.Matchs
+            var a = await _dataContext.Matchs
                 .Include(m => m.Group)
                 .Include(m => m.Visitor)
                 .Include(m => m.Local)
                 .FirstOrDefaultAsync(m => m.Id == id);
+            return a;
         }
 
         public async Task<MatchEntity> FindMatchByIdAsync(int matchId)

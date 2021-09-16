@@ -40,9 +40,9 @@ namespace Infrastructure.Repositories
                 .Where(g => g.Tournament.Id == idTournament && g.Name == groupName).FirstOrDefaultAsync();
         }
 
-        public async Task<GroupEntity[]> GetAllGroupOfTournamentAsync(int idTournamnet)
+        public async Task<List<GroupEntity>> GetAllGroupOfTournamentAsync(int idTournamnet)
         {
-            return await _dataContext.Groups.Include(g => g.Tournament).Where(g => g.Tournament.Id == idTournamnet).ToArrayAsync();
+            return await _dataContext.Groups.Include(g => g.Tournament).Where(g => g.Tournament.Id == idTournamnet && g.IsActive == true).ToListAsync();
         }
 
         public async Task<GroupEntity> GetGroupMatchsAsync(int id)

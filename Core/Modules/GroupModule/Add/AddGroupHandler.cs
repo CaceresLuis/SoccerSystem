@@ -26,6 +26,7 @@ namespace Core.Modules.GroupModule.Add
             if(await _groupRepository.GetGroupByNameAndTournamentAsync(group.Tournament.Id, group.Name) != null)
                 return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"The {group.Name} is already registered in this tournament", State = State.error };
 
+            group.IsActive = true;
             if(!await _groupRepository.AddGroupAsync(group))
                 return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"Something has gone wrong", State = State.error };
 

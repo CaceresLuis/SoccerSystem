@@ -30,7 +30,10 @@ namespace Core.Modules.GroupDetailsModule.Get
         public async Task<GroupDetailsResponse> Handle(GetGroupDetailsByGroupQuery request, CancellationToken cancellationToken)
         {
             GroupDetailsResponse response = new GroupDetailsResponse { Data = new ActionResponse { IsSuccess = true } };
-            GroupResponse group = _mapper.Map<GroupResponse>(await _groupRepository.FindGroupByIdAsync(request.IdGroup));
+            List<GroupEntity> ListGroup = await _groupRepository.GetAllGroupOfTournamentAsync(request.IdTournament);
+
+            GroupEntity groupEntity = await _groupRepository.GetGroupWithTournamentAsync(request.IdGroup);
+            GroupResponse group = _mapper.Map<GroupResponse>(groupEntity);
             response.Group = group;
 
             if (group == null)
@@ -40,21 +43,27 @@ namespace Core.Modules.GroupDetailsModule.Get
             }
 
             List<TeamEntity> teams = await _teamRepository.GetAllTeamAsync();
-            List<GroupTeamEntity> groupDetails = await _groupDetailsRepository.GetGroupsDetailsByGroupAsync(group.Id);
 
-            foreach (GroupTeamEntity groupDetail in groupDetails)
+            List<SelectListItem> teamList = new List<SelectListItem>();
+            foreach (var teambygroup in ListGroup)
             {
-                bool exist = teams.Where(t => t.Id == groupDetail.Team.Id).Any();
-                if (exist)
-                    teams.Remove(groupDetail.Team);
-            }
-            List<SelectListItem> teamList = teams.Select(t => new SelectListItem
-            {
-                Text = t.Name,
-                Value = $"{t.Id}"
-            })
+                List<GroupTeamEntity> groupDetails = await _groupDetailsRepository.GetGroupsDetailsByGroupAsync(teambygroup.Id);
+                foreach (GroupTeamEntity groupDetail in groupDetails)
+                {
+                    bool exist = teams.Where(t => t.Id == groupDetail.Team.Id).Any();
+                    if (exist)
+                        teams.Remove(groupDetail.Team);
+                }
+                teamList = teams.Select(t => new SelectListItem
+                {
+                    Text = t.Name,
+                    Value = $"{t.Id}"
+                })
                 .OrderBy(t => t.Text)
                 .ToList();
+            }
+            
+            
 
             response.SelectTeam = teamList;
             return response;

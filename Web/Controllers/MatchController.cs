@@ -3,11 +3,11 @@ using Core.Dtos;
 using Core.ModelResponse;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Core.Modules.MatchModule.Get;
 using Core.Modules.MatchModule.Add;
 using Core.Modules.MatchModule.List;
 using Core.Modules.MatchModule.Close;
+using Core.Modules.MatchModule.Reset;
 
 namespace Web.Controllers
 {
@@ -62,6 +62,9 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CloseMatch(MatchDto matchDto)
         {
+            if(matchDto.IsClosed) //delete before update
+                await _mediator.Send(new ResetMatchCommand { MatchDto = matchDto });
+
             ActionResponse update = await _mediator.Send(new CloseMatchCommand { MatchDto = matchDto });
             TempData["Title"] = update.Title;
             TempData["Message"] = update.Message;
@@ -69,29 +72,7 @@ namespace Web.Controllers
 
             if (!update.IsSuccess)
                 return View(matchDto);
-
-            return RedirectToAction("Detail", "Group", new { id = matchDto.GroupId });
-        }
-
-        // GET: MatchController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: MatchController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return View();
-            }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction(nameof(Matchs), new { id = matchDto.GroupId });
         }
     }
 }

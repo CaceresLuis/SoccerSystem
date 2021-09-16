@@ -71,6 +71,9 @@
                                 # Matches
                             </th>
                             <th>
+                                Is Active
+                            </th>
+                            <th>
                                 Actions
                             </th>
                         </tr>
@@ -87,6 +90,9 @@
                                 </td>
                                 <td class='clickable-row' data-href='@url/@item.Id'>
                                     @item.Matches.Count
+                                </td>
+                                <td class='clickable-row' data-href='@url/@item.Id'>
+                                    @item.IsActive
                                 </td>
                                 <td>
                                     <a asp-controller="Group" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">

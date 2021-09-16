@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Helpers.Image;
 
 namespace Web
 {
@@ -45,6 +46,9 @@ namespace Web
             services.AddScoped<IMatchRepository, MatchRepository>();
             services.AddScoped<ITournamentRepository, TournamentRepository>();
             services.AddScoped<IGroupTeamsRepository, GroupTeamsRepository>();
+
+            //Helpers
+            services.AddScoped<IIMageHelper, IMageHelper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

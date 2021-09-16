@@ -22,14 +22,16 @@ namespace Core.Modules.GroupModule.Update
             GroupEntity group = await _groupRepository.GetGroupWithTournamentAsync(request.Group.Id);
             if (group == null)
                 return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"The group does not exist", State = State.error };
-            
-            if(request.Group.Name == group.Name)
-                return new ActionResponse { IsSuccess = true, Title = "Success", Message = $"no changes were made", State = State.info };
 
-            if (await _groupRepository.GetGroupByNameAndTournamentAsync(group.Tournament.Id, request.Group.Name) != null)
+            if (request.Group.Name != group.Name)
+            {
+                if (await _groupRepository.GetGroupByNameAndTournamentAsync(group.Tournament.Id, request.Group.Name) != null)
                 return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"The {request.Group.Name} is already registered in this tournament", State = State.error };
+            }
 
             group.Name = request.Group.Name ?? group.Name;
+
+            group.IsActive = request.Group.IsActive;
 
             if (!await _groupRepository.UpdateGroupAsync(group))
                 return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"Something has gone wrong", State = State.error };
