@@ -13,6 +13,7 @@ namespace Web.Map
     {
         public MapProfile()
         {
+            CreateMap<UserEntity, UserDto>().ReverseMap();
             CreateMap<GroupEntity, GroupDto>().ReverseMap();
             CreateMap<GroupEntity, GroupMatchDto>().ReverseMap();
             CreateMap<GroupEntity, GroupMatchsDto>().ReverseMap();
