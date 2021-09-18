@@ -26,6 +26,9 @@ namespace Core.Modules.UserModule.Add
         public async Task<bool> Handle(AddUserCommand request, CancellationToken cancellationToken)
         {
             UserDto userdto = request.UserDto;
+            if (userdto.Password != userdto.PasswordConfirm)
+                throw new Exception("Error");
+
             UserEntity user = _mapper.Map<UserEntity>(userdto);
 
             UserEntity exist = await _userRepository.UserNameExist(user.UserName);
@@ -36,9 +39,9 @@ namespace Core.Modules.UserModule.Add
             if (userEmailExist)
                 throw new Exception("Error");
 
-            await _userRepository.AddUserAsync(user);
+            await _userRepository.AddUserAsync(user, userdto.PasswordConfirm);
 
-            if (userdto.Roles == null)
+            if (userdto.Roles != null)
             {
                 foreach (string rol in userdto.Roles)
                 {

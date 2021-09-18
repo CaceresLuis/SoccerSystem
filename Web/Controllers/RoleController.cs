@@ -5,15 +5,16 @@ using Core.ModelResponse;
 using Core.ModelResponse.One;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Core.Modules.TeamModule.Add;
+using Core.Modules.RoleModule;
 using Core.Modules.TeamModule.Get;
 using Core.Modules.TeamModule.List;
 using Core.Modules.TeamModule.Remove;
 using Core.Modules.TeamModule.Update;
-using Core.Modules.RoleModule;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class RoleController : Controller
     {
         private readonly IMapper _mapper;
@@ -43,7 +44,7 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(AddRoleCommand addRole)
         {
-            var create = await _mediator.Send(addRole);
+            await _mediator.Send(addRole);
 
             return RedirectToAction("Index", "Team");
         }

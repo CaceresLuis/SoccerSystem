@@ -1,0 +1,38 @@
+﻿@model Core.Dtos.UserDto
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h2>Edit</h2>
+
+<h4>User</h4>
+<hr />
+<div class="row">
+        <h3>User: @Model.UserName</h3>
+    <div class="col-md-5">
+        <dl class="dl-horizontal text-center">
+            <dd>Full Name</dd>
+            <dt>@Model.FirstName @Model.LastName</dt>
+            <dd>Email</dd>
+            <dt>@Model.Email</dt>
+            <dd>User Name</dd>
+            <dt>@Model.UserName</dt>
+            <dd>Document</dd>
+            <dt>@Model.Document</dt>
+            <dd>Address</dd>
+            <dt>@Model.Address</dt>
+        </dl>
+    </div>
+
+    <div class="col-md-4">
+        @if (!string.IsNullOrEmpty(Model.PicturePath))
+        {
+            <img src="@Url.Content(Model.PicturePath)" alt="Image" style="width:300px;height:300px;max-width: 100%; height: auto;" />
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

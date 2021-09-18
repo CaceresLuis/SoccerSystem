@@ -10,6 +10,7 @@ using Core.Modules.TeamModule.Get;
 using Core.Modules.TeamModule.List;
 using Core.Modules.TeamModule.Remove;
 using Core.Modules.TeamModule.Update;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers
 {
@@ -33,6 +34,7 @@ namespace Web.Controllers
             return View(teamView);
         }
 
+        [Authorize(Roles = "admin")]
         public ActionResult Create()
         {
             return View();
@@ -54,6 +56,7 @@ namespace Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> Edit(int id)
         {
 
@@ -85,6 +88,7 @@ namespace Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> Delete(int id)
         {
             if (id < 1) return NotFound();

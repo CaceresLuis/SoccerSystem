@@ -8,6 +8,7 @@ using Core.Modules.MatchModule.Add;
 using Core.Modules.MatchModule.List;
 using Core.Modules.MatchModule.Close;
 using Core.Modules.MatchModule.Reset;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers
 {
@@ -31,6 +32,7 @@ namespace Web.Controllers
             return View();
         }
 
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> Create(int id)
         {
             AddMatchDto addMatchDto = await _mediator.Send(new GetGroupDetailsforMatchQuery { GroupId = id });
@@ -52,6 +54,7 @@ namespace Web.Controllers
             return RedirectToAction("Detail", "Group", new { id = addMatchDto.Group.Id });
         }
 
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> CloseMatch(int id)
         {
             MatchDto match = await _mediator.Send(new GetMatchQuery { Id = id });

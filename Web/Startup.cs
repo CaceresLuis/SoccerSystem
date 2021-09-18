@@ -51,6 +51,12 @@ namespace Web
                 conf.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/NotAuthorized";
+                options.AccessDeniedPath = "/Account/NotAuthorized";
+            });
+
             //Config Automapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -65,19 +71,23 @@ namespace Web
             identityBuilder.AddSignInManager<SignInManager<UserEntity>>();
             services.TryAddSingleton<ISystemClock, SystemClock>();
 
+            services.AddIdentity<UserEntity, IdentityRole>().AddDefaultTokenProviders()
+              .AddEntityFrameworkStores<DataContext>();
+
             //Configuracion autenticacion                                             //Secret key
             SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keySecret));
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
-            {
-                opt.TokenValidationParameters = new TokenValidationParameters
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddCookie()
+                .AddJwtBearer(opt =>
                 {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = key,
-                    ValidateAudience = false,
-                    ValidateIssuer = false
-                };
-            }
-            );
+                    opt.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = key,
+                        ValidateAudience = false,
+                        ValidateIssuer = false
+                    };
+                });
 
             //Inyection of Repositories
             services.AddScoped<IUserSession, UserSession>();
@@ -115,7 +125,7 @@ namespace Web
             app.UseAuthentication();
 
             app.UseAuthorization();
-
+            app.UseCookiePolicy();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

@@ -1,0 +1,31 @@
+﻿@model Core.Modules.UserModule.Add.AddUserCommand
+
+<div class="form-group">
+    <label asp-for="UserDto.Document" class="control-label"></label>
+    <input asp-for="UserDto.Document" class="form-control" />
+    <span asp-validation-for="UserDto.Document" class="text-danger"></span>
+</div>
+
+<div class="form-group">
+    <label asp-for="UserDto.FirstName" class="control-label"></label>
+    <input asp-for="UserDto.FirstName" class="form-control" />
+    <span asp-validation-for="UserDto.FirstName" class="text-danger"></span>
+</div>
+
+<div class="form-group">
+    <label asp-for="UserDto.LastName" class="control-label"></label>
+    <input asp-for="UserDto.LastName" class="form-control" />
+    <span asp-validation-for="UserDto.LastName" class="text-danger"></span>
+</div>
+
+<div class="form-group">
+    <label asp-for="UserDto.Address" class="control-label"></label>
+    <input asp-for="UserDto.Address" class="form-control" />
+    <span asp-validation-for="UserDto.Address" class="text-danger"></span>
+</div>
+
+<div class="form-group">
+    <label asp-for="UserDto.PictureFile" class="control-label"></label>
+    <input asp-for="UserDto.PictureFile" class="form-control" type="file" />
+    <span asp-validation-for="UserDto.PictureFile" class="text-danger"></span>
+</div>

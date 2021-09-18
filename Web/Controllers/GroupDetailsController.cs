@@ -5,12 +5,14 @@ using Core.ModelResponse;
 using Core.ModelResponse.One;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Core.Modules.GroupDetailsModule.Add;
 using Core.Modules.GroupDetailsModule.Get;
 using Core.Modules.GroupDetailsModule.Remove;
 
 namespace Web.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class GroupDetailsController : Controller
     {
         private readonly IMapper _mapper;

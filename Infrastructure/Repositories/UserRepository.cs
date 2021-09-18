@@ -2,7 +2,9 @@
 using System.Linq;
 using Infrastructure.Models;
 using System.Threading.Tasks;
+using System.Security.Claims;
 using Infrastructure.Interfaces;
+using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
@@ -14,18 +16,45 @@ namespace Infrastructure.Repositories
         private readonly DataContext _dataContext;
         private readonly UserManager<UserEntity> _userManager;
         private readonly SignInManager<UserEntity> _signInManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
-        public UserRepository(DataContext dataContext, UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager)
+        public UserRepository(DataContext dataContext, UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, IHttpContextAccessor httpContextAccessor)
         {
             _dataContext = dataContext;
             _userManager = userManager;
             _signInManager = signInManager;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<bool> AddUserAsync(UserEntity user)
+        public async Task<SignInResult> LoginAsync(string userName, string password, bool rememberMe)
         {
-            IdentityResult addUser = await _userManager.CreateAsync(user, user.PasswordHash);
+            return await _signInManager.PasswordSignInAsync(userName, password, rememberMe, false);
+        }
+
+        public string GetSessionUser()
+        {
+            return _httpContextAccessor.HttpContext.User?.Claims?.FirstOrDefault(u => u.Type == ClaimTypes.Name)?.Value;
+        }
+
+        public async Task<UserEntity> GetUserSesscion()
+        {
+            var ussess = GetSessionUser();
+            UserEntity user = await _userManager.FindByNameAsync(ussess);
+            if (user == null)
+                throw new Exception("Error");
+
+            return user;
+        }
+
+        public async Task LogoutAsync()
+        {
+            await _signInManager.SignOutAsync();
+        }
+
+        public async Task<bool> AddUserAsync(UserEntity user, string pass)
+        {
+            IdentityResult addUser = await _userManager.CreateAsync(user, pass);
             if (!addUser.Succeeded)
                 return false;
 
@@ -41,18 +70,6 @@ namespace Infrastructure.Repositories
             return true;
         }
 
-        public async Task<UserEntity> GetUser(string email, string password)
-        {
-            UserEntity user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
-                throw new Exception("Error");
-
-            SignInResult result = await _signInManager.CheckPasswordSignInAsync(user, password, false);
-            if (!result.Succeeded)
-                throw new Exception("Error");
-
-            return user;
-        }
 
         public async Task<UserEntity> GetByEmail(string email)
         {

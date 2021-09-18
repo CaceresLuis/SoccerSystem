@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Core.Modules.TournamentModule.Add;
 using Core.Modules.TournamentModule.Get;
 using Core.Modules.TournamentModule.List;
+using Microsoft.AspNetCore.Authorization;
 using Core.Modules.TournamentModule.Remove;
 using Core.Modules.TournamentModule.Update;
 
@@ -33,6 +34,7 @@ namespace Web.Controllers
             return View(tournamentViews);
         }
 
+        [Authorize(Roles = "admin")]
         public ActionResult Create()
         {
             return View();
@@ -66,6 +68,7 @@ namespace Web.Controllers
             return View(tournamentView);
         }
 
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> Edit(int id)
         {
             ATournamentResponse tournamentResponse = await _mediator.Send(new GetTournamentQuery { Id = id });
@@ -96,6 +99,7 @@ namespace Web.Controllers
             return  RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> Delete(int id)
         {
             ActionResponse delete = await _mediator.Send(new RemoveTournamentCommand { Id = id });

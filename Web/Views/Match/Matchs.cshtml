@@ -85,17 +85,20 @@
                                         <td>
                                             @Html.DisplayFor(modelItem => item.IsClosed)
                                         </td>
-                                        <td>
-                                            @if (item.IsClosed == true)
-                                            {
-                                                <a asp-controller="Match" asp-action="CloseMatch" asp-route-id="@item.Id" class="btn btn-warning"><i class="bi bi-pencil-square"></i></a>
-                                            }
-                                            else
-                                            {
-                                                <a asp-controller="Match" asp-action="CloseMatch" asp-route-id="@item.Id" class="btn btn-success"><i class="bi bi-hand-index-thumb-fill"></i></a>
-                                            }
-                                            <button data-id="@item.Id" class="btn btn-danger deleteItemMath" data-toggle="modal" data-target="#deleteDialog"><i class="bi bi-trash-fill"></i></button>
-                                        </td>
+                                         @if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
+                                         { 
+                                            <td>
+                                                @if (item.IsClosed == true)
+                                                {
+                                                    <a asp-controller="Match" asp-action="CloseMatch" asp-route-id="@item.Id" class="btn btn-warning"><i class="bi bi-pencil-square"></i></a>
+                                                }
+                                                else
+                                                {
+                                                    <a asp-controller="Match" asp-action="CloseMatch" asp-route-id="@item.Id" class="btn btn-success"><i class="bi bi-hand-index-thumb-fill"></i></a>
+                                                }
+                                                <button data-id="@item.Id" class="btn btn-danger deleteItemMath" data-toggle="modal" data-target="#deleteDialog"><i class="bi bi-trash-fill"></i></button>
+                                            </td>
+                                         }
                                     </tr>
                                 }
                             </tbody>

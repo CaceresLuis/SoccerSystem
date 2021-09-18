@@ -43,12 +43,15 @@
     <a asp-action="Index" class="btn btn-default">
         <i class="bi bi-arrow-left-circle-fill"></i> Back
     </a>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
-        <i class="bi bi-pencil-square"></i> Edit
-    </a>
-    <a asp-controller="Group" asp-action="Create" asp-route-id="@Model.Id" class="btn btn-primary">
-        <i class="bi bi-plus-circle-fill"></i> Add Group
-    </a>
+     @if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
+     { 
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+            <i class="bi bi-pencil-square"></i> Edit
+        </a>
+        <a asp-controller="Group" asp-action="Create" asp-route-id="@Model.Id" class="btn btn-primary">
+            <i class="bi bi-plus-circle-fill"></i> Add Group
+        </a>
+      }
 </div>
 <br />
 <div class="row">
@@ -73,9 +76,12 @@
                             <th>
                                 Is Active
                             </th>
-                            <th>
-                                Actions
-                            </th>
+                             @if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
+                             { 
+                                <th>
+                                    Actions
+                                </th>
+                              }
                         </tr>
                     </thead>
                     <tbody>
@@ -94,14 +100,17 @@
                                 <td class='clickable-row' data-href='@url/@item.Id'>
                                     @item.IsActive
                                 </td>
-                                <td>
-                                    <a asp-controller="Group" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </a> |
-                                    <button data-id="@item.Id" class="btn btn-danger deleteItem" data-toggle="modal" data-target="#deleteDialog">
-                                        <i class="bi bi-trash-fill"></i>
-                                    </button>
-                                </td>
+                                 @if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
+                                 { 
+                                    <td>
+                                        <a asp-controller="Group" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a> |
+                                        <button data-id="@item.Id" class="btn btn-danger deleteItem" data-toggle="modal" data-target="#deleteDialog">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </td>
+                                 }
                             </tr>
                         }
                     </tbody>

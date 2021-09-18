@@ -1,87 +1,85 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
+﻿using MediatR;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Core.Modules.UserModule.Add;
+using Core.Modules.UserModule.LoginWeb;
+using Core.Modules.UserModule.Logout;
+using Core.Modules.UserModule.Get;
+using Core.Dtos;
 
 namespace Web.Controllers
 {
     public class AccountController : Controller
     {
-        // GET: AccountController
+        private readonly IMediator _mediator;
+
+        public AccountController(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
+
         public ActionResult Index()
         {
             return View();
         }
 
-        // GET: AccountController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: AccountController/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: AccountController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(AddUserCommand addUser)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            await _mediator.Send(addUser);
+
+            return RedirectToAction("Index", "Team");
         }
 
-        // GET: AccountController/Edit/5
-        public ActionResult Edit(int id)
+        public IActionResult Login()
+
         {
+            if (User.Identity.IsAuthenticated) return RedirectToAction("Index", "Home");
+
             return View();
         }
 
-        // POST: AccountController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> Login(LoginWebQuery model)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                Microsoft.AspNetCore.Identity.SignInResult result = await _mediator.Send(model);
+                if (result.Succeeded)
+                {
+                    if (Request.Query.Keys.Contains("ReturnUrl"))
+                    {
+                        return Redirect(Request.Query["ReturnUrl"].First());
+                    }
+
+                    return RedirectToAction("Index", "Home");
+                }
+
+                ModelState.AddModelError(string.Empty, "Email or password incorrect.");
             }
-            catch
-            {
-                return View();
-            }
+
+            return View(model);
         }
 
-        // GET: AccountController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Logout()
         {
-            return View();
+            await _mediator.Send(new LogoutUserQuery { });
+            return RedirectToAction("Index", "Home");
         }
-
-        // POST: AccountController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        
+        public async Task<ActionResult> MyProfile()
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            UserDto user = await _mediator.Send(new GetMyProfileQuery { });
+
+            return View(user);
         }
     }
 }

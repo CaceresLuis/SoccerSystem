@@ -10,6 +10,7 @@ using Core.Modules.GroupModule.Get;
 using Core.Modules.GroupModule.Remove;
 using Core.Modules.GroupModule.Update;
 using Core.Modules.TournamentModule.Get;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers
 {
@@ -24,6 +25,7 @@ namespace Web.Controllers
             _mediator = mediator;
         }
 
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> Create(int id)
         {
             ATournamentResponse tournamentResponse = await _mediator.Send(new GetTournamentQuery { Id = id });
@@ -68,6 +70,7 @@ namespace Web.Controllers
             return View(groupView);
         }
 
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> Edit(int id)
         {
             AGroupResponse AgroupResponse = await _mediator.Send(new GetFullGroupQuery { Id = id });
@@ -99,6 +102,7 @@ namespace Web.Controllers
             return RedirectToAction("Details", "Tournament", new { id = groupView.Tournament.Id });
         }
 
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> Delete(int id)
         {
             GroupResponse group = await _mediator.Send(new GetGroupWithTournamentQuery { Id = id });
