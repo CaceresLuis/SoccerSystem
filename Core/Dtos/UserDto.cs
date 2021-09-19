@@ -15,6 +15,7 @@ namespace Core.Dtos
         public string Address { get; set; }
         public string PicturePath { get; set; }
         public IFormFile PictureFile { get; set; }
+        public string FullName => $"{FirstName} {LastName}";
         public List<string> Roles { get; set; }
     }
 }

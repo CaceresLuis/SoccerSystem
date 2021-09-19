@@ -9,7 +9,8 @@
 <h4>User</h4>
 <hr />
 <div class="row">
-        <h3>User: @Model.UserName</h3>
+    <h3>User: @Model.UserName</h3>
+    
     <div class="col-md-5">
         <dl class="dl-horizontal text-center">
             <dd>Full Name</dd>
@@ -22,6 +23,11 @@
             <dt>@Model.Document</dt>
             <dd>Address</dd>
             <dt>@Model.Address</dt>
+            <dd>Roles</dd>
+            @foreach (var rol in Model.Roles)
+            {
+                <dt>@rol</dt>
+            }
         </dl>
     </div>
 
@@ -32,6 +38,9 @@
         }
     </div>
 </div>
+<a asp-action="Edit" class="btn btn-secondary">
+    <i class="bi bi-pencil-square"></i> Update me
+</a>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

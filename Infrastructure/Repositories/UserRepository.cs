@@ -37,14 +37,27 @@ namespace Infrastructure.Repositories
             return _httpContextAccessor.HttpContext.User?.Claims?.FirstOrDefault(u => u.Type == ClaimTypes.Name)?.Value;
         }
 
-        public async Task<UserEntity> GetUserSesscion()
+        public async Task<UserEntity> GetUserInSesscion()
         {
-            var ussess = GetSessionUser();
-            UserEntity user = await _userManager.FindByNameAsync(ussess);
+            UserEntity user = await _userManager.FindByNameAsync(GetSessionUser());
             if (user == null)
                 throw new Exception("Error");
 
             return user;
+        }
+
+        public async Task<List<string>> GetUserRolesAsync(UserEntity user)
+        {
+            IList<string> roles = await _userManager.GetRolesAsync(user);
+            if (roles.Count() < 1)
+               return new List<string>();
+
+            return roles.ToList();
+        }
+
+        public async Task<List<UserEntity>> GetUsersAsync()
+        {
+            return await _dataContext.Users.ToListAsync();
         }
 
         public async Task LogoutAsync()
@@ -71,7 +84,7 @@ namespace Infrastructure.Repositories
         }
 
 
-        public async Task<UserEntity> GetByEmail(string email)
+        public async Task<UserEntity> GetByEmailAsync(string email)
         {
             UserEntity user = await _dataContext.Users.FirstOrDefaultAsync(u => u.Email == email);
 
@@ -107,13 +120,13 @@ namespace Infrastructure.Repositories
             return exist;
         }
 
-        public async Task<string> EditUser(UserEntity user)
+        public async Task<bool> UpdateUserAsync(UserEntity user)
         {
             IdentityResult save = await _userManager.UpdateAsync(user);
             if (!save.Succeeded)
                 throw new Exception("Error");
 
-            return $"El usuario con correo: {user.Email} se actualizo correctamente";
+            return true;
         }
 
         public async Task<bool> ChanguePassword(UserEntity user, string currentPassword, string newPassword)
@@ -123,15 +136,6 @@ namespace Infrastructure.Repositories
                 throw new Exception("Error");
 
             return true;
-        }
-
-        public async Task<List<string>> GetRolesUser(UserEntity user)
-        {
-            IList<string> userRoles = await _userManager.GetRolesAsync(user);
-            if (userRoles == null)
-                throw new Exception("Error");
-
-            return userRoles.ToList();
         }
     }
 }

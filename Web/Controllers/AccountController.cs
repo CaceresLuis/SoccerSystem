@@ -7,6 +7,10 @@ using Core.Modules.UserModule.LoginWeb;
 using Core.Modules.UserModule.Logout;
 using Core.Modules.UserModule.Get;
 using Core.Dtos;
+using Core.Modules.UserModule.Update;
+using Microsoft.AspNetCore.Authorization;
+using Core.Modules.UserModule.List;
+using System.Collections.Generic;
 
 namespace Web.Controllers
 {
@@ -19,9 +23,27 @@ namespace Web.Controllers
             _mediator = mediator;
         }
 
-        public ActionResult Index()
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult> Index()
+        {
+            List<UserDto> users = await _mediator.Send(new ListUserQuery());
+            return View(users);
+        }
+
+
+        [Authorize(Roles = "admin")]
+        public ActionResult AddRoleToUser()
         {
             return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> AddRoleToUser(UserDto addUser)
+        {
+            await _mediator.Send(new AddUserCommand { UserDto = addUser });
+
+            return RedirectToAction("Index", "Team");
         }
 
         public ActionResult Create()
@@ -31,9 +53,9 @@ namespace Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(AddUserCommand addUser)
+        public async Task<ActionResult> Create(UserDto addUser)
         {
-            await _mediator.Send(addUser);
+            await _mediator.Send(new AddUserCommand { UserDto = addUser });
 
             return RedirectToAction("Index", "Team");
         }
@@ -74,12 +96,26 @@ namespace Web.Controllers
             await _mediator.Send(new LogoutUserQuery { });
             return RedirectToAction("Index", "Home");
         }
-        
+
+        [Authorize(Roles = "admin, user")]
         public async Task<ActionResult> MyProfile()
         {
-            UserDto user = await _mediator.Send(new GetMyProfileQuery { });
+            return View(await _mediator.Send(new GetMyProfileQuery { }));
+        }
 
-            return View(user);
+        [Authorize(Roles = "admin, user")]
+        public async Task<ActionResult> Edit()
+        {
+            return View(await _mediator.Send(new GetMyProfileQuery { }));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Edit(UserDto addUser)
+        {
+            await _mediator.Send(new UpdateUserCommand { UserDto = addUser });
+
+            return RedirectToAction("Index", "Team");
         }
     }
 }

@@ -30,6 +30,7 @@ namespace Core.Modules.UserModule.Add
                 throw new Exception("Error");
 
             UserEntity user = _mapper.Map<UserEntity>(userdto);
+            user.Email = user.UserName;
 
             UserEntity exist = await _userRepository.UserNameExist(user.UserName);
             if (exist != null)
@@ -49,7 +50,10 @@ namespace Core.Modules.UserModule.Add
                     if (roleExist != null)
                         await _userRepository.AddRoleToUser(user, roleExist.Name);
                 }
+                return true;
             }
+
+            await _userRepository.AddRoleToUser(user, "user");
 
             return true;
         }

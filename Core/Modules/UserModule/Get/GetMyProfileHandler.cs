@@ -2,8 +2,10 @@
 using Core.Dtos;
 using AutoMapper;
 using System.Threading;
+using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
+using System.Collections.Generic;
 
 namespace Core.Modules.UserModule.Get
 {
@@ -20,8 +22,10 @@ namespace Core.Modules.UserModule.Get
 
         public async Task<UserDto> Handle(GetMyProfileQuery request, CancellationToken cancellationToken)
         {
-            Infrastructure.Models.UserEntity user = await _userRepository.GetUserSesscion();
+            UserEntity user = await _userRepository.GetUserInSesscion();
+            List<string> roles = await _userRepository.GetUserRolesAsync(user);
             UserDto userDto = _mapper.Map<UserDto>(user);
+            userDto.Roles = roles;
             return userDto;
         }
     }
