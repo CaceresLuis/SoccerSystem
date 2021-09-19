@@ -23,6 +23,8 @@
 
   <ItemGroup>
     <Folder Include="Modules\GroupModule\List\" />
+    <Folder Include="Modules\UserModule\AddRoleToUer\" />
+    <Folder Include="Security\Role\" />
   </ItemGroup>
 
 </Project>

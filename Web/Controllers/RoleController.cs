@@ -1,16 +1,20 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using AutoMapper;
 using Web.ViewModel;
 using Core.ModelResponse;
 using Core.ModelResponse.One;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Core.Modules.RoleModule;
 using Core.Modules.TeamModule.Get;
 using Core.Modules.TeamModule.List;
 using Core.Modules.TeamModule.Remove;
 using Core.Modules.TeamModule.Update;
 using Microsoft.AspNetCore.Authorization;
+using Core.Modules.RoleModule.Add;
+using Core.Modules.RoleModule.List;
+using Core.Dtos;
+using System.Collections.Generic;
 
 namespace Web.Controllers
 {
@@ -28,11 +32,19 @@ namespace Web.Controllers
 
         public async Task<ActionResult> Index()
         {
-            TeamResponse[] teamResponse = await _mediator.Send(new ListTeamsQuery());
+            var  role = await _mediator.Send(new ListRolesQuery());
+            List<RoleDto> roles = new List<RoleDto>();
+            foreach (var item in role)
+            {
+                RoleDto rol = new RoleDto
+                {
+                    Id = item.Id,
+                    Name = item.Name
+                };
+                roles.Add(rol);
+            }
 
-            TeamViewModels[] teamView = _mapper.Map<TeamViewModels[]>(teamResponse);
-
-            return View(teamView);
+            return View(roles);
         }
 
         public ActionResult Create()
@@ -44,7 +56,14 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(AddRoleCommand addRole)
         {
-            await _mediator.Send(addRole);
+            try
+            {
+                await _mediator.Send(addRole);
+            }
+            catch (Exception e)
+            {
+                TempData["Title"] = e.Message;
+            }
 
             return RedirectToAction("Index", "Team");
         }

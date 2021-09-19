@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using System.ComponentModel.DataAnnotations;
 
-namespace Core.Modules.RoleModule
+namespace Core.Modules.RoleModule.Add
 {
     public class AddRoleCommand : IRequest<bool>
     {

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
-namespace Core.Modules.RoleModule
+namespace Core.Modules.RoleModule.Add
 {
     public class AddRoleHandler : IRequestHandler<AddRoleCommand, bool>
     {
