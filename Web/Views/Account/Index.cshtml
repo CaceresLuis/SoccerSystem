@@ -63,12 +63,17 @@
                 @if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
                 {
                     <td>
-                        <a asp-action="UserDetails" asp-route-id="@item.Email" class="btn btn-secondary">
-                            <i class="bi bi-person-lines-fill"></i>
-                        </a>
+                        <form asp-action="AddRoleToUser" method="get">
+                            <input type="hidden" name="email" asp-for="@item.Email" />
+                            <button type="submit" value="Save" class="btn btn-secondary">
+                                <i class="bi bi-person-lines-fill"></i>
+                            </button>
+                        </form>
                     </td>
                 }
             </tr>
         }
     </tbody>
 </table>
+
+<partial name="_Alert" />

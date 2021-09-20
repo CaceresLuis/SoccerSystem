@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Infrastructure.Models;
 using System.Threading.Tasks;
 using System.Security.Claims;
@@ -39,11 +38,7 @@ namespace Infrastructure.Repositories
 
         public async Task<UserEntity> GetUserInSesscion()
         {
-            UserEntity user = await _userManager.FindByNameAsync(GetSessionUser());
-            if (user == null)
-                throw new Exception("Error");
-
-            return user;
+            return await _userManager.FindByNameAsync(GetSessionUser()); ;
         }
 
         public async Task<List<string>> GetUserRolesAsync(UserEntity user)
@@ -68,74 +63,53 @@ namespace Infrastructure.Repositories
         public async Task<bool> AddUserAsync(UserEntity user, string pass)
         {
             IdentityResult addUser = await _userManager.CreateAsync(user, pass);
-            if (!addUser.Succeeded)
-                return false;
 
-            return true;
+            return addUser.Succeeded;
         }
 
         public async Task<bool> AddRoleToUser(UserEntity user, string role)
         {
             IdentityResult add = await _userManager.AddToRoleAsync(user, role);
-            if (!add.Succeeded)
-                return false;
-
-            return true;
+            return add.Succeeded;
         }
-
 
         public async Task<UserEntity> GetByEmailAsync(string email)
         {
-            UserEntity user = await _dataContext.Users.FirstOrDefaultAsync(u => u.Email == email);
-
-            return user;
+            return await _dataContext.Users.FirstOrDefaultAsync(u => u.Email == email); ;
         }
 
         public async Task<UserEntity> GetUserName(string userName)
         {
-            UserEntity user = await _dataContext.Users.FirstOrDefaultAsync(u => u.UserName == userName);
-
-            return user;
+            return await _dataContext.Users.FirstOrDefaultAsync(u => u.UserName == userName); ;
         }
 
         public async Task<UserEntity> GetUserById(string userId)
         {
-            UserEntity user = await _dataContext.Users.FindAsync(userId);
-
-            return user;
+            return await _dataContext.Users.FindAsync(userId); ;
         }
 
         public async Task<UserEntity> UserNameExist(string userName)
         {
-            UserEntity exist = await _dataContext.Users.FirstOrDefaultAsync(u => u.UserName == userName);
-            return exist;
+            return await _dataContext.Users.FirstOrDefaultAsync(u => u.UserName == userName); ;
         }
 
         public async Task<bool> EmailExist(string email)
         {
-            bool exist = await _dataContext.Users.Where(u => u.Email == email).AnyAsync();
-            if (exist)
-                throw new Exception("Error");
-
-            return exist;
+            return await _dataContext.Users.Where(u => u.Email == email).AnyAsync(); ;
         }
 
         public async Task<bool> UpdateUserAsync(UserEntity user)
         {
             IdentityResult save = await _userManager.UpdateAsync(user);
-            if (!save.Succeeded)
-                throw new Exception("Error");
 
-            return true;
+            return save.Succeeded;
         }
 
         public async Task<bool> ChanguePassword(UserEntity user, string currentPassword, string newPassword)
         {
             IdentityResult save = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
-            if (!save.Succeeded)
-                throw new Exception("Error");
 
-            return true;
+            return save.Succeeded;
         }
     }
 }

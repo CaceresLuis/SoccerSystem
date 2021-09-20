@@ -1,26 +1,32 @@
 ﻿using MediatR;
+using Core.Dtos;
 using System.Linq;
+using Shared.Enums;
+using Core.Helpers;
+using Web.ModelsView;
+using Shared.Exceptions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Core.Modules.UserModule.Add;
-using Core.Modules.UserModule.LoginWeb;
-using Core.Modules.UserModule.Logout;
-using Core.Modules.UserModule.Get;
-using Core.Dtos;
-using Core.Modules.UserModule.Update;
-using Microsoft.AspNetCore.Authorization;
-using Core.Modules.UserModule.List;
 using System.Collections.Generic;
+using Core.Modules.UserModule.Add;
+using Core.Modules.UserModule.Get;
+using Core.Modules.UserModule.List;
+using Core.Modules.UserModule.Logout;
+using Core.Modules.UserModule.Update;
+using Core.Modules.UserModule.LoginWeb;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers
 {
     public class AccountController : Controller
     {
         private readonly IMediator _mediator;
+        private readonly IListItemHelper _listItemHelper;
 
-        public AccountController(IMediator mediator)
+        public AccountController(IMediator mediator, IListItemHelper listItemHelper)
         {
             _mediator = mediator;
+            _listItemHelper = listItemHelper;
         }
 
         [Authorize(Roles = "admin")]
@@ -28,22 +34,6 @@ namespace Web.Controllers
         {
             List<UserDto> users = await _mediator.Send(new ListUserQuery());
             return View(users);
-        }
-
-
-        [Authorize(Roles = "admin")]
-        public ActionResult AddRoleToUser()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> AddRoleToUser(UserDto addUser)
-        {
-            await _mediator.Send(new AddUserCommand { UserDto = addUser });
-
-            return RedirectToAction("Index", "Team");
         }
 
         public ActionResult Create()
@@ -55,11 +45,60 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(UserDto addUser)
         {
-            await _mediator.Send(new AddUserCommand { UserDto = addUser });
+            try
+            {
+                await _mediator.Send(new AddUserCommand { UserDto = addUser });
+                TempData["Title"] = "Registered";
+                TempData["Message"] = $"The User: {addUser.Email} has been created";
+                TempData["State"] = $"{State.success}";
 
-            return RedirectToAction("Index", "Team");
+                return RedirectToAction(nameof(Index));
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = e.Error.State;
+
+                return View();
+            }
         }
 
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult> AddRoleToUser(string email)
+        {
+            var user = await _mediator.Send(new GetUserQuery { Email = email });
+            AddRoleToUserViewModel addRoleToUser = new AddRoleToUserViewModel
+            { 
+                UserDto = user,
+                SelectRol = await _listItemHelper.RolesListItem(user.Roles)
+            };
+            return View(addRoleToUser);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> AddRoleToUser(AddRoleToUserViewModel roleUserView)
+        {
+            try
+            {
+                await _mediator.Send(new AddRoleToUserCommand { Email = roleUserView.UserDto.Email, RoleName = roleUserView.RoleName });
+
+                TempData["Title"] = "Succdess";
+                TempData["Message"] = "User now have a new role";
+                TempData["State"] = $"{State.success}";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = e.Error.State;
+
+                return View(roleUserView);
+            }
+        }
+        
         public IActionResult Login()
 
         {
@@ -113,9 +152,29 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(UserDto addUser)
         {
-            await _mediator.Send(new UpdateUserCommand { UserDto = addUser });
+            try
+            {
+                await _mediator.Send(new UpdateUserCommand { UserDto = addUser });
 
-            return RedirectToAction("Index", "Team");
+                TempData["Title"] = "Updated";
+                TempData["Message"] = "your profile has been updated";
+                TempData["State"] = $"{State.success}";
+
+                return RedirectToAction(nameof(MyProfile));
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = e.Error.State;
+
+                return View();
+            }
+        }
+
+        public IActionResult NotAuthorized()
+        {
+            return View();
         }
     }
 }

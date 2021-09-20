@@ -1,7 +1,9 @@
 using System;
 using MediatR;
 using System.Text;
+using Core.Helpers;
 using Infrastructure;
+using Shared.Exceptions;
 using Core.Security.Token;
 using Shared.Helpers.Image;
 using Infrastructure.Models;
@@ -102,11 +104,13 @@ namespace Web
 
             //Helpers
             services.AddScoped<IIMageHelper, IMageHelper>();
+            services.AddScoped<IListItemHelper, ListItemHelper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseMiddleware<MiddelwareHandler>();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

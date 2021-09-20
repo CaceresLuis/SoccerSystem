@@ -7,7 +7,8 @@ namespace Infrastructure.Interfaces
     public interface IRoleRepository
     {
         Task AddRole(string name);
-        Task DeleteRole(IdentityRole role);
+        Task<bool> DeleteRole(IdentityRole role);
+        Task<IdentityRole> FindRole(string id);
         Task<IdentityRole> GetRole(string name);
         Task<List<IdentityRole>> GetRoles();
     }

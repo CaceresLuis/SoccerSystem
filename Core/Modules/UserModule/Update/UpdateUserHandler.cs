@@ -1,10 +1,12 @@
-﻿using System;
-using MediatR;
+﻿using MediatR;
 using Core.Dtos;
+using System.Net;
+using Shared.Enums;
 using System.Threading;
+using Shared.Exceptions;
+using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
-using Infrastructure.Models;
 
 namespace Core.Modules.UserModule.Update
 {
@@ -22,7 +24,15 @@ namespace Core.Modules.UserModule.Update
             UserDto userDto = request.UserDto;
             UserEntity user = await _userRepository.GetUserInSesscion();
             if (userDto.Email != user.Email)
-                throw new Exception("otro usuario");
+                throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                    new Error
+                    {
+                        Code = "Error",
+                        Message = "This profile not is your",
+                        Title = "Fail",
+                        State = State.error,
+                        IsSuccess = false
+                    });
 
             user.Address = userDto.Address ?? user.Address;
             user.Document = userDto.Document ?? user.Document;
@@ -30,6 +40,17 @@ namespace Core.Modules.UserModule.Update
             user.FirstName = userDto.FirstName ?? user.FirstName;
 
             bool update = await _userRepository.UpdateUserAsync(user);
+            if (!update)
+                throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                    new Error
+                    {
+                        Code = "Error",
+                        Message = "This profile not is your",
+                        Title = "Fail",
+                        State = State.error,
+                        IsSuccess = false
+                    });
+
             return update;
         }
     }

@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Authorization;
 using Core.Modules.GroupDetailsModule.Add;
 using Core.Modules.GroupDetailsModule.Get;
 using Core.Modules.GroupDetailsModule.Remove;
+using Shared.Enums;
+using Shared.Exceptions;
 
 namespace Web.Controllers
 {
@@ -41,16 +43,24 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(CreateGroupDetailsViewModels groupDetail)
         {
-            GroupDetailsResponse groupDetailsResponse = _mapper.Map<GroupDetailsResponse>(groupDetail);
-            ActionResponse create = await _mediator.Send(new AddGroupDetailsCommand { GroupDetail = groupDetailsResponse });
-            TempData["Title"] = create.Title;
-            TempData["Message"] = create.Message;
-            TempData["State"] = create.State.ToString();
+            try
+            {
+                GroupDetailsResponse groupDetailsResponse = _mapper.Map<GroupDetailsResponse>(groupDetail);
+                ActionResponse create = await _mediator.Send(new AddGroupDetailsCommand { GroupDetail = groupDetailsResponse });
+                TempData["Title"] = "Added";
+                TempData["Message"] = $"The team was added to the group";
+                TempData["State"] = $"{State.success}";
 
-            if (!create.IsSuccess)
+                return RedirectToAction("Detail", "Group", new { id = groupDetail.Group.Id });
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = e.Error.State;
+
                 return View(groupDetail);
-
-            return RedirectToAction("Detail", "Group", new { id = groupDetail.Group.Id });
+            }
         }
 
         public async Task<ActionResult> Delete(int id)

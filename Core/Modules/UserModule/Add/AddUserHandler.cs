@@ -2,7 +2,10 @@
 using MediatR;
 using Core.Dtos;
 using AutoMapper;
+using System.Net;
+using Shared.Enums;
 using System.Threading;
+using Shared.Exceptions;
 using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
@@ -32,14 +35,18 @@ namespace Core.Modules.UserModule.Add
             UserEntity user = _mapper.Map<UserEntity>(userdto);
             user.Email = user.UserName;
 
-            UserEntity exist = await _userRepository.UserNameExist(user.UserName);
-            if (exist != null)
-                throw new Exception("Error");
-
-            bool userEmailExist = await _userRepository.EmailExist(user.Email);
-            if (userEmailExist)
-                throw new Exception("Error");
-
+            bool userExist = await _userRepository.EmailExist(user.Email);
+            if (userExist)
+                throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                    new Error
+                    {
+                        Code = "Not registered",
+                        Message = $"The Email: {user.Email} is already usage",
+                        Title = "Not registered",
+                        State = State.error,
+                        IsSuccess = false
+                    });
+          
             await _userRepository.AddUserAsync(user, userdto.PasswordConfirm);
 
             if (userdto.Roles != null)

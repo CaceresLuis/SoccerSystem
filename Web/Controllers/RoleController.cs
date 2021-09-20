@@ -1,20 +1,22 @@
 ﻿using System;
 using MediatR;
+using Core.Dtos;
 using AutoMapper;
+using Shared.Enums;
 using Web.ViewModel;
+using Shared.Exceptions;
 using Core.ModelResponse;
 using Core.ModelResponse.One;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using Core.Modules.TeamModule.Get;
-using Core.Modules.TeamModule.List;
-using Core.Modules.TeamModule.Remove;
-using Core.Modules.TeamModule.Update;
-using Microsoft.AspNetCore.Authorization;
 using Core.Modules.RoleModule.Add;
 using Core.Modules.RoleModule.List;
-using Core.Dtos;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
+using Core.Modules.TeamModule.Update;
+using Core.Modules.RoleModule.Remove;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers
 {
@@ -32,9 +34,9 @@ namespace Web.Controllers
 
         public async Task<ActionResult> Index()
         {
-            var  role = await _mediator.Send(new ListRolesQuery());
+            List<IdentityRole> role = await _mediator.Send(new ListRolesQuery());
             List<RoleDto> roles = new List<RoleDto>();
-            foreach (var item in role)
+            foreach (IdentityRole item in role)
             {
                 RoleDto rol = new RoleDto
                 {
@@ -59,13 +61,19 @@ namespace Web.Controllers
             try
             {
                 await _mediator.Send(addRole);
+                TempData["Title"] = "Registered";
+                TempData["Message"] = $"The role: {addRole.Name} has been created";
+                TempData["State"] = $"{State.success}";
+                return RedirectToAction(nameof(Index));
             }
-            catch (Exception e)
+            catch (ExceptionHandler e)
             {
-                TempData["Title"] = e.Message;
-            }
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = e.Error.State;
 
-            return RedirectToAction("Index", "Team");
+                return View();
+            }
         }
 
         public async Task<ActionResult> Edit(int id)
@@ -99,15 +107,22 @@ namespace Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(Guid id)
         {
-            if (id < 1) return NotFound();
-
-            ActionResponse delete = await _mediator.Send(new RemoveTeamCommand { IdTeam = id });
-            TempData["Title"] = delete.Title;
-            TempData["Message"] = delete.Message;
-            TempData["State"] = delete.State.ToString();
-
+            try
+            {
+                bool delete = await _mediator.Send(new RemoveRoleCommand { Id = id });
+                TempData["Title"] = "Deleted";
+                TempData["Message"] = $"The role: {id} has been deleted";
+                TempData["State"] = $"{State.success}";
+            }
+            catch (Exception)
+            {
+                TempData["Title"] = "Error";
+                TempData["Message"] = $"The role: {id} has not been deleted";
+                TempData["State"] = $"{State.error}";
+            }
+            
             return RedirectToAction(nameof(Index));
         }
     }

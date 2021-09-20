@@ -1,0 +1,42 @@
+﻿@model Web.ModelsView.AddRoleToUserViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h4>User: @Model.UserDto.FullName || @Model.UserDto.Email</h4>
+<hr />
+<h4>
+		 <label>Now Roles: </label>
+    @foreach (var item in Model.UserDto.Roles)
+	{
+		 <label>@item</label>
+	}
+</h4>
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AddRoleToUser" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="UserDto.Email" />
+            <div class="form-group">
+                <label class="control-label">Role Name</label>
+                <select asp-for="RoleName" asp-items="Model.SelectRol" class="form-control"></select>
+                <span asp-validation-for="RoleName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @*<a asp-controller="Group" asp-action="Detail" asp-route-id="@Model.Group.Id" class="btn btn-default">
+                    <i class="bi bi-arrow-left-circle-fill"></i> Back
+                </a>*@
+                <button type="submit" value="Create" class="btn btn-primary">
+                    <i class="bi bi-save2-fill"></i> Add Role
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<partial name="_Alert" />
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
