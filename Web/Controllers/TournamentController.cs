@@ -61,8 +61,8 @@ namespace Web.Controllers
         {
             ATournamentResponse tournamentResponse = await _mediator.Send(new GetTournamentQuery { Id = id });
 
-            if (!tournamentResponse.Data.IsSuccess)
-                return RedirectToAction(nameof(Index));
+            //if (!tournamentResponse.Data.IsSuccess)
+            //    return RedirectToAction(nameof(Index));
 
             TournamentViewModels tournamentView = _mapper.Map<TournamentViewModels>(tournamentResponse.Tournament);
             return View(tournamentView);

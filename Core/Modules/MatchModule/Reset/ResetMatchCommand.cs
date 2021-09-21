@@ -1,10 +1,9 @@
 ﻿using MediatR;
 using Core.Dtos;
-using Core.ModelResponse;
 
 namespace Core.Modules.MatchModule.Reset
 {
-    public class ResetMatchCommand : IRequest<ActionResponse>
+    public class ResetMatchCommand : IRequest<bool>
     {
         public MatchDto MatchDto { get; set; }
     }

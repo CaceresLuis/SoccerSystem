@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Shared.Exceptions;
+using System.Net;
 
 namespace Core.Modules.GroupDetailsModule.Get
 {
@@ -29,7 +31,7 @@ namespace Core.Modules.GroupDetailsModule.Get
 
         public async Task<GroupDetailsResponse> Handle(GetGroupDetailsByGroupQuery request, CancellationToken cancellationToken)
         {
-            GroupDetailsResponse response = new GroupDetailsResponse { Data = new ActionResponse { IsSuccess = true } };
+            GroupDetailsResponse response = new GroupDetailsResponse { };
             List<GroupEntity> ListGroup = await _groupRepository.GetAllGroupOfTournamentAsync(request.IdTournament);
 
             GroupEntity groupEntity = await _groupRepository.GetGroupWithTournamentAsync(request.IdGroup);
@@ -37,10 +39,15 @@ namespace Core.Modules.GroupDetailsModule.Get
             response.Group = group;
 
             if (group == null)
-            {
-                response.Data = new ActionResponse { IsSuccess = false, Title = "Error", Message = "The team does not exist", State = State.error };
-                return response;
-            }
+                throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                    new Error
+                    {
+                        Code = "Error",
+                        Message = "The team does not exist",
+                        Title = "Error",
+                        State = State.error,
+                        IsSuccess = false
+                    });
 
             List<TeamEntity> teams = await _teamRepository.GetAllTeamAsync();
 
@@ -62,8 +69,6 @@ namespace Core.Modules.GroupDetailsModule.Get
                 .OrderBy(t => t.Text)
                 .ToList();
             }
-            
-            
 
             response.SelectTeam = teamList;
             return response;

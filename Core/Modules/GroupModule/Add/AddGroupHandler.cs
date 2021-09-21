@@ -1,15 +1,16 @@
 ﻿using MediatR;
 using AutoMapper;
+using System.Net;
 using Shared.Enums;
 using System.Threading;
-using Core.ModelResponse;
+using Shared.Exceptions;
 using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 
 namespace Core.Modules.GroupModule.Add
 {
-    public class AddGroupHandler : IRequestHandler<AddGroupCommand, ActionResponse>
+    public class AddGroupHandler : IRequestHandler<AddGroupCommand, bool>
     {
         private readonly IMapper _mapper;
         private readonly IGroupRepository _groupRepository;
@@ -20,17 +21,44 @@ namespace Core.Modules.GroupModule.Add
             _groupRepository = groupRepository;
         }
 
-        public async Task<ActionResponse> Handle(AddGroupCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(AddGroupCommand request, CancellationToken cancellationToken)
         {
             GroupEntity group = _mapper.Map<GroupEntity>(request.Group);
-            if(await _groupRepository.GetGroupByNameAndTournamentAsync(group.Tournament.Id, group.Name) != null)
-                return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"The {group.Name} is already registered in this tournament", State = State.error };
+            if(group.Name == null)
+                throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                    new Error
+                    {
+                        Code = "Error",
+                        Message = "The role name is emty",
+                        Title = "Error",
+                        State = State.error,
+                        IsSuccess = false
+                    });
+
+            if (await _groupRepository.GetGroupByNameAndTournamentAsync(group.Tournament.Id, group.Name) != null)
+                throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                    new Error
+                    {
+                        Code = "Error",
+                        Message = $"The {group.Name} is already registered in this tournament",
+                        Title = "Error",
+                        State = State.error,
+                        IsSuccess = false
+                    });
 
             group.IsActive = true;
             if(!await _groupRepository.AddGroupAsync(group))
-                return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"Something has gone wrong", State = State.error };
+                throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                    new Error
+                    {
+                        Code = "Error",
+                        Message = "Something has gone wrong",
+                        Title = "Error",
+                        State = State.error,
+                        IsSuccess = false
+                    });
 
-            return new ActionResponse { IsSuccess = true, Title = "Created!", Message = $"The group {group.Name} was created", State = State.success };
+            return true;
         }
     }
 }

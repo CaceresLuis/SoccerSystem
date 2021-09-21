@@ -1,9 +1,8 @@
 ﻿using MediatR;
-using Core.ModelResponse.One;
 
 namespace Core.Modules.GroupDetailsModule.Remove
 {
-    public class RemoveGroupDetailCommand : IRequest<RGroupDetailsResponse>
+    public class RemoveGroupDetailCommand : IRequest<int>
     {
         public int Id { get; set; }
     }

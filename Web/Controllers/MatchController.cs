@@ -9,6 +9,9 @@ using Core.Modules.MatchModule.List;
 using Core.Modules.MatchModule.Close;
 using Core.Modules.MatchModule.Reset;
 using Microsoft.AspNetCore.Authorization;
+using Shared.Enums;
+using Shared.Exceptions;
+using Core.Modules.MatchModule.Remove;
 
 namespace Web.Controllers
 {
@@ -27,7 +30,7 @@ namespace Web.Controllers
             return View(list);
         }
 
-        public ActionResult Details(int id)
+        public ActionResult Details()
         {
             return View();
         }
@@ -43,15 +46,21 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(AddMatchDto addMatchDto)
         {
-            ActionResponse create = await _mediator.Send(new AddMatchCommand { AddMatchDto = addMatchDto });
-            TempData["Title"] = create.Title;
-            TempData["Message"] = create.Message;
-            TempData["State"] = create.State.ToString();
-
-            if (!create.IsSuccess)
+            try
+            {
+                await _mediator.Send(new AddMatchCommand { AddMatchDto = addMatchDto });
+                TempData["Title"] = "Success!";
+                TempData["Message"] = "Macht added";
+                TempData["State"] = State.success.ToString();
+                return RedirectToAction("Detail", "Group", new { id = addMatchDto.Group.Id });
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = State.error.ToString();
                 return View(addMatchDto);
-
-            return RedirectToAction("Detail", "Group", new { id = addMatchDto.Group.Id });
+            }           
         }
 
         [Authorize(Roles = "admin")]
@@ -65,17 +74,47 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CloseMatch(MatchDto matchDto)
         {
-            if(matchDto.IsClosed) //delete before update
-                await _mediator.Send(new ResetMatchCommand { MatchDto = matchDto });
+            try
+            {
+                if (matchDto.IsClosed) //delete before update
+                    await _mediator.Send(new ResetMatchCommand { MatchDto = matchDto });
 
-            ActionResponse update = await _mediator.Send(new CloseMatchCommand { MatchDto = matchDto });
-            TempData["Title"] = update.Title;
-            TempData["Message"] = update.Message;
-            TempData["State"] = update.State.ToString();
+                await _mediator.Send(new CloseMatchCommand { MatchDto = matchDto });
 
-            if (!update.IsSuccess)
+                TempData["Title"] = "Success";
+                TempData["Message"] = "Macht Closet!";
+                TempData["State"] = State.success.ToString();
+
+                return RedirectToAction(nameof(Matchs), new { id = matchDto.GroupId });
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = State.error.ToString();
                 return View(matchDto);
-            return RedirectToAction(nameof(Matchs), new { id = matchDto.GroupId });
+            }
+        }
+
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult> DeleteMatch(int id)
+        {
+            MatchDto match = await _mediator.Send(new GetMatchQuery { Id = id });
+            try
+            {
+                await _mediator.Send(new RemoveMatchCommand { Id = id });
+                TempData["Title"] = "Updated!";
+                TempData["Message"] = $"Match has been deleted!";
+                TempData["State"] = State.success.ToString();
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = State.error.ToString();
+            }
+
+            return RedirectToAction("Matchs", "Match", new { Id = match.GroupId });
         }
     }
 }

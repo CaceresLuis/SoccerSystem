@@ -6,8 +6,11 @@
 
   <ItemGroup>
     <Compile Remove="Mapping\**" />
+    <Compile Remove="Modules\GroupModule\List\**" />
     <EmbeddedResource Remove="Mapping\**" />
+    <EmbeddedResource Remove="Modules\GroupModule\List\**" />
     <None Remove="Mapping\**" />
+    <None Remove="Modules\GroupModule\List\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,7 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Modules\GroupModule\List\" />
     <Folder Include="Modules\UserModule\AddRoleToUer\" />
     <Folder Include="Security\Role\" />
   </ItemGroup>

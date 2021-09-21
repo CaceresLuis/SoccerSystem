@@ -1,15 +1,13 @@
 ﻿using MediatR;
 using Core.Dtos;
-using Shared.Enums;
 using System.Threading;
-using Core.ModelResponse;
 using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 
 namespace Core.Modules.MatchModule.Reset
 {
-    public class ResetMatchHandler : IRequestHandler<ResetMatchCommand, ActionResponse>
+    public class ResetMatchHandler : IRequestHandler<ResetMatchCommand, bool>
     {
         private readonly IMatchRepository _matchRepository;
         private readonly IGroupTeamsRepository _groupTeamsRepository;
@@ -20,7 +18,7 @@ namespace Core.Modules.MatchModule.Reset
             _groupTeamsRepository = groupTeamsRepository;
         }
 
-        public async Task<ActionResponse> Handle(ResetMatchCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(ResetMatchCommand request, CancellationToken cancellationToken)
         {
             MatchDto dto = request.MatchDto;
             GroupTeamEntity local = await _groupTeamsRepository.GetGroupDetailsByGroupAdnTeamAsync(dto.GroupId, dto.Local.Id);
@@ -57,7 +55,8 @@ namespace Core.Modules.MatchModule.Reset
             match.GoalsVisitor = 0;
             match.GoalsLocal = 0;
             await _matchRepository.UpdateMatchAsync(match);
-            return new ActionResponse { IsSuccess = true, Title = "Success", Message = "Macht Updated", State = State.success };
+
+            return true;
         }
     }
 }

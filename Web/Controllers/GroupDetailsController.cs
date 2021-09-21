@@ -1,16 +1,15 @@
 ﻿using MediatR;
 using AutoMapper;
 using Web.ViewModel;
+using Shared.Enums;
+using Shared.Exceptions;
 using Core.ModelResponse;
-using Core.ModelResponse.One;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Core.Modules.GroupDetailsModule.Add;
 using Core.Modules.GroupDetailsModule.Get;
 using Core.Modules.GroupDetailsModule.Remove;
-using Shared.Enums;
-using Shared.Exceptions;
 
 namespace Web.Controllers
 {
@@ -28,15 +27,22 @@ namespace Web.Controllers
 
         public async Task<ActionResult> Create(int idGroup, int idTournament)
         {
-            //TODO: verificar que los grupos del torneo estan activos y quitar los team
-            GroupDetailsResponse groupDetailsResponse = await _mediator.Send(new GetGroupDetailsByGroupQuery { IdGroup = idGroup, IdTournament = idTournament });
-            TempData["Title"] = groupDetailsResponse.Data.Title;
-            TempData["Message"] = groupDetailsResponse.Data.Message;
-            TempData["State"] = groupDetailsResponse.Data.State.ToString();
+            try
+            {
+                //TODO: verificar que los grupos del torneo estan activos y quitar los team
+                GroupDetailsResponse groupDetailsResponse = await _mediator.Send(new GetGroupDetailsByGroupQuery { IdGroup = idGroup, IdTournament = idTournament });
+                CreateGroupDetailsViewModels detailsViewModel = _mapper.Map<CreateGroupDetailsViewModels>(groupDetailsResponse);
 
-            CreateGroupDetailsViewModels detailsViewModel = _mapper.Map<CreateGroupDetailsViewModels>(groupDetailsResponse);
-
-            return View(detailsViewModel);
+                return View(detailsViewModel);
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = e.Error.State;
+                return View();
+            }
+            
         }
 
         [HttpPost]
@@ -46,7 +52,7 @@ namespace Web.Controllers
             try
             {
                 GroupDetailsResponse groupDetailsResponse = _mapper.Map<GroupDetailsResponse>(groupDetail);
-                ActionResponse create = await _mediator.Send(new AddGroupDetailsCommand { GroupDetail = groupDetailsResponse });
+                bool create = await _mediator.Send(new AddGroupDetailsCommand { GroupDetail = groupDetailsResponse });
                 TempData["Title"] = "Added";
                 TempData["Message"] = $"The team was added to the group";
                 TempData["State"] = $"{State.success}";
@@ -65,12 +71,22 @@ namespace Web.Controllers
 
         public async Task<ActionResult> Delete(int id)
         {
-            RGroupDetailsResponse delete = await _mediator.Send(new RemoveGroupDetailCommand { Id = id });
-            TempData["Title"] = delete.Data.Title;
-            TempData["Message"] = delete.Data.Message;
-            TempData["State"] = delete.Data.State.ToString();
+            try
+            {
+                int delete = await _mediator.Send(new RemoveGroupDetailCommand { Id = id });
+                TempData["Title"] = "Deleted!";
+                TempData["Message"] = "Team has been deleted!";
+                TempData["State"] = $"{State.success}"; 
+                return RedirectToAction("Detail", "Group", new { id = delete });
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = e.Error.State;
 
-            return RedirectToAction("Detail", "Group", new { id = delete.GroupId });
+                return RedirectToAction("Detail", "Group", new { id = int.Parse(e.Error.Code) });
+            }    
         }
     }
 }
