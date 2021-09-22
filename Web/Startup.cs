@@ -45,6 +45,9 @@ namespace Web
             //Config MediatoR
             services.AddMediatR(typeof(AddTeamCommand).Assembly);
 
+            //Inyectando Swagger
+            services.AddSwaggerGen();
+
             services.AddControllersWithViews();
 
             //Config Datacontex
@@ -135,6 +138,14 @@ namespace Web
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+            });
+
+            //Usando SWagger
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                //Personalizar
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Soccer System v1");
             });
         }
     }

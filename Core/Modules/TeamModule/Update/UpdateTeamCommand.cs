@@ -1,10 +1,10 @@
 ﻿using MediatR;
-using Core.ModelResponse;
+using Core.Dtos;
 
 namespace Core.Modules.TeamModule.Update
 {
     public class UpdateTeamCommand : IRequest<bool>
     {
-        public TeamResponse Team { get; set; }
+        public TeamDto Team { get; set; }
     }
 }

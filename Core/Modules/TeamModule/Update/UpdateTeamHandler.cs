@@ -1,9 +1,9 @@
 ﻿using MediatR;
+using Core.Dtos;
 using System.Net;
 using Shared.Enums;
 using System.Threading;
 using Shared.Exceptions;
-using Core.ModelResponse;
 using Shared.Helpers.Image;
 using Infrastructure.Models;
 using System.Threading.Tasks;
@@ -24,11 +24,12 @@ namespace Core.Modules.TeamModule.Update
 
         public async Task<bool> Handle(UpdateTeamCommand request, CancellationToken cancellationToken)
         {
-            TeamResponse upTeam = request.Team;
+            TeamDto upTeam = request.Team;
             if(upTeam.LogoFile != null)
                 upTeam.LogoPath = await _iMageHelper.UploadImageAsync(upTeam.LogoFile, "Teams");
 
             TeamEntity team = await _teamRepository.FindTeamByIdAsync(upTeam.Id);
+            
             if(team == null)
                 throw new ExceptionHandler(HttpStatusCode.BadRequest,
                     new Error
@@ -54,10 +55,10 @@ namespace Core.Modules.TeamModule.Update
                     });
             }
 
-            team.Name = upTeam.Name;
-            team.LogoPath = upTeam.LogoPath;
+            team.Name = upTeam.Name ?? team.Name;
+            team.LogoPath = upTeam.LogoPath ?? team.LogoPath;
 
-            if(!await _teamRepository.UpdateTeamAsync(team))
+            if (!await _teamRepository.UpdateTeamAsync(team))
                 throw new ExceptionHandler(HttpStatusCode.BadRequest,
                     new Error
                     {

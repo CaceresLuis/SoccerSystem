@@ -42,14 +42,13 @@ namespace Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(TeamViewModels teamView)
+        public async Task<ActionResult> Create(TeamDto teamDto)
         {
             try
             {
-                TeamResponse teamResponse = _mapper.Map<TeamResponse>(teamView);
-                await _mediator.Send(new AddTeamCommand { Team = teamResponse });
+                await _mediator.Send(new AddTeamCommand { Team = teamDto });
                 TempData["Title"] = "Created";
-                TempData["Message"] = $"The team {teamResponse.Name} was created";
+                TempData["Message"] = $"The team {teamDto.Name} was created";
                 TempData["State"] = State.success.ToString();
 
                 return RedirectToAction(nameof(Index));
@@ -82,14 +81,13 @@ namespace Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(TeamViewModels teamView)
+        public async Task<ActionResult> Edit(TeamDto teamDto)
         {
             try
             {
-                TeamResponse teamResponse = _mapper.Map<TeamResponse>(teamView);
-                await _mediator.Send(new UpdateTeamCommand { Team = teamResponse });
+                await _mediator.Send(new UpdateTeamCommand { Team = teamDto });
                 TempData["Title"] = "Updated!";
-                TempData["Message"] = $"The team: {teamResponse.Name} was Updated";
+                TempData["Message"] = $"The team: {teamDto.Name} was Updated";
                 TempData["State"] = State.success.ToString();
 
                 return RedirectToAction(nameof(Index));
@@ -99,7 +97,7 @@ namespace Web.Controllers
                 TempData["Title"] = e.Error.Title;
                 TempData["Message"] = e.Error.Message;
                 TempData["State"] = State.error.ToString();
-                return View(teamView);
+                return View(teamDto);
             }
         }
 
