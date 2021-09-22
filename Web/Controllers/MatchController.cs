@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Core.Dtos;
-using Core.ModelResponse;
+using Shared.Enums;
+using Shared.Exceptions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Core.Modules.MatchModule.Get;
@@ -8,14 +9,12 @@ using Core.Modules.MatchModule.Add;
 using Core.Modules.MatchModule.List;
 using Core.Modules.MatchModule.Close;
 using Core.Modules.MatchModule.Reset;
-using Microsoft.AspNetCore.Authorization;
-using Shared.Enums;
-using Shared.Exceptions;
 using Core.Modules.MatchModule.Remove;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers
 {
-    public class MatchController : Controller
+    public class MatchController : Controller 
     {
         private readonly IMediator _mediator;
 

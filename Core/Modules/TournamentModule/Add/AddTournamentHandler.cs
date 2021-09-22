@@ -1,16 +1,17 @@
 ﻿using MediatR;
 using AutoMapper;
+using System.Net;
 using Shared.Enums;
 using System.Threading;
-using Core.ModelResponse;
+using Shared.Exceptions;
+using Shared.Helpers.Image;
 using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
-using Shared.Helpers.Image;
 
 namespace Core.Modules.TournamentModule.Add
 {
-    public class AddTournamentHandler : IRequestHandler<AddTournamentCommand, ActionResponse>
+    public class AddTournamentHandler : IRequestHandler<AddTournamentCommand, bool>
     {
         private readonly IMapper _mapper;
         private readonly IIMageHelper _iMageHelper;
@@ -23,7 +24,7 @@ namespace Core.Modules.TournamentModule.Add
             _tournamentRepository = tournamentRepository;
         }
 
-        public async Task<ActionResponse> Handle(AddTournamentCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(AddTournamentCommand request, CancellationToken cancellationToken)
         {
             if(request.Tournament.LogoFile != null)
                 request.Tournament.LogoPath = await _iMageHelper.UploadImageAsync(request.Tournament.LogoFile, "Tournaments");
@@ -31,12 +32,27 @@ namespace Core.Modules.TournamentModule.Add
             TournamentEntity tournament = _mapper.Map<TournamentEntity>(request.Tournament);
 
             if (await _tournamentRepository.GetTournamentByNameAsync(tournament.Name) != null)
-                return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"The {tournament.Name} tournament name is already registered", State = State.error };
+                throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                    new Error
+                    {
+                        Code = "Error",
+                        Message = $"The {tournament.Name} tournament name is already registered",
+                        Title = "Error",
+                        State = State.error,
+                        IsSuccess = false
+                    });
 
-            if(!await _tournamentRepository.AddTournamentAsync(tournament))
-                return new ActionResponse { IsSuccess = false, Title = "Error!", Message = $"Something has gone wrong", State = State.error };
-
-            return new ActionResponse { IsSuccess = true, Title = "Created", Message = $"The tournament {tournament.Name} was created", State = State.success };
+            if (!await _tournamentRepository.AddTournamentAsync(tournament))
+                throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                    new Error
+                    {
+                        Code = "Error",
+                        Message = "Something has gone wrong",
+                        Title = "Error",
+                        State = State.error,
+                        IsSuccess = false
+                    });
+            return true;
         }
     }
 }

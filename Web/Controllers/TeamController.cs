@@ -1,8 +1,10 @@
 ﻿using MediatR;
+using Core.Dtos;
 using AutoMapper;
+using Shared.Enums;
 using Web.ViewModel;
+using Shared.Exceptions;
 using Core.ModelResponse;
-using Core.ModelResponse.One;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Core.Modules.TeamModule.Add;
@@ -27,11 +29,9 @@ namespace Web.Controllers
 
         public async Task<ActionResult> Index()
         {
-            TeamResponse[] teamResponse = await _mediator.Send(new ListTeamsQuery());
+            TeamDto[] teamDtos = await _mediator.Send(new ListTeamsQuery());
 
-            TeamViewModels[] teamView = _mapper.Map<TeamViewModels[]>(teamResponse);
-
-            return View(teamView);
+            return View(teamDtos);
         }
 
         [Authorize(Roles = "admin")]
@@ -44,60 +44,82 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(TeamViewModels teamView)
         {
-            TeamResponse teamResponse = _mapper.Map<TeamResponse>(teamView);
-            ActionResponse create = await _mediator.Send(new AddTeamCommand { Team = teamResponse });
-            TempData["Title"] = create.Title;
-            TempData["Message"] = create.Message;
-            TempData["State"] = create.State.ToString();
+            try
+            {
+                TeamResponse teamResponse = _mapper.Map<TeamResponse>(teamView);
+                await _mediator.Send(new AddTeamCommand { Team = teamResponse });
+                TempData["Title"] = "Created";
+                TempData["Message"] = $"The team {teamResponse.Name} was created";
+                TempData["State"] = State.success.ToString();
 
-            if (!create.IsSuccess)
+                return RedirectToAction(nameof(Index));
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = State.error.ToString();
                 return View();
-
-            return RedirectToAction(nameof(Index));
+            }
         }
 
         [Authorize(Roles = "admin")]
         public async Task<ActionResult> Edit(int id)
         {
-
-            ATeamResponse teamResponse = await _mediator.Send(new GetTeamByIdQuery { TeamId = id });
-            TempData["Title"] = teamResponse.Data.Title;
-            TempData["Message"] = teamResponse.Data.Message;
-            TempData["State"] = teamResponse.Data.State.ToString();
-
-            if (!teamResponse.Data.IsSuccess)
+            try
+            {
+                TeamDto teamDto = await _mediator.Send(new GetTeamByIdQuery { TeamId = id });
+                return View(teamDto);
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = State.error.ToString();
                 return RedirectToAction(nameof(Index));
-
-            TeamViewModels teamView = _mapper.Map<TeamViewModels>(teamResponse.Team);
-            return View(teamView);
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(TeamViewModels teamView)
         {
-            TeamResponse teamResponse = _mapper.Map<TeamResponse>(teamView);
-            ActionResponse update = await _mediator.Send(new UpdateTeamCommand { Team = teamResponse });
-            TempData["Title"] = update.Title;
-            TempData["Message"] = update.Message;
-            TempData["State"] = update.State.ToString();
+            try
+            {
+                TeamResponse teamResponse = _mapper.Map<TeamResponse>(teamView);
+                await _mediator.Send(new UpdateTeamCommand { Team = teamResponse });
+                TempData["Title"] = "Updated!";
+                TempData["Message"] = $"The team: {teamResponse.Name} was Updated";
+                TempData["State"] = State.success.ToString();
 
-            if (!update.IsSuccess)
+                return RedirectToAction(nameof(Index));
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = State.error.ToString();
                 return View(teamView);
-
-            return RedirectToAction(nameof(Index));
+            }
         }
 
         [Authorize(Roles = "admin")]
         public async Task<ActionResult> Delete(int id)
         {
-            if (id < 1) return NotFound();
-
-            ActionResponse delete = await _mediator.Send(new RemoveTeamCommand { IdTeam = id });
-            TempData["Title"] = delete.Title;
-            TempData["Message"] = delete.Message;
-            TempData["State"] = delete.State.ToString();
-
+            try
+            {
+                await _mediator.Send(new RemoveTeamCommand { IdTeam = id });
+                TempData["Title"] = "Deleted!";
+                TempData["Message"] = $"Team has been deleted!";
+                TempData["State"] = State.success.ToString();
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = State.error.ToString();
+            }
+            
             return RedirectToAction(nameof(Index));
         }
     }

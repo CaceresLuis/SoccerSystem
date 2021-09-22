@@ -1,8 +1,9 @@
 ﻿using MediatR;
 using AutoMapper;
+using System.Net;
 using Shared.Enums;
 using System.Threading;
-using Core.ModelResponse;
+using Shared.Exceptions;
 using Shared.Helpers.Image;
 using Infrastructure.Models;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ using Infrastructure.Interfaces;
 
 namespace Core.Modules.TeamModule.Add
 {
-    public class AddTeamHandler : IRequestHandler<AddTeamCommand, ActionResponse>
+    public class AddTeamHandler : IRequestHandler<AddTeamCommand, bool>
     {
         private readonly IMapper _mapper;
         private readonly IIMageHelper _iMageHelper;
@@ -23,7 +24,7 @@ namespace Core.Modules.TeamModule.Add
             _teamRepository = teamRepository;
         }
 
-        public async Task<ActionResponse> Handle(AddTeamCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(AddTeamCommand request, CancellationToken cancellationToken)
         {
             if (request.Team.LogoFile != null)
                 request.Team.LogoPath = await _iMageHelper.UploadImageAsync(request.Team.LogoFile, "Tournaments");
@@ -31,12 +32,28 @@ namespace Core.Modules.TeamModule.Add
             TeamEntity team = _mapper.Map<TeamEntity>(request.Team);
 
             if(await _teamRepository.FindTeamByNameAsync(team.Name) != null)
-                return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"The {team.Name} is already registered", State = State.error };
+                throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                    new Error
+                    {
+                        Code = "Error",
+                        Message = $"The {team.Name} is already registered",
+                        Title = "Error",
+                        State = State.error,
+                        IsSuccess = false
+                    });
 
-            if(!await _teamRepository.AddTeamAsync(team))
-                return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"Something has gone wrong", State = State.error }; ;
+            if (!await _teamRepository.AddTeamAsync(team))
+                throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                    new Error
+                    {
+                        Code = "Error",
+                        Message = "Something has gone wrong",
+                        Title = "Error",
+                        State = State.error,
+                        IsSuccess = false
+                    });
 
-            return new ActionResponse { IsSuccess = true, Title = "Created", Message = $"The team {team.Name} was created", State = State.success };
+            return true;
         }
     }
 }

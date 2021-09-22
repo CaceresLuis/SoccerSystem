@@ -1,6 +1,8 @@
 ﻿using MediatR;
+using System.Net;
 using Shared.Enums;
 using System.Threading;
+using Shared.Exceptions;
 using Core.ModelResponse;
 using Shared.Helpers.Image;
 using Infrastructure.Models;
@@ -9,7 +11,7 @@ using Infrastructure.Interfaces;
 
 namespace Core.Modules.TournamentModule.Update
 {
-    public class UpdateTournamentHandler : IRequestHandler<UpdateTournamentCommnad, ActionResponse>
+    public class UpdateTournamentHandler : IRequestHandler<UpdateTournamentCommnad, bool>
     {
         private readonly IIMageHelper _iMageHelper;
         private readonly ITournamentRepository _tournamentRepository;
@@ -20,7 +22,7 @@ namespace Core.Modules.TournamentModule.Update
             _tournamentRepository = tournamentRepository;
         }
 
-        public async Task<ActionResponse> Handle(UpdateTournamentCommnad request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(UpdateTournamentCommnad request, CancellationToken cancellationToken)
         {
             TournamentResponse upTournament = request.TournamentResponse;
             if (upTournament.LogoFile != null)
@@ -28,12 +30,28 @@ namespace Core.Modules.TournamentModule.Update
 
             TournamentEntity tournament = await _tournamentRepository.GetTournamentFindAsync(request.TournamentResponse.Id);
             if (tournament == null)
-                return new ActionResponse { IsSuccess = false, Title = "Error", Message = "The tournament does not exist", State = State.error };
+                throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                    new Error
+                    {
+                        Code = "Error",
+                        Message = "The tournament does not exist",
+                        Title = "Error",
+                        State = State.error,
+                        IsSuccess = false
+                    });
 
-            if(upTournament.Name != tournament.Name)
+            if (upTournament.Name != tournament.Name)
             {
                 if (await _tournamentRepository.GetTournamentByNameAsync(request.TournamentResponse.Name) != null)
-                    return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"The {upTournament.Name} tournament name is already registered", State = State.error };
+                    throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                    new Error
+                    {
+                        Code = "Error",
+                        Message = $"The {upTournament.Name} tournament name is already registered",
+                        Title = "Error",
+                        State = State.error,
+                        IsSuccess = false
+                    });
             }
 
             tournament.EndDate = upTournament.EndDate;
@@ -43,9 +61,17 @@ namespace Core.Modules.TournamentModule.Update
             tournament.LogoPath = upTournament.LogoPath ?? tournament.LogoPath;
 
             if(!await _tournamentRepository.UpdateTournamentAsync(tournament))
-                return new ActionResponse { IsSuccess = true, Title = "Error!", Message = "Something has gone wrong", State = State.error };
+                throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                    new Error
+                    {
+                        Code = "Error",
+                        Message = "Something has gone wrong",
+                        Title = "Error",
+                        State = State.error,
+                        IsSuccess = false
+                    });
 
-            return new ActionResponse { IsSuccess = true, Title = "Updated!", Message = $"The tournament {tournament.Name} was Updated", State = State.success };
+            return true;
         }
     }
 }

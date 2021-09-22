@@ -2,7 +2,6 @@
 using AutoMapper;
 using Web.Models;
 using Web.ViewModel;
-using Web.ModelsView;
 using Core.ModelResponse;
 using Infrastructure.Models;
 using Core.ModelResponse.One;
@@ -17,16 +16,10 @@ namespace Web.Map
             CreateMap<GroupEntity, GroupDto>().ReverseMap();
             CreateMap<GroupEntity, GroupMatchDto>().ReverseMap();
             CreateMap<GroupEntity, GroupMatchsDto>().ReverseMap();
-            //CreateMap<GroupEntity, GroupDetailEntity>().ReverseMap();
 
 
             CreateMap<MatchEntity, MatchDto>();
             CreateMap<TeamEntity, TeamDto>().ReverseMap();
-
-
-            CreateMap<AddMatchDto, AddMatchViewModel>();
-            CreateMap<GroupDto, GroupViewModel>().ReverseMap();
-
 
 
 

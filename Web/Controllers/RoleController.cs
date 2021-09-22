@@ -3,18 +3,13 @@ using MediatR;
 using Core.Dtos;
 using AutoMapper;
 using Shared.Enums;
-using Web.ViewModel;
 using Shared.Exceptions;
-using Core.ModelResponse;
-using Core.ModelResponse.One;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using Core.Modules.TeamModule.Get;
 using Core.Modules.RoleModule.Add;
 using Core.Modules.RoleModule.List;
 using Microsoft.AspNetCore.Identity;
-using Core.Modules.TeamModule.Update;
 using Core.Modules.RoleModule.Remove;
 using Microsoft.AspNetCore.Authorization;
 
@@ -75,38 +70,7 @@ namespace Web.Controllers
                 return View();
             }
         }
-
-        public async Task<ActionResult> Edit(int id)
-        {
-
-            ATeamResponse teamResponse = await _mediator.Send(new GetTeamByIdQuery { TeamId = id });
-            TempData["Title"] = teamResponse.Data.Title;
-            TempData["Message"] = teamResponse.Data.Message;
-            TempData["State"] = teamResponse.Data.State.ToString();
-
-            if (!teamResponse.Data.IsSuccess)
-                return RedirectToAction(nameof(Index));
-
-            TeamViewModels teamView = _mapper.Map<TeamViewModels>(teamResponse.Team);
-            return View(teamView);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(TeamViewModels teamView)
-        {
-            TeamResponse teamResponse = _mapper.Map<TeamResponse>(teamView);
-            ActionResponse update = await _mediator.Send(new UpdateTeamCommand { Team = teamResponse });
-            TempData["Title"] = update.Title;
-            TempData["Message"] = update.Message;
-            TempData["State"] = update.State.ToString();
-
-            if (!update.IsSuccess)
-                return View(teamView);
-
-            return RedirectToAction(nameof(Index));
-        }
-
+      
         public async Task<ActionResult> Delete(Guid id)
         {
             try

@@ -11,6 +11,8 @@ using Core.Modules.TournamentModule.List;
 using Microsoft.AspNetCore.Authorization;
 using Core.Modules.TournamentModule.Remove;
 using Core.Modules.TournamentModule.Update;
+using Shared.Exceptions;
+using Shared.Enums;
 
 namespace Web.Controllers
 {
@@ -44,69 +46,100 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(TournamentViewModels tournamentView)
         {
-            TournamentResponse tournamentResponse = _mapper.Map<TournamentResponse>(tournamentView);
-            ActionResponse create = await _mediator.Send(new AddTournamentCommand { Tournament = tournamentResponse });
+            try
+            {
+                TournamentResponse tournamentResponse = _mapper.Map<TournamentResponse>(tournamentView);
+                await _mediator.Send(new AddTournamentCommand { Tournament = tournamentResponse });
 
-            TempData["Title"] = create.Title;
-            TempData["Message"] = create.Message;
-            TempData["State"] = create.State.ToString();
+                TempData["Title"] = "Created!";
+                TempData["Message"] = $"The tournament {tournamentResponse.Name} was created";
+                TempData["State"] = State.success.ToString();
 
-            if (!create.IsSuccess)
+                return RedirectToAction(nameof(Index));
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = State.error.ToString();
                 return View();
-                
-            return RedirectToAction(nameof(Index));
+            }
         }
 
         public async Task<ActionResult> Details(int id)
         {
-            ATournamentResponse tournamentResponse = await _mediator.Send(new GetTournamentQuery { Id = id });
-
-            //if (!tournamentResponse.Data.IsSuccess)
-            //    return RedirectToAction(nameof(Index));
-
-            TournamentViewModels tournamentView = _mapper.Map<TournamentViewModels>(tournamentResponse.Tournament);
-            return View(tournamentView);
+            try
+            {
+                var tournamentResponse = await _mediator.Send(new GetTournamentQuery { Id = id });
+                TournamentViewModels tournamentView = _mapper.Map<TournamentViewModels>(tournamentResponse);
+                return View(tournamentView);
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = State.error.ToString();
+                return RedirectToAction("Index", "Tournament");
+            }
         }
 
         [Authorize(Roles = "admin")]
         public async Task<ActionResult> Edit(int id)
         {
-            ATournamentResponse tournamentResponse = await _mediator.Send(new GetTournamentQuery { Id = id });
-            TempData["Title"] = tournamentResponse.Data.Title;
-            TempData["Message"] = tournamentResponse.Data.Message;
-            TempData["State"] = tournamentResponse.Data.State.ToString();
-
-            if (!tournamentResponse.Data.IsSuccess)
-                return RedirectToAction(nameof(Index));
-
-            TournamentViewModels tournamentView = _mapper.Map<TournamentViewModels>(tournamentResponse.Tournament);
-            return View(tournamentView);
+            try
+            {
+                var tournamentResponse = await _mediator.Send(new GetTournamentQuery { Id = id });
+                TournamentViewModels tournamentView = _mapper.Map<TournamentViewModels>(tournamentResponse);
+                return View(tournamentView);
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = State.error.ToString();
+                return RedirectToAction("Index", "Tournament");
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(TournamentViewModels tournamentView)
         {
-            TournamentResponse tournamentResponse = _mapper.Map<TournamentResponse>(tournamentView);
-            ActionResponse update = await _mediator.Send(new UpdateTournamentCommnad { TournamentResponse = tournamentResponse });
-            TempData["Title"] = update.Title;
-            TempData["Message"] = update.Message;
-            TempData["State"] = update.State.ToString();
-
-            if (!update.IsSuccess)
+            try
+            {
+                TournamentResponse tournamentResponse = _mapper.Map<TournamentResponse>(tournamentView);
+                await _mediator.Send(new UpdateTournamentCommnad { TournamentResponse = tournamentResponse });
+                TempData["Title"] = "Updated!";
+                TempData["Message"] = $"The tournament {tournamentResponse.Name} was Updated";
+                TempData["State"] = State.success.ToString();
+                return RedirectToAction(nameof(Details), new { id = tournamentResponse.Id });
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = State.error.ToString();
                 return View(tournamentView);
-
-            return  RedirectToAction(nameof(Index));
+            }
         }
 
         [Authorize(Roles = "admin")]
         public async Task<ActionResult> Delete(int id)
         {
-            ActionResponse delete = await _mediator.Send(new RemoveTournamentCommand { Id = id });
-            TempData["Title"] = delete.Title;
-            TempData["Message"] = delete.Message;
-            TempData["State"] = delete.State.ToString();
+            try
+            {
+                await _mediator.Send(new RemoveTournamentCommand { Id = id });
+                TempData["Title"] = "Deleted!";
+                TempData["Message"] = "Tournament has been deleted!";
+                TempData["State"] = State.success.ToString();
 
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = State.error.ToString();
+            }
             return RedirectToAction(nameof(Index));
         }
     }

@@ -4,7 +4,6 @@ using Shared.Enums;
 using Web.ViewModel;
 using Shared.Exceptions;
 using Core.ModelResponse;
-using Core.ModelResponse.One;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Core.Modules.GroupModule.Add;
@@ -33,8 +32,8 @@ namespace Web.Controllers
             GroupViewModels groupView = new GroupViewModels { };
             try
             {
-                ATournamentResponse tournamentResponse = await _mediator.Send(new GetTournamentQuery { Id = id });
-                TournamentViewModels tournament = _mapper.Map<TournamentViewModels>(tournamentResponse.Tournament);
+                TournamentResponse tournamentResponse = await _mediator.Send(new GetTournamentQuery { Id = id });
+                TournamentViewModels tournament = _mapper.Map<TournamentViewModels>(tournamentResponse);
                 groupView.Tournament = tournament;
 
                 return View(groupView);

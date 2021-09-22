@@ -7,12 +7,11 @@ using Shared.Exceptions;
 using Core.ModelResponse;
 using Infrastructure.Models;
 using System.Threading.Tasks;
-using Core.ModelResponse.One;
 using Infrastructure.Interfaces;
 
 namespace Core.Modules.TournamentModule.Get
 {
-    public class GetTournamentHandler : IRequestHandler<GetTournamentQuery, ATournamentResponse>
+    public class GetTournamentHandler : IRequestHandler<GetTournamentQuery, TournamentResponse>
     {
         private readonly IMapper _mapper;
         private readonly ITournamentRepository _tournamentRepository;
@@ -23,10 +22,8 @@ namespace Core.Modules.TournamentModule.Get
             _tournamentRepository = tournamentRepository;
         }
 
-        public async Task<ATournamentResponse> Handle(GetTournamentQuery request, CancellationToken cancellationToken)
+        public async Task<TournamentResponse> Handle(GetTournamentQuery request, CancellationToken cancellationToken)
         {
-            ATournamentResponse response = new ATournamentResponse { };
-
             TournamentEntity tournament = await _tournamentRepository.GetTournamentDetailsAsync(request.Id);
             if(tournament == null)
                 throw new ExceptionHandler(HttpStatusCode.BadRequest,
@@ -39,8 +36,7 @@ namespace Core.Modules.TournamentModule.Get
                         IsSuccess = false
                     });
 
-            response.Tournament = _mapper.Map<TournamentResponse>(tournament);
-            return response;
+            return _mapper.Map<TournamentResponse>(tournament);
         }
     }
 }

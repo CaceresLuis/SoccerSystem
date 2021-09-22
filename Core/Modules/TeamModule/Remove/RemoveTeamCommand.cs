@@ -3,7 +3,7 @@ using Core.ModelResponse;
 
 namespace Core.Modules.TeamModule.Remove
 {
-    public class RemoveTeamCommand : IRequest<ActionResponse>
+    public class RemoveTeamCommand : IRequest<bool>
     {
         public int IdTeam { get; set; }
     }

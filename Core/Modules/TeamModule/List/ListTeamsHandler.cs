@@ -1,7 +1,7 @@
 ﻿using MediatR;
+using Core.Dtos;
 using AutoMapper;
 using System.Threading;
-using Core.ModelResponse;
 using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace Core.Modules.TeamModule.List
 {
-    public class ListTeamsHandler : IRequestHandler<ListTeamsQuery, TeamResponse[]>
+    public class ListTeamsHandler : IRequestHandler<ListTeamsQuery, TeamDto[]>
     {
         private readonly IMapper _mapper;
         private readonly ITeamRepository _teamRepository;
@@ -22,7 +22,7 @@ namespace Core.Modules.TeamModule.List
             _groupRepository = groupRepository;
         }
 
-        public async Task<TeamResponse[]> Handle(ListTeamsQuery request, CancellationToken cancellationToken)
+        public async Task<TeamDto[]> Handle(ListTeamsQuery request, CancellationToken cancellationToken)
         {
             List<GroupEntity> groupTournament = await _groupRepository.GetGroupTeamTournamentsAsync();
             List<TeamEntity> teams = await _teamRepository.GetAllTeamAsync();
@@ -37,7 +37,7 @@ namespace Core.Modules.TeamModule.List
                 }
             }
 
-            return _mapper.Map<TeamResponse[]>(teams);
+            return _mapper.Map<TeamDto[]>(teams);
         }
     }
 }
