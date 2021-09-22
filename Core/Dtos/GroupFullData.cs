@@ -4,7 +4,7 @@ namespace Core.Dtos
 {
     public class GroupFullData : GroupDto
     {
-        public ICollection<MatchDto> MatchDtos { get; set; }
+        public ICollection<MatchDto> Matchs { get; set; }
         public ICollection<GroupTeam> GroupTeams { get; set; }
     }
 }

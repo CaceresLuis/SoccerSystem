@@ -16,5 +16,6 @@ namespace Infrastructure.Interfaces
         Task<GroupEntity> GetGroupMatchsAsync(int id);
         Task<GroupEntity> GetGroupTeamAndDetailsAsync(int id);
         Task<List<GroupEntity>> GetGroupTeamTournamentsAsync();
+        Task<GroupEntity[]> GetListGroupWithTournamentAsync();
     }
 }

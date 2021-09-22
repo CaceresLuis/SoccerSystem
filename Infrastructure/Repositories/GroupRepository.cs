@@ -34,6 +34,11 @@ namespace Infrastructure.Repositories
             return await _dataContext.Groups.Include(g => g.Tournament).FirstOrDefaultAsync(g => g.Id == id);
         }
 
+        public async Task<GroupEntity[]> GetListGroupWithTournamentAsync()
+        {
+            return await _dataContext.Groups.Include(g => g.Tournament).ToArrayAsync();
+        }
+
         public async Task<GroupEntity> GetGroupByNameAndTournamentAsync(int idTournament, string groupName)
         {
             return await _dataContext.Groups.Include(g => g.Tournament)

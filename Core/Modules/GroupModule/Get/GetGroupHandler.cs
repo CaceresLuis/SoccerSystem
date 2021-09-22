@@ -1,14 +1,14 @@
 ﻿using MediatR;
+using Core.Dtos;
 using AutoMapper;
 using System.Threading;
-using Core.ModelResponse;
 using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 
 namespace Core.Modules.GroupModule.Get
 {
-    public class GetGroupHandler : IRequestHandler<GetGroupQuery, GroupResponse>
+    public class GetGroupHandler : IRequestHandler<GetGroupQuery, GroupDto>
     {
         private readonly IMapper _mapper;
         private readonly IGroupRepository _groupRepository;
@@ -19,11 +19,11 @@ namespace Core.Modules.GroupModule.Get
             _groupRepository = groupRepository;
         }
 
-        public async Task<GroupResponse> Handle(GetGroupQuery request, CancellationToken cancellationToken)
+        public async Task<GroupDto> Handle(GetGroupQuery request, CancellationToken cancellationToken)
         {
             GroupEntity group = await _groupRepository.GetGroupWithTournamentAsync(request.Id);
 
-            return _mapper.Map<GroupResponse>(group);
+            return _mapper.Map<GroupDto>(group);
         }
     }
 }

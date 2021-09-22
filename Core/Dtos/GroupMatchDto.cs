@@ -2,7 +2,7 @@
 {
     public class GroupMatchDto : GroupDto
     {
-        public MatchDto MatchDto { get; set; }
+        public MatchDto Match { get; set; }
         public GroupTeam MyProperty { get; set; }
     }
 }

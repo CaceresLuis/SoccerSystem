@@ -12,14 +12,15 @@ namespace Web.Map
     {
         public MapProfile()
         {
+            CreateMap<TeamEntity, TeamDto>().ReverseMap();
             CreateMap<UserEntity, UserDto>().ReverseMap();
+            CreateMap<MatchEntity, MatchDto>().ReverseMap();
             CreateMap<GroupEntity, GroupDto>().ReverseMap();
             CreateMap<GroupEntity, GroupMatchDto>().ReverseMap();
             CreateMap<GroupEntity, GroupMatchsDto>().ReverseMap();
+            CreateMap<TournamentEntity, TournamentDto>().ReverseMap();
 
 
-            CreateMap<MatchEntity, MatchDto>();
-            CreateMap<TeamEntity, TeamDto>().ReverseMap();
 
 
 

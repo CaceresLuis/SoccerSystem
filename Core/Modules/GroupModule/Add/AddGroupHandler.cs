@@ -14,16 +14,21 @@ namespace Core.Modules.GroupModule.Add
     {
         private readonly IMapper _mapper;
         private readonly IGroupRepository _groupRepository;
+        private readonly ITournamentRepository _tournamentRepository;
 
-        public AddGroupHandler(IMapper mapper, IGroupRepository groupRepository)
+        public AddGroupHandler(IMapper mapper, IGroupRepository groupRepository, ITournamentRepository tournamentRepository)
         {
             _mapper = mapper;
             _groupRepository = groupRepository;
+            _tournamentRepository = tournamentRepository;
         }
 
         public async Task<bool> Handle(AddGroupCommand request, CancellationToken cancellationToken)
         {
-            GroupEntity group = _mapper.Map<GroupEntity>(request.Group);
+            TournamentEntity tournamentEntity = await _tournamentRepository.GetTournamentFindAsync(request.GroupDto.Tournament.Id);
+            GroupEntity group = _mapper.Map<GroupEntity>(request.GroupDto);
+            group.IsActive = true;
+            group.Tournament = tournamentEntity;
             if(group.Name == null)
                 throw new ExceptionHandler(HttpStatusCode.BadRequest,
                     new Error
@@ -46,8 +51,7 @@ namespace Core.Modules.GroupModule.Add
                         IsSuccess = false
                     });
 
-            group.IsActive = true;
-            if(!await _groupRepository.AddGroupAsync(group))
+            if (!await _groupRepository.AddGroupAsync(group))
                 throw new ExceptionHandler(HttpStatusCode.BadRequest,
                     new Error
                     {

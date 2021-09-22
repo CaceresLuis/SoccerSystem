@@ -4,6 +4,6 @@ namespace Core.Dtos
 {
     public class TournamentGroupsDto : TournamentDto
     {
-        public ICollection<GroupDto> GroupDtos { get; set; }
+        public ICollection<GroupDto> Group { get; set; }
     }
 }

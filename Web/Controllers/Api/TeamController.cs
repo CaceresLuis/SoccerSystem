@@ -1,10 +1,9 @@
 ﻿using MediatR;
 using Core.Dtos;
-using Infrastructure;
-using Infrastructure.Models;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Core.Modules.TeamModule.Get;
+using Core.Modules.TeamModule.Add;
 using Core.Modules.TeamModule.List;
 using Core.Modules.TeamModule.Update;
 using Core.Modules.TeamModule.Remove;
@@ -16,11 +15,9 @@ namespace Web.Controllers.Api
     public class TeamController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly DataContext _context;
 
-        public TeamController(DataContext context, IMediator mediator)
+        public TeamController(IMediator mediator)
         {
-            _context = context;
             _mediator = mediator;
         }
 
@@ -44,12 +41,9 @@ namespace Web.Controllers.Api
         }
 
         [HttpPost]
-        public async Task<ActionResult<TeamEntity>> PostTeam(TeamEntity teamEntity)
+        public async Task<ActionResult<bool>> PostTeam(TeamDto teamDto)
         {
-            _context.Teams.Add(teamEntity);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetTeamEntity", new { id = teamEntity.Id }, teamEntity);
+            return await _mediator.Send(new AddTeamCommand { Team = teamDto });
         }
 
         [HttpDelete("{id}")]
