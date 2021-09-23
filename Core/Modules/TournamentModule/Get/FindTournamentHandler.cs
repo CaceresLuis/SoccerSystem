@@ -26,7 +26,7 @@ namespace Core.Modules.TournamentModule.Get
         {
             TournamentEntity tournament = await _tournamentRepository.GetTournamentDetailsAsync(request.Id);
             if (tournament == null)
-                throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                throw new ExceptionHandler(HttpStatusCode.NotFound,
                     new Error
                     {
                         Code = "Error",

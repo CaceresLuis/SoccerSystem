@@ -15,6 +15,7 @@ using Core.Modules.UserModule.Logout;
 using Core.Modules.UserModule.Update;
 using Core.Modules.UserModule.LoginWeb;
 using Microsoft.AspNetCore.Authorization;
+using Core.Modules.UserModule.AddRoleToUer;
 
 namespace Web.Controllers
 {
@@ -67,7 +68,7 @@ namespace Web.Controllers
         [Authorize(Roles = "admin")]
         public async Task<ActionResult> AddRoleToUser(string email)
         {
-            var user = await _mediator.Send(new GetUserQuery { Email = email });
+            UserDto user = await _mediator.Send(new GetUserQuery { Email = email });
             AddRoleToUserViewModel addRoleToUser = new AddRoleToUserViewModel
             { 
                 UserDto = user,

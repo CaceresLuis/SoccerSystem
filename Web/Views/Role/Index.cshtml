@@ -33,9 +33,9 @@
                 </td>
 
                 @if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
-                {
+                { string id = @item.Name;
                     <td>
-                        <button data-id="@item.Id" class="btn btn-danger deleteItem" data-toggle="modal" data-target="#deleteDialog">
+                        <button data-id="@id" class="btn btn-danger deleteItem" data-toggle="modal" data-target="#deleteDialog">
                             <i class="bi bi-trash-fill"></i>
                         </button>
                     </td>

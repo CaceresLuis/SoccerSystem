@@ -1,17 +1,17 @@
 ﻿using MediatR;
+using Core.Dtos;
 using AutoMapper;
 using System.Net;
 using Shared.Enums;
 using System.Threading;
 using Shared.Exceptions;
-using Core.ModelResponse;
 using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 
 namespace Core.Modules.TournamentModule.Get
 {
-    public class GetTournamentHandler : IRequestHandler<GetTournamentQuery, TournamentResponse>
+    public class GetTournamentHandler : IRequestHandler<GetTournamentQuery, TournamentFullData>
     {
         private readonly IMapper _mapper;
         private readonly ITournamentRepository _tournamentRepository;
@@ -22,11 +22,11 @@ namespace Core.Modules.TournamentModule.Get
             _tournamentRepository = tournamentRepository;
         }
 
-        public async Task<TournamentResponse> Handle(GetTournamentQuery request, CancellationToken cancellationToken)
+        public async Task<TournamentFullData> Handle(GetTournamentQuery request, CancellationToken cancellationToken)
         {
             TournamentEntity tournament = await _tournamentRepository.GetTournamentDetailsAsync(request.Id);
             if(tournament == null)
-                throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                throw new ExceptionHandler(HttpStatusCode.NotFound,
                     new Error
                     {
                         Code = "Error",
@@ -36,7 +36,7 @@ namespace Core.Modules.TournamentModule.Get
                         IsSuccess = false
                     });
 
-            return _mapper.Map<TournamentResponse>(tournament);
+            return _mapper.Map<TournamentFullData>(tournament);
         }
     }
 }

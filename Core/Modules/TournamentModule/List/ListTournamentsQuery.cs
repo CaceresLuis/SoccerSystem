@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using Core.ModelResponse;
+using Core.Dtos;
 
 namespace Core.Modules.TournamentModule.List
 {
-    public class ListTournamentsQuery : IRequest<TournamentResponse[]>
+    public class ListTournamentsQuery : IRequest<TournamentFullData[]>
     {
     }
 }

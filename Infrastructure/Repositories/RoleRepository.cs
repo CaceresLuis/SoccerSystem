@@ -18,7 +18,7 @@ namespace Infrastructure.Repositories
 
         public async Task AddRole(string name)
         {
-            IdentityResult create = await _roleManager.CreateAsync(new IdentityRole(name));
+            await _roleManager.CreateAsync(new IdentityRole(name));
         }
 
         public async Task<IdentityRole> GetRole(string name)

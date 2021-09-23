@@ -1,4 +1,4 @@
-﻿@model ICollection<Web.ViewModel.TournamentViewModels>
+﻿@model ICollection<Core.Dtos.TournamentFullData>
 
 @{
     var url = "https://localhost:44372/Tournament/Details";
@@ -63,10 +63,10 @@ else
                             {
                                 <tr>
                                     <td class='clickable-row' data-href='@url/@item.Id'>
-                                        @item.StartDateLocal
+                                        @item.StartDate.ToString("d")
                                     </td>
                                     <td class='clickable-row' data-href='@url/@item.Id'>
-                                        @item.EndDateLocal
+                                        @item.EndDate.ToString("d")
                                     </td>
                                     <td class='clickable-row' data-href='@url/@item.Id'>
                                         @if (!string.IsNullOrEmpty(item.LogoPath))

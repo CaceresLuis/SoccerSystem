@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using AutoMapper;
 using System.Net;
 using Shared.Enums;
@@ -26,10 +27,17 @@ namespace Core.Modules.TournamentModule.Add
 
         public async Task<bool> Handle(AddTournamentCommand request, CancellationToken cancellationToken)
         {
-            if(request.Tournament.LogoFile != null)
-                request.Tournament.LogoPath = await _iMageHelper.UploadImageAsync(request.Tournament.LogoFile, "Tournaments");
+            Dtos.DtosApi.AddTournamentDto data = request.Tournament;
+            if (data.EndDate == DateTime.MinValue)
+                data.EndDate = DateTime.Now;
 
-            TournamentEntity tournament = _mapper.Map<TournamentEntity>(request.Tournament);
+            if (data.StartDate == DateTime.MinValue)
+                data.StartDate = DateTime.Now;
+
+            TournamentEntity tournament = _mapper.Map<TournamentEntity>(data);
+
+            if(data.LogoFile != null)
+                tournament.LogoPath = await _iMageHelper.UploadImageAsync(data.LogoFile, "Tournaments");
 
             if (await _tournamentRepository.GetTournamentByNameAsync(tournament.Name) != null)
                 throw new ExceptionHandler(HttpStatusCode.BadRequest,

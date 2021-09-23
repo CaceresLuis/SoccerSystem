@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Core.ModelResponse;
 
 namespace Core.Modules.GroupModule.Remove
 {

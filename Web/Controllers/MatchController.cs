@@ -8,7 +8,6 @@ using Core.Modules.MatchModule.Get;
 using Core.Modules.MatchModule.Add;
 using Core.Modules.MatchModule.List;
 using Core.Modules.MatchModule.Close;
-using Core.Modules.MatchModule.Reset;
 using Core.Modules.MatchModule.Remove;
 using Microsoft.AspNetCore.Authorization;
 
@@ -27,11 +26,6 @@ namespace Web.Controllers
         {
             GroupMatchsDto list = await _mediator.Send(new ListMatchByGroupQuery { GroupId = id });
             return View(list);
-        }
-
-        public ActionResult Details()
-        {
-            return View();
         }
 
         [Authorize(Roles = "admin")]
@@ -75,11 +69,7 @@ namespace Web.Controllers
         {
             try
             {
-                if (matchDto.IsClosed) //delete before update
-                    await _mediator.Send(new ResetMatchCommand { MatchDto = matchDto });
-
                 await _mediator.Send(new CloseMatchCommand { MatchDto = matchDto });
-
                 TempData["Title"] = "Success";
                 TempData["Message"] = "Macht Closet!";
                 TempData["State"] = State.success.ToString();
@@ -102,7 +92,7 @@ namespace Web.Controllers
             try
             {
                 await _mediator.Send(new RemoveMatchCommand { Id = id });
-                TempData["Title"] = "Updated!";
+                TempData["Title"] = "Deleted!";
                 TempData["Message"] = $"Match has been deleted!";
                 TempData["State"] = State.success.ToString();
             }

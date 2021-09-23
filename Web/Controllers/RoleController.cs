@@ -51,13 +51,13 @@ namespace Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(AddRoleCommand addRole)
+        public async Task<ActionResult> Create(RoleDto roleDto)
         {
             try
             {
-                await _mediator.Send(addRole);
+                await _mediator.Send(new AddRoleCommand { Name = roleDto.Name });
                 TempData["Title"] = "Registered";
-                TempData["Message"] = $"The role: {addRole.Name} has been created";
+                TempData["Message"] = $"The role: {roleDto.Name} has been created";
                 TempData["State"] = $"{State.success}";
                 return RedirectToAction(nameof(Index));
             }
@@ -70,12 +70,12 @@ namespace Web.Controllers
                 return View();
             }
         }
-      
-        public async Task<ActionResult> Delete(Guid id)
+
+        public async Task<ActionResult> Delete(string id)
         {
             try
             {
-                bool delete = await _mediator.Send(new RemoveRoleCommand { Id = id });
+                bool delete = await _mediator.Send(new RemoveRoleCommand { Name = id });
                 TempData["Title"] = "Deleted";
                 TempData["Message"] = $"The role: {id} has been deleted";
                 TempData["State"] = $"{State.success}";

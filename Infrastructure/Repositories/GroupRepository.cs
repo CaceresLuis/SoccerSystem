@@ -65,7 +65,7 @@ namespace Infrastructure.Repositories
         {
             return await _dataContext.Groups
                 .Include(g => g.Tournament)
-                .Include(g => g.GroupDetails)
+                .Include(g => g.GroupTeams)
                 .ThenInclude(gd => gd.Team)
                 .Include(g => g.Matches)
                 .FirstOrDefaultAsync(g => g.Id == id);
@@ -75,7 +75,7 @@ namespace Infrastructure.Repositories
         {
             return await _dataContext.Groups
                 .Include(g => g.Tournament)
-                .Include(g => g.GroupDetails)
+                .Include(g => g.GroupTeams)
                 .ThenInclude(gd => gd.Team)
                 .Include(g => g.Matches)
                 .Where(g => g.Tournament.IsActive == true)

@@ -1,9 +1,9 @@
 ﻿using MediatR;
+using Core.Dtos;
 using System.Net;
 using Shared.Enums;
 using System.Threading;
 using Shared.Exceptions;
-using Core.ModelResponse;
 using Shared.Helpers.Image;
 using Infrastructure.Models;
 using System.Threading.Tasks;
@@ -24,11 +24,11 @@ namespace Core.Modules.TournamentModule.Update
 
         public async Task<bool> Handle(UpdateTournamentCommnad request, CancellationToken cancellationToken)
         {
-            TournamentResponse upTournament = request.TournamentResponse;
+            TournamentDto upTournament = request.TournamentDto;
             if (upTournament.LogoFile != null)
                 upTournament.LogoPath = await _iMageHelper.UploadImageAsync(upTournament.LogoFile, "Teams");
 
-            TournamentEntity tournament = await _tournamentRepository.GetTournamentFindAsync(request.TournamentResponse.Id);
+            TournamentEntity tournament = await _tournamentRepository.GetTournamentFindAsync(request.TournamentDto.Id);
             if (tournament == null)
                 throw new ExceptionHandler(HttpStatusCode.BadRequest,
                     new Error
@@ -42,7 +42,7 @@ namespace Core.Modules.TournamentModule.Update
 
             if (upTournament.Name != tournament.Name)
             {
-                if (await _tournamentRepository.GetTournamentByNameAsync(request.TournamentResponse.Name) != null)
+                if (await _tournamentRepository.GetTournamentByNameAsync(request.TournamentDto.Name) != null)
                     throw new ExceptionHandler(HttpStatusCode.BadRequest,
                     new Error
                     {
@@ -54,9 +54,9 @@ namespace Core.Modules.TournamentModule.Update
                     });
             }
 
-            tournament.EndDate = upTournament.EndDate;
+            tournament.EndDate = (upTournament.EndDate == null) ? tournament.EndDate : upTournament.EndDate;
             tournament.IsActive = upTournament.IsActive;
-            tournament.StartDate = upTournament.StartDate;
+            tournament.StartDate = (upTournament.StartDate == null) ? tournament.StartDate : upTournament.StartDate;
             tournament.Name = upTournament.Name ?? tournament.Name;
             tournament.LogoPath = upTournament.LogoPath ?? tournament.LogoPath;
 

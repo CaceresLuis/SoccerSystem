@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using Core.ModelResponse;
+using Core.Dtos;
 
 namespace Core.Modules.GroupModule.Get
 {
-    public class GetFullGroupQuery : IRequest<GroupResponse>
+    public class GetFullGroupQuery : IRequest<GroupFullData>
     {
         public int Id { get; set; }
     }

@@ -1,4 +1,4 @@
-﻿@model Web.ViewModel.TournamentViewModels
+﻿@model Core.Dtos.TournamentDto
 
 <div class="form-group">
     <label asp-for="Name" class="control-label"></label>
@@ -8,7 +8,7 @@
 
 <div class="form-group">
     <label asp-for="LogoFile" class="control-label"></label>
-    <input asp-for="LogoFile" class="form-control" type="file" />
+    <input asp-for="LogoFile" class="form-control" accept="image/*" type="file" />
     <span asp-validation-for="LogoFile" class="text-danger"></span>
 </div>
 

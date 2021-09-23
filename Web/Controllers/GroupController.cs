@@ -1,10 +1,7 @@
 ﻿using MediatR;
 using Core.Dtos;
-using AutoMapper;
 using Shared.Enums;
-using Web.ViewModel;
 using Shared.Exceptions;
-using Core.ModelResponse;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Core.Modules.GroupModule.Add;
@@ -18,12 +15,10 @@ namespace Web.Controllers
 {
     public class GroupController : Controller
     {
-        private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
-        public GroupController(IMediator mediator, IMapper mapper)
+        public GroupController(IMediator mediator)
         {
-            _mapper = mapper;
             _mediator = mediator;
         }
 
@@ -74,9 +69,8 @@ namespace Web.Controllers
         {
             try
             {
-                GroupResponse groupResponse = await _mediator.Send(new GetFullGroupQuery { Id = id });
-                GroupViewModels groupView = _mapper.Map<GroupViewModels>(groupResponse);
-                return View(groupView);
+                GroupFullData groupFullData = await _mediator.Send(new GetFullGroupQuery { Id = id });
+                return View(groupFullData);
             }
             catch (ExceptionHandler e)
             {

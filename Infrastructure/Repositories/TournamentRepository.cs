@@ -47,7 +47,7 @@ namespace Infrastructure.Repositories
                 .ThenInclude(t => t.Matches)
                 .ThenInclude(t => t.Visitor)
                 .Include(t => t.Groups)
-                .ThenInclude(t => t.GroupDetails)
+                .ThenInclude(t => t.GroupTeams)
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
 
@@ -61,7 +61,7 @@ namespace Infrastructure.Repositories
         {
             return (await _dataContext.Tournaments
             .Include(t => t.Groups)
-            .ThenInclude(g => g.GroupDetails)
+            .ThenInclude(g => g.GroupTeams)
             .ThenInclude(gd => gd.Team)
             .Include(t => t.Groups)
             .ThenInclude(g => g.Matches)

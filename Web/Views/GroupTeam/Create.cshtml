@@ -1,0 +1,35 @@
+﻿@model Core.Dtos.AddGroupTeamDto
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Add</h2>
+
+<h4>Team to group: @Model.Group.Name</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Group.Id" />
+            <div class="form-group">
+                <label asp-for="TeamId" class="control-label"></label>
+                <select asp-for="TeamId" asp-items="Model.SelectTeam" class="form-control"></select>
+                <span asp-validation-for="TeamId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <a asp-controller="Group" asp-action="Detail" asp-route-id="@Model.Group.Id" class="btn btn-default">
+                    <i class="bi bi-arrow-left-circle-fill"></i> Back
+                </a>
+                <button type="submit" value="Create" class="btn btn-primary">
+                    <i class="bi bi-save2-fill"></i> Create
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

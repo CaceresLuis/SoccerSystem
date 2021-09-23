@@ -1,18 +1,17 @@
 ﻿using MediatR;
+using Core.Dtos;
 using AutoMapper;
-using Web.ViewModel;
-using Core.ModelResponse;
+using Shared.Enums;
+using Shared.Exceptions;
 using System.Threading.Tasks;
-using Core.ModelResponse.One;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Hosting;
 using Core.Modules.TournamentModule.Add;
 using Core.Modules.TournamentModule.Get;
 using Core.Modules.TournamentModule.List;
 using Microsoft.AspNetCore.Authorization;
 using Core.Modules.TournamentModule.Remove;
 using Core.Modules.TournamentModule.Update;
-using Shared.Exceptions;
-using Shared.Enums;
 
 namespace Web.Controllers
 {
@@ -20,20 +19,20 @@ namespace Web.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public TournamentController(IMediator mediator, IMapper mapper)
+        public TournamentController(IMediator mediator, IMapper mapper, IWebHostEnvironment webHostEnvironment)
         {
             _mapper = mapper;
             _mediator = mediator;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public async Task<ActionResult> Index()
         {
-            TournamentResponse[] tournaments = await _mediator.Send(new ListTournamentsQuery());
+            TournamentFullData[] tournaments = await _mediator.Send(new ListTournamentsQuery());
 
-            TournamentViewModels[] tournamentViews = _mapper.Map<TournamentViewModels[]>(tournaments);
-
-            return View(tournamentViews);
+            return View(tournaments);
         }
 
         [Authorize(Roles = "admin")]
@@ -44,15 +43,14 @@ namespace Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(TournamentViewModels tournamentView)
+        public async Task<ActionResult> Create(Core.Dtos.DtosApi.AddTournamentDto addTournamentDto)
         {
             try
             {
-                TournamentResponse tournamentResponse = _mapper.Map<TournamentResponse>(tournamentView);
-                await _mediator.Send(new AddTournamentCommand { Tournament = tournamentResponse });
+                await _mediator.Send(new AddTournamentCommand { Tournament = addTournamentDto });
 
                 TempData["Title"] = "Created!";
-                TempData["Message"] = $"The tournament {tournamentResponse.Name} was created";
+                TempData["Message"] = $"The tournament {addTournamentDto.Name} was created";
                 TempData["State"] = State.success.ToString();
 
                 return RedirectToAction(nameof(Index));
@@ -70,9 +68,8 @@ namespace Web.Controllers
         {
             try
             {
-                var tournamentResponse = await _mediator.Send(new GetTournamentQuery { Id = id });
-                TournamentViewModels tournamentView = _mapper.Map<TournamentViewModels>(tournamentResponse);
-                return View(tournamentView);
+                TournamentFullData tournamentFullData = await _mediator.Send(new GetTournamentQuery { Id = id });
+                return View(tournamentFullData);
             }
             catch (ExceptionHandler e)
             {
@@ -88,9 +85,8 @@ namespace Web.Controllers
         {
             try
             {
-                var tournamentResponse = await _mediator.Send(new GetTournamentQuery { Id = id });
-                TournamentViewModels tournamentView = _mapper.Map<TournamentViewModels>(tournamentResponse);
-                return View(tournamentView);
+                Core.Dtos.TournamentDto tournamentFullData = await _mediator.Send(new FindTournamentQuery { Id = id });
+                return View(tournamentFullData);
             }
             catch (ExceptionHandler e)
             {
@@ -103,23 +99,22 @@ namespace Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(TournamentViewModels tournamentView)
+        public async Task<ActionResult> Edit(Core.Dtos.TournamentDto tournamentDto)
         {
             try
             {
-                TournamentResponse tournamentResponse = _mapper.Map<TournamentResponse>(tournamentView);
-                await _mediator.Send(new UpdateTournamentCommnad { TournamentResponse = tournamentResponse });
+                await _mediator.Send(new UpdateTournamentCommnad { TournamentDto = tournamentDto });
                 TempData["Title"] = "Updated!";
-                TempData["Message"] = $"The tournament {tournamentResponse.Name} was Updated";
+                TempData["Message"] = $"The tournament {tournamentDto.Name} was Updated";
                 TempData["State"] = State.success.ToString();
-                return RedirectToAction(nameof(Details), new { id = tournamentResponse.Id });
+                return RedirectToAction(nameof(Details), new { id = tournamentDto.Id });
             }
             catch (ExceptionHandler e)
             {
                 TempData["Title"] = e.Error.Title;
                 TempData["Message"] = e.Error.Message;
                 TempData["State"] = State.error.ToString();
-                return View(tournamentView);
+                return View(tournamentDto);
             }
         }
 

@@ -3,12 +3,14 @@ using MediatR;
 using System.Text;
 using Core.Helpers;
 using Infrastructure;
+using Core.Validations;
 using Shared.Exceptions;
 using Core.Security.Token;
 using Shared.Helpers.Image;
 using Infrastructure.Models;
 using Core.Security.Sesscion;
 using Infrastructure.Interfaces;
+using FluentValidation.AspNetCore;
 using Infrastructure.Repositories;
 using Core.Modules.TeamModule.Add;
 using Microsoft.AspNetCore.Builder;
@@ -49,6 +51,8 @@ namespace Web
             services.AddSwaggerGen();
 
             services.AddControllersWithViews();
+
+            services.AddControllers().AddFluentValidation(conf => conf.RegisterValidatorsFromAssemblyContaining<ConfigValidations>());
 
             //Config Datacontex
             services.AddDbContext<DataContext>(conf =>
@@ -108,6 +112,7 @@ namespace Web
             //Helpers
             services.AddScoped<IIMageHelper, IMageHelper>();
             services.AddScoped<IListItemHelper, ListItemHelper>();
+            services.AddScoped<IResetMatchHelper, ResetMatchHelper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
