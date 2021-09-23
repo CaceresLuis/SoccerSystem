@@ -9,6 +9,6 @@ namespace Web.Models
         public bool IsActive { get; set; }
         public Tournament Tournament { get; set; }
         public ICollection<Match> Matches { get; set; }
-        public ICollection<GroupDetails> GroupDetails { get; set; }
+        public ICollection<GroupDetails> GroupTeams { get; set; }
     }
 }

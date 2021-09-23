@@ -1,17 +1,17 @@
 ﻿using MediatR;
+using Core.Dtos;
 using AutoMapper;
 using System.Net;
 using Shared.Enums;
 using System.Threading;
 using Shared.Exceptions;
-using Core.ModelResponse;
 using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 
 namespace Core.Modules.GroupModule.Get
 {
-    public class GetFullGroupHandler : IRequestHandler<GetFullGroupQuery, GroupResponse>
+    public class GetFullGroupHandler : IRequestHandler<GetFullGroupQuery, GroupFullData>
     {
         private readonly IMapper _mapper;
         private readonly IGroupRepository _groupRepository;
@@ -22,7 +22,7 @@ namespace Core.Modules.GroupModule.Get
             _groupRepository = groupRepository;
         }
 
-        public async Task<GroupResponse> Handle(GetFullGroupQuery request, CancellationToken cancellationToken)
+        public async Task<GroupFullData> Handle(GetFullGroupQuery request, CancellationToken cancellationToken)
         {
             GroupEntity group = await _groupRepository.GetGroupTeamAndDetailsAsync(request.Id);
             if (group == null)
@@ -36,7 +36,7 @@ namespace Core.Modules.GroupModule.Get
                         IsSuccess = false
                     });
 
-            return _mapper.Map<GroupResponse>(group);
+            return _mapper.Map<GroupFullData>(group);
         }
     }
 }

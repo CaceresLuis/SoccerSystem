@@ -16,9 +16,13 @@ namespace Web.Map
             CreateMap<UserEntity, UserDto>().ReverseMap();
             CreateMap<MatchEntity, MatchDto>().ReverseMap();
             CreateMap<GroupEntity, GroupDto>().ReverseMap();
+            CreateMap<GroupEntity, GroupFullData>().ReverseMap();
+            CreateMap<GroupTeamEntity, GroupTeamDto>().ReverseMap();
+
             CreateMap<GroupEntity, GroupMatchDto>().ReverseMap();
             CreateMap<GroupEntity, GroupMatchsDto>().ReverseMap();
             CreateMap<TournamentEntity, TournamentDto>().ReverseMap();
+            CreateMap<GroupTeamEntity, AGroupDetailResponse>().ReverseMap();
 
 
 

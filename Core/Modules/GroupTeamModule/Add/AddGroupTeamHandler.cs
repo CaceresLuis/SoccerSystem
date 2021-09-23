@@ -7,25 +7,29 @@ using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 
-namespace Core.Modules.GroupDetailsModule.Add
+namespace Core.Modules.GroupTeamModule.Add
 {
-    public class AddGroupDetailsHandler : IRequestHandler<AddGroupDetailsCommand, bool>
+    public class AddGroupTeamHandler : IRequestHandler<AddGroupTeamCommand, bool>
     {
         private readonly ITeamRepository _teamRepository;
         private readonly IGroupRepository _groupRepository;
         private readonly IGroupTeamsRepository _groupDetailsRepository;
 
-        public AddGroupDetailsHandler(IGroupTeamsRepository groupDetailsRepository, ITeamRepository teamRepository = null, IGroupRepository groupRepository = null)
+        public AddGroupTeamHandler(IGroupTeamsRepository groupDetailsRepository, ITeamRepository teamRepository = null, IGroupRepository groupRepository = null)
         {
             _teamRepository = teamRepository;
             _groupRepository = groupRepository;
             _groupDetailsRepository = groupDetailsRepository;
         }
 
-        public async Task<bool> Handle(AddGroupDetailsCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(AddGroupTeamCommand request, CancellationToken cancellationToken)
         {
-            TeamEntity team = await _teamRepository.FindTeamByIdAsync(request.GroupDetail.TeamId);
-            GroupEntity group = await _groupRepository.FindGroupByIdAsync(request.GroupDetail.Group.Id);
+            var data = request.AddGroupTeamDto;
+            if(data.Group != null)
+                data.IdGroup = data.Group.Id;
+
+            TeamEntity team = await _teamRepository.FindTeamByIdAsync(data.TeamId);
+            GroupEntity group = await _groupRepository.FindGroupByIdAsync(data.IdGroup);
             if(team == null || group == null)
                 throw new ExceptionHandler(HttpStatusCode.BadRequest,
                     new Error

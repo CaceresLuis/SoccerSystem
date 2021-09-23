@@ -3,7 +3,6 @@ using AutoMapper;
 using Web.ViewModel;
 using Core.ModelResponse;
 using System.Threading.Tasks;
-using Core.ModelResponse.One;
 using Microsoft.AspNetCore.Mvc;
 using Core.Modules.TournamentModule.Add;
 using Core.Modules.TournamentModule.Get;
@@ -70,7 +69,7 @@ namespace Web.Controllers
         {
             try
             {
-                var tournamentResponse = await _mediator.Send(new GetTournamentQuery { Id = id });
+                TournamentResponse tournamentResponse = await _mediator.Send(new GetTournamentQuery { Id = id });
                 TournamentViewModels tournamentView = _mapper.Map<TournamentViewModels>(tournamentResponse);
                 return View(tournamentView);
             }
@@ -88,7 +87,7 @@ namespace Web.Controllers
         {
             try
             {
-                var tournamentResponse = await _mediator.Send(new GetTournamentQuery { Id = id });
+                TournamentResponse tournamentResponse = await _mediator.Send(new GetTournamentQuery { Id = id });
                 TournamentViewModels tournamentView = _mapper.Map<TournamentViewModels>(tournamentResponse);
                 return View(tournamentView);
             }

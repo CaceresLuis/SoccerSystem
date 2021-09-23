@@ -1,6 +1,6 @@
 ﻿namespace Core.Dtos
 {
-    public class GroupTeam
+    public class GroupTeamDto
     {
         public int Id { get; set; }
         public int MatchesPlayed { get; set; }

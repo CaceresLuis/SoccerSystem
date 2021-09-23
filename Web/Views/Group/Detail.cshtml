@@ -1,4 +1,4 @@
-﻿@model Web.ViewModel.GroupViewModels
+﻿@model Core.Dtos.GroupFullData
 
 @{
     ViewData["Title"] = "Details";
@@ -21,7 +21,7 @@
                     <a class="nav-link" href="#">Group || <b> @Html.DisplayFor(model => model.Name) </b></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#"># Teams || <b> @Html.DisplayFor(model => model.GroupDetails.Count) </b></a>
+                    <a class="nav-link" href="#"># Teams || <b> @Html.DisplayFor(model => model.GroupTeams.Count) </b></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#"># Is Active || <b> @Model.IsActive </b></a>
@@ -60,7 +60,7 @@
     <br />
      @if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
      {
-        <form asp-controller="GroupDetails" asp-action="Create" method="get">
+        <form asp-controller="GroupTeam" asp-action="Create" method="get">
             <input type="hidden" name="idTournament" asp-for="Tournament.Id" />
             <input type="hidden" name="idGroup" asp-for="Id" />
             <button type="submit" value="Save" class="btn btn-primary">
@@ -69,7 +69,7 @@
         </form>
      }
     <a name="Matches"></a>
-    @if (Model.GroupDetails.Count != 0)
+    @if (Model.GroupTeams.Count != 0)
     {
         <div class="row">
             <div class="col-md-12">
@@ -82,7 +82,7 @@
                             <thead>
                                 <tr>
                                     <th>
-                                        @Html.DisplayNameFor(model => model.GroupDetails.FirstOrDefault().Team.LogoPath)
+                                        @Html.DisplayNameFor(model => model.GroupTeams.FirstOrDefault().Team.LogoPath)
                                     </th>
                                     <th>
                                         Name
@@ -115,7 +115,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in Model.GroupDetails
+                                @foreach (var item in Model.GroupTeams
                               .OrderByDescending(g => g.Points)
                               .ThenByDescending(g => g.GoalDifference)
                               .ThenByDescending(g => g.GoalsFor))
@@ -195,7 +195,7 @@
             });
 
             $("#btnYesDelete").click(function () {
-                window.location.href = '/GroupDetails/Delete/' + item_to_delete;
+                window.location.href = '/GroupTeam/Delete/' + item_to_delete;
             });
         });
     </script>

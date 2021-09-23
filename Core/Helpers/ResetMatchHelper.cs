@@ -1,28 +1,32 @@
-﻿using MediatR;
-using System.Threading;
-using Infrastructure.Models;
+﻿using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
+using Core.Dtos;
 
-namespace Core.Modules.MatchModule.Reset
+namespace Core.Helpers
 {
-    public class ResetMatchHandler : IRequestHandler<ResetMatchCommand, bool>
+    public class ResetMatchHelper : IResetMatchHelper
     {
         private readonly IMatchRepository _matchRepository;
         private readonly IGroupTeamsRepository _groupTeamsRepository;
 
-        public ResetMatchHandler(IMatchRepository matchRepository, IGroupTeamsRepository groupTeamsRepository)
+        public ResetMatchHelper(IMatchRepository matchRepository, IGroupTeamsRepository groupTeamsRepository)
         {
             _matchRepository = matchRepository;
             _groupTeamsRepository = groupTeamsRepository;
         }
 
-        public async Task<bool> Handle(ResetMatchCommand request, CancellationToken cancellationToken)
+        public async Task<bool> ResetMatchAsync(MatchDto matchDto)
         {
-            MatchEntity matchEntity = request.Match;
-            GroupTeamEntity local = await _groupTeamsRepository.GetGroupDetailsByGroupAdnTeamAsync(matchEntity.Id, matchEntity.Local.Id);
-            GroupTeamEntity visitor = await _groupTeamsRepository.GetGroupDetailsByGroupAdnTeamAsync(matchEntity.Id, matchEntity.Visitor.Id);
-            MatchEntity match = await _matchRepository.FindMatchByIdAsync(matchEntity.Id);
+            if (matchDto.Visitor != null && matchDto.Local != null)
+            {
+                matchDto.VisitorId = matchDto.Visitor.Id;
+                matchDto.LocalId = matchDto.Local.Id;
+            }
+
+            GroupTeamEntity local = await _groupTeamsRepository.GetGroupDetailsByGroupAdnTeamAsync(matchDto.GroupId, matchDto.LocalId);
+            GroupTeamEntity visitor = await _groupTeamsRepository.GetGroupDetailsByGroupAdnTeamAsync(matchDto.GroupId, matchDto.VisitorId);
+            MatchEntity match = await _matchRepository.FindMatchByIdAsync(matchDto.Id);
 
             local.MatchesPlayed--;
             local.GoalsFor -= match.GoalsLocal;

@@ -74,9 +74,8 @@ namespace Web.Controllers
         {
             try
             {
-                GroupResponse groupResponse = await _mediator.Send(new GetFullGroupQuery { Id = id });
-                GroupViewModels groupView = _mapper.Map<GroupViewModels>(groupResponse);
-                return View(groupView);
+                GroupFullData groupFullData = await _mediator.Send(new GetFullGroupQuery { Id = id });
+                return View(groupFullData);
             }
             catch (ExceptionHandler e)
             {

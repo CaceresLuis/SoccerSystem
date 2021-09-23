@@ -12,7 +12,7 @@ namespace Infrastructure.Models
         public string Name { get; set; }
         public bool IsActive { get; set; }
         public TournamentEntity Tournament { get; set; }
-        public ICollection<GroupTeamEntity> GroupDetails { get; set; }
         public ICollection<MatchEntity> Matches { get; set; }
+        public ICollection<GroupTeamEntity> GroupTeams { get; set; }
     }
 }

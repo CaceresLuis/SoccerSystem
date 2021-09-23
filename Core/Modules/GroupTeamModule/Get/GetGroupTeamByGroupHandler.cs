@@ -1,27 +1,27 @@
 ﻿using MediatR;
+using Core.Dtos;
 using AutoMapper;
+using System.Net;
 using System.Linq;
 using Shared.Enums;
 using System.Threading;
-using Core.ModelResponse;
+using Shared.Exceptions;
 using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Shared.Exceptions;
-using System.Net;
 
-namespace Core.Modules.GroupDetailsModule.Get
+namespace Core.Modules.GroupTeamModule.Get
 {
-    public class GetGroupDetailsByGroupHandler : IRequestHandler<GetGroupDetailsByGroupQuery, GroupDetailsResponse>
+    public class GetGroupTeamByGroupHandler : IRequestHandler<GetGroupTeamByGroupQuery, AddGroupTeamDto>
     {
         private readonly IMapper _mapper;
         private readonly ITeamRepository _teamRepository;
         private readonly IGroupRepository _groupRepository;
         private readonly IGroupTeamsRepository _groupDetailsRepository;
 
-        public GetGroupDetailsByGroupHandler(IMapper mapper, IGroupRepository groupRepository, ITeamRepository teamRepository, IGroupTeamsRepository groupDetailsRepository)
+        public GetGroupTeamByGroupHandler(IMapper mapper, IGroupRepository groupRepository, ITeamRepository teamRepository, IGroupTeamsRepository groupDetailsRepository)
         {
             _mapper = mapper;
             _teamRepository = teamRepository;
@@ -29,16 +29,13 @@ namespace Core.Modules.GroupDetailsModule.Get
             _groupDetailsRepository = groupDetailsRepository;
         }
 
-        public async Task<GroupDetailsResponse> Handle(GetGroupDetailsByGroupQuery request, CancellationToken cancellationToken)
+        public async Task<AddGroupTeamDto> Handle(GetGroupTeamByGroupQuery request, CancellationToken cancellationToken)
         {
-            GroupDetailsResponse response = new GroupDetailsResponse { };
-            List<GroupEntity> ListGroup = await _groupRepository.GetAllGroupOfTournamentAsync(request.IdTournament);
-
+            List<GroupEntity> listGroup = await _groupRepository.GetAllGroupOfTournamentAsync(request.IdTournament);
             GroupEntity groupEntity = await _groupRepository.GetGroupWithTournamentAsync(request.IdGroup);
-            GroupResponse group = _mapper.Map<GroupResponse>(groupEntity);
-            response.Group = group;
+            GroupDto groupDto = _mapper.Map<GroupDto>(groupEntity);
 
-            if (group == null)
+            if (groupDto == null)
                 throw new ExceptionHandler(HttpStatusCode.BadRequest,
                     new Error
                     {
@@ -52,7 +49,7 @@ namespace Core.Modules.GroupDetailsModule.Get
             List<TeamEntity> teams = await _teamRepository.GetAllTeamAsync();
 
             List<SelectListItem> teamList = new List<SelectListItem>();
-            foreach (var teambygroup in ListGroup)
+            foreach (GroupEntity teambygroup in listGroup)
             {
                 List<GroupTeamEntity> groupDetails = await _groupDetailsRepository.GetGroupsDetailsByGroupAsync(teambygroup.Id);
                 foreach (GroupTeamEntity groupDetail in groupDetails)
@@ -70,8 +67,7 @@ namespace Core.Modules.GroupDetailsModule.Get
                 .ToList();
             }
 
-            response.SelectTeam = teamList;
-            return response;
+            return new AddGroupTeamDto { Group = groupDto, SelectTeam = teamList };
         }
     }
 }

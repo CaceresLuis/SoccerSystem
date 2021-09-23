@@ -7,7 +7,7 @@ using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 
-namespace Core.Modules.GroupDetailsModule.Remove
+namespace Core.Modules.GroupTeamModule.Remove
 {
     public class RemoveGroupDetailHandler : IRequestHandler<RemoveGroupDetailCommand, int>
     {

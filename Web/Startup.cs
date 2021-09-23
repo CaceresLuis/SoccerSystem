@@ -108,6 +108,7 @@ namespace Web
             //Helpers
             services.AddScoped<IIMageHelper, IMageHelper>();
             services.AddScoped<IListItemHelper, ListItemHelper>();
+            services.AddScoped<IResetMatchHelper, ResetMatchHelper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -10,6 +10,6 @@ namespace Core.ModelResponse
         public bool IsActive { get; set; }
         public TournamentResponse Tournament { get; set; }
         public ICollection<MatchResponse> Matches { get; set; }
-        public ICollection<AGroupDetailResponse> GroupDetails { get; set; }
+        public ICollection<AGroupDetailResponse> GroupTeams { get; set; }
     }
 }

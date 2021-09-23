@@ -29,11 +29,6 @@ namespace Web.Controllers
             return View(list);
         }
 
-        public ActionResult Details()
-        {
-            return View();
-        }
-
         [Authorize(Roles = "admin")]
         public async Task<ActionResult> Create(int id)
         {
@@ -75,11 +70,7 @@ namespace Web.Controllers
         {
             try
             {
-                if (matchDto.IsClosed) //delete before update
-                    await _mediator.Send(new ResetMatchCommand { MatchDto = matchDto });
-
                 await _mediator.Send(new CloseMatchCommand { MatchDto = matchDto });
-
                 TempData["Title"] = "Success";
                 TempData["Message"] = "Macht Closet!";
                 TempData["State"] = State.success.ToString();
@@ -102,7 +93,7 @@ namespace Web.Controllers
             try
             {
                 await _mediator.Send(new RemoveMatchCommand { Id = id });
-                TempData["Title"] = "Updated!";
+                TempData["Title"] = "Deleted!";
                 TempData["Message"] = $"Match has been deleted!";
                 TempData["State"] = State.success.ToString();
             }

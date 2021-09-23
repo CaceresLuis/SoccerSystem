@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Core.ModelResponse.One;
 using Infrastructure.Interfaces;
 
-namespace Core.Modules.GroupDetailsModule.Update
+namespace Core.Modules.GroupTeamModule.Update
 {
     public class UpdateGroupDetailsHandler : IRequestHandler<UpdateGroupDetailsCommand, ActionResponse>
     {

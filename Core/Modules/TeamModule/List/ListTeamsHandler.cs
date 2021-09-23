@@ -28,7 +28,7 @@ namespace Core.Modules.TeamModule.List
             List<TeamEntity> teams = await _teamRepository.GetAllTeamAsync();
             foreach (GroupEntity group in groupTournament)
             {
-                foreach (GroupTeamEntity detail in group.GroupDetails)
+                foreach (GroupTeamEntity detail in group.GroupTeams)
                 {
                     TeamEntity team = detail.Team;
                     TeamEntity teamList = teams.Find(t => t.Name == team.Name);

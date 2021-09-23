@@ -26,8 +26,10 @@ namespace Core.Modules.MatchModule.Add
         public async Task<bool> Handle(AddMatchCommand request, CancellationToken cancellationToken)
         {
             AddMatchDto matchDto = request.AddMatchDto;
+            if (matchDto.Group != null)
+                matchDto.GroupId = matchDto.Group.Id;
 
-            GroupEntity groupEntity = await _groupRepository.FindGroupByIdAsync(matchDto.Group.Id);
+            GroupEntity groupEntity = await _groupRepository.FindGroupByIdAsync(matchDto.GroupId);
             if(groupEntity == null)
                 throw new ExceptionHandler(HttpStatusCode.BadRequest,
                     new Error

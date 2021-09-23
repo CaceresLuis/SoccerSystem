@@ -1,27 +1,23 @@
 ﻿using MediatR;
-using AutoMapper;
-using Web.ViewModel;
+using Core.Dtos;
 using Shared.Enums;
 using Shared.Exceptions;
-using Core.ModelResponse;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Core.Modules.GroupTeamModule.Add;
+using Core.Modules.GroupTeamModule.Get;
 using Microsoft.AspNetCore.Authorization;
-using Core.Modules.GroupDetailsModule.Add;
-using Core.Modules.GroupDetailsModule.Get;
-using Core.Modules.GroupDetailsModule.Remove;
+using Core.Modules.GroupTeamModule.Remove;
 
 namespace Web.Controllers
 {
     [Authorize(Roles = "admin")]
-    public class GroupDetailsController : Controller
+    public class GroupTeamController : Controller
     {
-        private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
-        public GroupDetailsController(IMediator mediator, IMapper mapper)
-        {
-            _mapper = mapper;
+        public GroupTeamController(IMediator mediator)
+        {            
             _mediator = mediator;
         }
 
@@ -29,11 +25,8 @@ namespace Web.Controllers
         {
             try
             {
-                //TODO: verificar que los grupos del torneo estan activos y quitar los team
-                GroupDetailsResponse groupDetailsResponse = await _mediator.Send(new GetGroupDetailsByGroupQuery { IdGroup = idGroup, IdTournament = idTournament });
-                CreateGroupDetailsViewModels detailsViewModel = _mapper.Map<CreateGroupDetailsViewModels>(groupDetailsResponse);
-
-                return View(detailsViewModel);
+                AddGroupTeamDto addGroupTeamDto = await _mediator.Send(new GetGroupTeamByGroupQuery { IdGroup = idGroup, IdTournament = idTournament });
+                return View(addGroupTeamDto);
             }
             catch (ExceptionHandler e)
             {
@@ -42,22 +35,20 @@ namespace Web.Controllers
                 TempData["State"] = e.Error.State;
                 return View();
             }
-            
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(CreateGroupDetailsViewModels groupDetail)
+        public async Task<ActionResult> Create(AddGroupTeamDto addGroupTeamDto)
         {
             try
             {
-                GroupDetailsResponse groupDetailsResponse = _mapper.Map<GroupDetailsResponse>(groupDetail);
-                bool create = await _mediator.Send(new AddGroupDetailsCommand { GroupDetail = groupDetailsResponse });
+                bool create = await _mediator.Send(new AddGroupTeamCommand { AddGroupTeamDto = addGroupTeamDto });
                 TempData["Title"] = "Added";
                 TempData["Message"] = $"The team was added to the group";
                 TempData["State"] = $"{State.success}";
 
-                return RedirectToAction("Detail", "Group", new { id = groupDetail.Group.Id });
+                return RedirectToAction("Detail", "Group", new { id = addGroupTeamDto.Group.Id });
             }
             catch (ExceptionHandler e)
             {
@@ -65,7 +56,7 @@ namespace Web.Controllers
                 TempData["Message"] = e.Error.Message;
                 TempData["State"] = e.Error.State;
 
-                return View(groupDetail);
+                return View(addGroupTeamDto);
             }
         }
 

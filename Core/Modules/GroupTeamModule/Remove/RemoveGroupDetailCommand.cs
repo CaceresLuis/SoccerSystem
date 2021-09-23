@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Core.Modules.GroupDetailsModule.Remove
+namespace Core.Modules.GroupTeamModule.Remove
 {
     public class RemoveGroupDetailCommand : IRequest<int>
     {
