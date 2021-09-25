@@ -2,6 +2,7 @@
 using Core.Dtos;
 using AutoMapper;
 using Shared.Enums;
+using Core.Dtos.DtosApi;
 using Shared.Exceptions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -43,7 +44,7 @@ namespace Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(Core.Dtos.DtosApi.AddTournamentDto addTournamentDto)
+        public async Task<ActionResult> Create(AddTournamentDto addTournamentDto)
         {
             try
             {
@@ -99,7 +100,7 @@ namespace Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(Core.Dtos.TournamentDto tournamentDto)
+        public async Task<ActionResult> Edit(TournamentDto tournamentDto)
         {
             try
             {
