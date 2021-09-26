@@ -1,33 +1,40 @@
-using System;
-using MediatR;
-using System.Text;
 using Core.Helpers;
-using Infrastructure;
-using Core.Validations;
-using Shared.Exceptions;
-using Core.Security.Token;
-using Shared.Helpers.Image;
-using Infrastructure.Models;
-using Core.Security.Sesscion;
-using Infrastructure.Interfaces;
-using FluentValidation.AspNetCore;
-using Infrastructure.Repositories;
 using Core.Modules.TeamModule.Add;
+using Core.Modules.TeamModule.List;
+using Core.Security.Sesscion;
+using Core.Security.Token;
+using Core.Validations;
+using FluentValidation.AspNetCore;
+using Infrastructure;
+using Infrastructure.Interfaces;
+using Infrastructure.Models;
+using Infrastructure.Repositories;
+using MediatR;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using Shared.Exceptions;
+using Shared.Helpers.Image;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Web
+namespace Api
 {
     public class Startup
     {
@@ -41,26 +48,34 @@ namespace Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton(Configuration);
+            services.AddCors(o => o.AddPolicy("corsApp", builder => {
+                builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            }));
 
-            //Config MediatoR
-            services.AddMediatR(typeof(AddTeamCommand).Assembly);
-
-            //Inyectando Swagger
-            services.AddSwaggerGen();
-
-            services.AddControllersWithViews().AddFluentValidation(conf => conf.RegisterValidatorsFromAssemblyContaining<ConfigValidations>());
             //Config Datacontex
             services.AddDbContext<DataContext>(conf =>
             {
                 conf.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.LoginPath = "/Account/NotAuthorized";
-                options.AccessDeniedPath = "/Account/NotAuthorized";
-            });
+            services.AddOptions();
+
+            //Config MediatoR
+            services.AddMediatR(typeof(ListTeamsQuery).Assembly);
+
+            services.AddControllers(opt => {
+                var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                opt.Filters.Add(new AuthorizeFilter(policy));
+            })
+            .AddFluentValidation(cfg => cfg.RegisterValidatorsFromAssemblyContaining<ConfigValidations>());
+
+            //services.AddControllers().AddFluentValidation(conf => conf.RegisterValidatorsFromAssemblyContaining<ConfigValidations>());
+
+            //Inyectando Swagger
+            services.AddSwaggerGen();
+
+            //Get SecretKey of userManager Secrets
+            string keySecret = Configuration["SecretKey"];
 
             //Config Automapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -75,6 +90,19 @@ namespace Web
             identityBuilder.AddEntityFrameworkStores<DataContext>();
             identityBuilder.AddSignInManager<SignInManager<UserEntity>>();
             services.TryAddSingleton<ISystemClock, SystemClock>();
+
+            //Configuracion autenticacion                                             //Secret key
+            SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keySecret));
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
+            {
+                opt.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = key,
+                    ValidateAudience = false,
+                    ValidateIssuer = false
+                };
+            });
 
             //Inyection of Repositories
             services.AddScoped<IUserSession, UserSession>();
@@ -96,31 +124,31 @@ namespace Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors("corsApp");
             app.UseMiddleware<MiddelwareHandler>();
             if (env.IsDevelopment())
             {
                 //app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+
+            app.UseAuthentication();
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
 
             app.UseRouting();
 
-            app.UseAuthentication();
-
             app.UseAuthorization();
-            app.UseCookiePolicy();
+
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllers();
+            });
+
+            //Usando SWagger
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                //Personalizar
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Soccer System v1");
             });
         }
     }

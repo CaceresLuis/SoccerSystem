@@ -9,7 +9,7 @@ using Core.Modules.TeamModule.Update;
 using Core.Modules.TeamModule.Remove;
 using Microsoft.AspNetCore.Authorization;
 
-namespace Web.Controllers.Api
+namespace Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
