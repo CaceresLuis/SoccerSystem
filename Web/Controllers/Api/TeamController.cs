@@ -34,14 +34,14 @@ namespace Web.Controllers.Api
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<bool>> PutTeam(int id, TeamDto teamDto)
+        public async Task<ActionResult<bool>> PutTeam(int id, [FromForm] TeamDto teamDto)
         {
             teamDto.Id = id;
             return await _mediator.Send(new UpdateTeamCommand { Team = teamDto });
         }
 
         [HttpPost]
-        public async Task<ActionResult<bool>> PostTeam(TeamDto teamDto)
+        public async Task<ActionResult<bool>> PostTeam([FromForm] TeamDto teamDto)
         {
             return await _mediator.Send(new AddTeamCommand { Team = teamDto });
         }

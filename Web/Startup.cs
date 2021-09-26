@@ -24,6 +24,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace Web
 {
@@ -50,10 +52,13 @@ namespace Web
             //Inyectando Swagger
             services.AddSwaggerGen();
 
-            services.AddControllersWithViews();
+            //services.AddControllers(opt =>
+            //{
+            //    AuthorizationPolicy policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+            //    opt.Filters.Add(new AuthorizeFilter(policy));
+            //}).AddFluentValidation(conf => conf.RegisterValidatorsFromAssemblyContaining<ConfigValidations>());
 
-            services.AddControllers().AddFluentValidation(conf => conf.RegisterValidatorsFromAssemblyContaining<ConfigValidations>());
-
+            services.AddControllersWithViews().AddFluentValidation(conf => conf.RegisterValidatorsFromAssemblyContaining<ConfigValidations>());
             //Config Datacontex
             services.AddDbContext<DataContext>(conf =>
             {

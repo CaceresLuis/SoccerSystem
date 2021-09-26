@@ -38,7 +38,7 @@ namespace Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(AddMatchDto addMatchDto)
-        {
+        {                
             try
             {
                 await _mediator.Send(new AddMatchCommand { AddMatchDto = addMatchDto });
@@ -52,7 +52,7 @@ namespace Web.Controllers
                 TempData["Title"] = e.Error.Title;
                 TempData["Message"] = e.Error.Message;
                 TempData["State"] = State.error.ToString();
-                return View(addMatchDto);
+                return RedirectToAction(nameof(Create), new { id = addMatchDto.Group.Id });
             }           
         }
 
