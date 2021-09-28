@@ -20,7 +20,7 @@ namespace Core.Modules.UserModule.AddRoleToUer
 
         public async Task<bool> Handle(AddRoleToUserCommand request, CancellationToken cancellationToken)
         {
-            UserEntity user = await _userRepository.GetByEmailAsync(request.Email);
+            UserEntity user = await _userRepository.FindByEmailAsync(request.Email);
             bool addRolUser = await _userRepository.AddRoleToUser(user, request.RoleName);
             if(!addRolUser)
                 throw new ExceptionHandler(HttpStatusCode.BadRequest,

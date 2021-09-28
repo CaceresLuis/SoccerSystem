@@ -31,14 +31,20 @@ namespace Infrastructure.Repositories
             return await _signInManager.PasswordSignInAsync(userName, password, rememberMe, false);
         }
 
+        public async Task<bool> LoginApiAsync(UserEntity user, string password)
+        {
+            SignInResult login = await _signInManager.CheckPasswordSignInAsync(user, password, false);
+            return login.Succeeded;
+        }
+
         public string GetSessionUser()
         {
-            return _httpContextAccessor.HttpContext.User?.Claims?.FirstOrDefault(u => u.Type == ClaimTypes.Name)?.Value;
+            return _httpContextAccessor.HttpContext.User?.Claims?.FirstOrDefault(u => u.Type == ClaimTypes.NameIdentifier)?.Value;
         }
 
         public async Task<UserEntity> GetUserInSesscion()
         {
-            return await _userManager.FindByNameAsync(GetSessionUser()); ;
+            return await _userManager.FindByNameAsync(GetSessionUser());
         }
 
         public async Task<List<string>> GetUserRolesAsync(UserEntity user)
@@ -73,29 +79,14 @@ namespace Infrastructure.Repositories
             return add.Succeeded;
         }
 
-        public async Task<UserEntity> GetByEmailAsync(string email)
+        public async Task<UserEntity> FindByEmailAsync(string email)
         {
-            return await _dataContext.Users.FirstOrDefaultAsync(u => u.Email == email); ;
+            return await _userManager.FindByEmailAsync(email);
         }
 
-        public async Task<UserEntity> GetUserName(string userName)
+        public async Task<UserEntity> FindUserByName(string userName)
         {
-            return await _dataContext.Users.FirstOrDefaultAsync(u => u.UserName == userName); ;
-        }
-
-        public async Task<UserEntity> GetUserById(string userId)
-        {
-            return await _dataContext.Users.FindAsync(userId); ;
-        }
-
-        public async Task<UserEntity> UserNameExist(string userName)
-        {
-            return await _dataContext.Users.FirstOrDefaultAsync(u => u.UserName == userName); ;
-        }
-
-        public async Task<bool> EmailExist(string email)
-        {
-            return await _dataContext.Users.Where(u => u.Email == email).AnyAsync(); ;
+            return await _userManager.FindByNameAsync(userName);
         }
 
         public async Task<bool> UpdateUserAsync(UserEntity user)

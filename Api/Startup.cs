@@ -1,38 +1,31 @@
-using Core.Helpers;
-using Core.Modules.TeamModule.Add;
-using Core.Modules.TeamModule.List;
-using Core.Security.Sesscion;
-using Core.Security.Token;
-using Core.Validations;
-using FluentValidation.AspNetCore;
-using Infrastructure;
-using Infrastructure.Interfaces;
-using Infrastructure.Models;
-using Infrastructure.Repositories;
-using MediatR;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
-using Shared.Exceptions;
-using Shared.Helpers.Image;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using MediatR;
 using System.Text;
-using System.Threading.Tasks;
+using Core.Helpers;
+using Infrastructure;
+using Core.Validations;
+using Shared.Exceptions;
+using Core.Security.Token;
+using Shared.Helpers.Image;
+using Infrastructure.Models;
+using Core.Security.Sesscion;
+using Infrastructure.Interfaces;
+using FluentValidation.AspNetCore;
+using Infrastructure.Repositories;
+using Microsoft.AspNetCore.Builder;
+using Core.Modules.TeamModule.List;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Api
 {
@@ -45,12 +38,13 @@ namespace Api
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(o => o.AddPolicy("corsApp", builder => {
-                builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-            }));
+            //Config Automapper
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            //Config MediatoR
+            services.AddMediatR(typeof(ListTeamsQuery).Assembly);
 
             //Config Datacontex
             services.AddDbContext<DataContext>(conf =>
@@ -58,39 +52,25 @@ namespace Api
                 conf.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
-            services.AddOptions();
-
-            //Config MediatoR
-            services.AddMediatR(typeof(ListTeamsQuery).Assembly);
-
-            services.AddControllers(opt => {
-                var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
-                opt.Filters.Add(new AuthorizeFilter(policy));
-            })
-            .AddFluentValidation(cfg => cfg.RegisterValidatorsFromAssemblyContaining<ConfigValidations>());
-
-            //services.AddControllers().AddFluentValidation(conf => conf.RegisterValidatorsFromAssemblyContaining<ConfigValidations>());
-
             //Inyectando Swagger
             services.AddSwaggerGen();
 
-            //Get SecretKey of userManager Secrets
+            services.AddControllers(opt => {
+                AuthorizationPolicy policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                opt.Filters.Add(new AuthorizeFilter(policy));
+            }).AddFluentValidation(cfg => cfg.RegisterValidatorsFromAssemblyContaining<ConfigValidations>());
+
+
+            //Get SecretKey of userManager Secrets, also apply in JwtGenerator
             string keySecret = Configuration["SecretKey"];
-
-            //Config Automapper
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
             //Config para manejo de usuarios, login, etc
             IdentityBuilder builder = services.AddIdentityCore<UserEntity>();
             IdentityBuilder identityBuilder = new IdentityBuilder(builder.UserType, builder.Services);
-
             identityBuilder.AddRoles<IdentityRole>();
             identityBuilder.AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<UserEntity, IdentityRole>>();
-
             identityBuilder.AddEntityFrameworkStores<DataContext>();
             identityBuilder.AddSignInManager<SignInManager<UserEntity>>();
             services.TryAddSingleton<ISystemClock, SystemClock>();
-
             //Configuracion autenticacion                                             //Secret key
             SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keySecret));
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
@@ -119,6 +99,10 @@ namespace Api
             services.AddScoped<IIMageHelper, IMageHelper>();
             services.AddScoped<IListItemHelper, ListItemHelper>();
             services.AddScoped<IResetMatchHelper, ResetMatchHelper>();
+
+            services.AddCors(o => o.AddPolicy("corsApp", builder => {
+                builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -131,10 +115,9 @@ namespace Api
                 //app.UseDeveloperExceptionPage();
             }
 
-            app.UseAuthentication();
-            app.UseHttpsRedirection();
-
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

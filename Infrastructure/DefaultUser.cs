@@ -17,7 +17,7 @@ namespace Infrastructure
                 {
                     FirstName = "Julanito",
                     LastName = "De Tal",
-                    UserName = "JulaTal",
+                    UserName = "jusla@nito.com",
                     Document = "2486468794694",
                     Email = "jusla@nito.com"
                 };

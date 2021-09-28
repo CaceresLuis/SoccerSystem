@@ -1,6 +1,5 @@
 using System;
 using MediatR;
-using System.Text;
 using Core.Helpers;
 using Infrastructure;
 using Core.Validations;
@@ -18,14 +17,13 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Web
 {
@@ -46,10 +44,8 @@ namespace Web
             //Config MediatoR
             services.AddMediatR(typeof(AddTeamCommand).Assembly);
 
-            //Inyectando Swagger
-            services.AddSwaggerGen();
-
             services.AddControllersWithViews().AddFluentValidation(conf => conf.RegisterValidatorsFromAssemblyContaining<ConfigValidations>());
+            
             //Config Datacontex
             services.AddDbContext<DataContext>(conf =>
             {
@@ -75,6 +71,23 @@ namespace Web
             identityBuilder.AddEntityFrameworkStores<DataContext>();
             identityBuilder.AddSignInManager<SignInManager<UserEntity>>();
             services.TryAddSingleton<ISystemClock, SystemClock>();
+            services.AddIdentity<UserEntity, IdentityRole>().AddDefaultTokenProviders()
+              .AddEntityFrameworkStores<DataContext>();
+
+            //Get SecretKey of userManager Secrets
+            string keySecret = Configuration["SecretKey"];
+            //Configuracion autenticacion                                             //Secret key
+            SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keySecret));
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
+            {
+                opt.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = key,
+                    ValidateAudience = false,
+                    ValidateIssuer = false
+                };
+            });
 
             //Inyection of Repositories
             services.AddScoped<IUserSession, UserSession>();
@@ -104,7 +117,6 @@ namespace Web
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
             app.UseHttpsRedirection();

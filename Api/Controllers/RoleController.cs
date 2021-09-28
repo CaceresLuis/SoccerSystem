@@ -7,11 +7,13 @@ using Core.Modules.RoleModule.List;
 using Microsoft.AspNetCore.Identity;
 using Core.Modules.RoleModule.Remove;
 using Core.Modules.UserModule.AddRoleToUer;
+using Microsoft.AspNetCore.Authorization;
 
-namespace Web.Controllers.Api
+namespace Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "admin")]
     public class RoleController : ControllerBase
     {
         private readonly IMediator _mediator;

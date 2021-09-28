@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Core.Modules.GroupTeamModule.Add;
 using Core.Modules.GroupTeamModule.Remove;
+using Microsoft.AspNetCore.Authorization;
 
-namespace Web.Controllers.Api
+namespace Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "admin")]
     public class GroupTeamController : ControllerBase
     {
         private readonly IMediator _mediator;

@@ -11,16 +11,14 @@ namespace Infrastructure.Interfaces
         Task<bool> AddUserAsync(UserEntity user, string pass);
         Task<bool> ChanguePassword(UserEntity user, string currentPassword, string newPassword);
         Task<bool> UpdateUserAsync(UserEntity user);
-        Task<bool> EmailExist(string email);
-        Task<UserEntity> GetByEmailAsync(string email);
+        Task<UserEntity> FindByEmailAsync(string email);
         string GetSessionUser();
-        Task<UserEntity> GetUserById(string userId);
-        Task<UserEntity> GetUserName(string userName);
+        Task<UserEntity> FindUserByName(string userId);
         Task<UserEntity> GetUserInSesscion();
         Task<SignInResult> LoginAsync(string userName, string password, bool rememberMe);
         Task LogoutAsync();
-        Task<UserEntity> UserNameExist(string userName);
         Task<List<string>> GetUserRolesAsync(UserEntity user);
         Task<List<UserEntity>> GetUsersAsync();
+        Task<bool> LoginApiAsync(UserEntity user, string password);
     }
 }

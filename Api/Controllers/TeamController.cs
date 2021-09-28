@@ -13,6 +13,7 @@ namespace Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    
     public class TeamController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -23,19 +24,21 @@ namespace Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin")]
+        [AllowAnonymous]
         public async Task<ActionResult<TeamDto[]>> GetTeams()
         {
             return await _mediator.Send(new ListTeamsQuery());
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<TeamDto>> GetTeam(int id)
         {
             return await _mediator.Send(new GetTeamByIdQuery { TeamId = id });
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<bool>> PutTeam(int id, [FromForm] TeamDto teamDto)
         {
             teamDto.Id = id;
@@ -43,12 +46,14 @@ namespace Api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<bool>> PostTeam([FromForm] TeamDto teamDto)
         {
             return await _mediator.Send(new AddTeamCommand { Team = teamDto });
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<bool>> DeleteTeam(int id)
         {
             return await _mediator.Send(new RemoveTeamCommand { IdTeam = id });

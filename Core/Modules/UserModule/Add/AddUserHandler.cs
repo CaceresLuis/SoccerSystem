@@ -30,13 +30,21 @@ namespace Core.Modules.UserModule.Add
         {
             UserDto userdto = request.UserDto;
             if (userdto.Password != userdto.PasswordConfirm)
-                throw new Exception("Error");
+                throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                    new Error
+                    {
+                        Code = "Not registered",
+                        Message = "Paswords not match",
+                        Title = "Not registered",
+                        State = State.error,
+                        IsSuccess = false
+                    });
 
             UserEntity user = _mapper.Map<UserEntity>(userdto);
-            user.Email = user.UserName;
+            user.UserName = user.Email;
 
-            bool userExist = await _userRepository.EmailExist(user.Email);
-            if (userExist)
+            var userExist = await _userRepository.FindByEmailAsync(user.Email);
+            if (userExist != null)
                 throw new ExceptionHandler(HttpStatusCode.BadRequest,
                     new Error
                     {

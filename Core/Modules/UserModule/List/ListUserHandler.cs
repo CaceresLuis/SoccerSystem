@@ -28,7 +28,7 @@ namespace Core.Modules.UserModule.List
             foreach (UserDto user in usersDto)
             {
                 UserEntity userEntity = _mapper.Map<UserEntity>(user);
-                UserEntity userData = await _userRepository.GetByEmailAsync(userEntity.Email);
+                UserEntity userData = await _userRepository.FindByEmailAsync(userEntity.Email);
                 user.Roles = await _userRepository.GetUserRolesAsync(userData);
             }
 

@@ -69,9 +69,6 @@ namespace Core.Validations
             RuleFor(u => u.LastName)
                 .NotEmpty()
                 .WithMessage("The LastName is requered");
-            RuleFor(u => u.UserName)
-                .NotEmpty()
-                .WithMessage("The Email is requered");
             RuleFor(u => u.Password)
                 .NotEmpty()
                 .WithMessage("The Password is requered");

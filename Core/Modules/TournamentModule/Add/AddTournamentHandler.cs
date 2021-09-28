@@ -9,6 +9,7 @@ using Shared.Helpers.Image;
 using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
+using Core.Dtos.DtosApi;
 
 namespace Core.Modules.TournamentModule.Add
 {
@@ -27,7 +28,7 @@ namespace Core.Modules.TournamentModule.Add
 
         public async Task<bool> Handle(AddTournamentCommand request, CancellationToken cancellationToken)
         {
-            Dtos.DtosApi.AddTournamentDto data = request.Tournament;
+            AddTournamentDto data = request.Tournament;
             if (data.EndDate == DateTime.MinValue)
                 data.EndDate = DateTime.Now;
 

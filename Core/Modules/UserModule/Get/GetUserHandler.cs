@@ -22,7 +22,7 @@ namespace Core.Modules.UserModule.Get
 
         public async Task<UserDto> Handle(GetUserQuery request, CancellationToken cancellationToken)
         {
-            UserEntity userEntity = await _userRepository.GetByEmailAsync(request.Email);
+            UserEntity userEntity = await _userRepository.FindByEmailAsync(request.Email);
             List<string> roles = await _userRepository.GetUserRolesAsync(userEntity);
             UserDto userDto = _mapper.Map<UserDto>(userEntity);
             userDto.Roles = roles;

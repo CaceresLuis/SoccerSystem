@@ -7,8 +7,9 @@ using Core.Modules.GroupModule.Get;
 using Core.Modules.GroupModule.List;
 using Core.Modules.GroupModule.Update;
 using Core.Modules.GroupModule.Remove;
+using Microsoft.AspNetCore.Authorization;
 
-namespace Web.Controllers.Api
+namespace Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -22,18 +23,21 @@ namespace Web.Controllers.Api
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<GroupDto[]>> GetGroups()
         {
             return await _mediator.Send(new ListGroupQuery ());
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<GroupDto>> GetGroupEntity(int id)
         {
             return await _mediator.Send(new GetGroupQuery { Id = id });
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<bool>> PutGroupEntity(int id, GroupDto groupDto)
         {
             groupDto.Id = id;
@@ -41,12 +45,14 @@ namespace Web.Controllers.Api
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<bool>> PostGroupEntity(GroupDto groupDto)
         {
             return await _mediator.Send(new AddGroupCommand { GroupDto = groupDto });
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<bool>> DeleteGroupEntity(int id)
         {
             return await _mediator.Send(new RemoveGroupCommand { Id = id });

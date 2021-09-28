@@ -3,7 +3,7 @@ using AutoMapper;
 using Core.Dtos.DtosApi;
 using Infrastructure.Models;
 
-namespace Web.Map
+namespace Core.Mapping
 {
     public class MapProfile : Profile
     {
@@ -11,6 +11,7 @@ namespace Web.Map
         {
             CreateMap<TeamEntity, TeamDto>().ReverseMap();
             CreateMap<UserEntity, UserDto>().ReverseMap();
+            CreateMap<UserEntity, UserDtoApi>().ReverseMap();
             CreateMap<MatchEntity, MatchDto>().ReverseMap();
             CreateMap<GroupEntity, GroupDto>().ReverseMap();
             CreateMap<GroupEntity, GroupFullData>().ReverseMap();
@@ -18,7 +19,7 @@ namespace Web.Map
 
             CreateMap<GroupEntity, GroupMatchsDto>().ReverseMap();
             CreateMap<TournamentEntity, TournamentDto>().ReverseMap();
-            CreateMap<AddTournamentDto, AddTournamentDto>().ReverseMap();
+            CreateMap<TournamentEntity, AddTournamentDto>().ReverseMap();
             CreateMap<TournamentEntity, TournamentFullData>().ReverseMap();
         }
     }

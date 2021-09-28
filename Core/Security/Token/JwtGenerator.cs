@@ -5,11 +5,20 @@ using System.Security.Claims;
 using System.Collections.Generic;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.Extensions.Configuration;
 
 namespace Core.Security.Token
 {
     public class JwtGenerator : IJwtGenerator
     {
+        //Get global configurations
+        private readonly IConfiguration _configuration;
+
+        public JwtGenerator(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public string CreateToken(UserEntity user, List<string> roles)
         {
             List<Claim> claims = new List<Claim>
@@ -24,8 +33,8 @@ namespace Core.Security.Token
                     claims.Add(new Claim(ClaimTypes.Role, rol));
                 }
             }
-
-            SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("secretilla voladita"));
+            string keySecret = _configuration["SecretKey"];
+            SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keySecret));
             SigningCredentials credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             SecurityTokenDescriptor tokenDescription = new SecurityTokenDescriptor
