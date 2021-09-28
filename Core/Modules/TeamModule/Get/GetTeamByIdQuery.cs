@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using Core.ModelResponse.One;
+using Core.Dtos;
 
 namespace Core.Modules.TeamModule.Get
 {
-    public class GetTeamByIdQuery : IRequest<ATeamResponse>
+    public class GetTeamByIdQuery : IRequest<TeamDto>
     {
         public int TeamId { get; set; }
     }

@@ -2,9 +2,13 @@
 
 namespace Core.Dtos
 {
-    public class GroupFullData : GroupDto
+    public class GroupFullData
     {
-        public ICollection<MatchDto> MatchDtos { get; set; }
-        public ICollection<GroupTeam> GroupTeams { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public bool IsActive { get; set; }
+        public TournamentDto Tournament { get; set; }
+        public ICollection<MatchDto> Matches { get; set; }
+        public ICollection<GroupTeamDto> GroupTeams { get; set; }
     }
 }

@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using Core.ModelResponse;
+using Core.Dtos;
 
 namespace Core.Modules.TeamModule.List
 {
-    public class ListTeamsQuery : IRequest<TeamResponse[]>
+    public class ListTeamsQuery : IRequest<TeamDto[]>
     {
     }
 }

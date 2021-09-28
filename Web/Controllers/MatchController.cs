@@ -1,17 +1,19 @@
 ﻿using MediatR;
 using Core.Dtos;
-using Core.ModelResponse;
+using Shared.Enums;
+using Shared.Exceptions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Core.Modules.MatchModule.Get;
 using Core.Modules.MatchModule.Add;
 using Core.Modules.MatchModule.List;
 using Core.Modules.MatchModule.Close;
-using Core.Modules.MatchModule.Reset;
+using Core.Modules.MatchModule.Remove;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers
 {
-    public class MatchController : Controller
+    public class MatchController : Controller 
     {
         private readonly IMediator _mediator;
 
@@ -26,11 +28,7 @@ namespace Web.Controllers
             return View(list);
         }
 
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> Create(int id)
         {
             AddMatchDto addMatchDto = await _mediator.Send(new GetGroupDetailsforMatchQuery { GroupId = id });
@@ -40,18 +38,25 @@ namespace Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(AddMatchDto addMatchDto)
-        {
-            ActionResponse create = await _mediator.Send(new AddMatchCommand { AddMatchDto = addMatchDto });
-            TempData["Title"] = create.Title;
-            TempData["Message"] = create.Message;
-            TempData["State"] = create.State.ToString();
-
-            if (!create.IsSuccess)
-                return View(addMatchDto);
-
-            return RedirectToAction("Detail", "Group", new { id = addMatchDto.Group.Id });
+        {                
+            try
+            {
+                await _mediator.Send(new AddMatchCommand { AddMatchDto = addMatchDto });
+                TempData["Title"] = "Success!";
+                TempData["Message"] = "Macht added";
+                TempData["State"] = State.success.ToString();
+                return RedirectToAction("Detail", "Group", new { id = addMatchDto.Group.Id });
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = State.error.ToString();
+                return RedirectToAction(nameof(Create), new { id = addMatchDto.Group.Id });
+            }           
         }
 
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> CloseMatch(int id)
         {
             MatchDto match = await _mediator.Send(new GetMatchQuery { Id = id });
@@ -62,17 +67,43 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CloseMatch(MatchDto matchDto)
         {
-            if(matchDto.IsClosed) //delete before update
-                await _mediator.Send(new ResetMatchCommand { MatchDto = matchDto });
+            try
+            {
+                await _mediator.Send(new CloseMatchCommand { MatchDto = matchDto });
+                TempData["Title"] = "Success";
+                TempData["Message"] = "Macht Closet!";
+                TempData["State"] = State.success.ToString();
 
-            ActionResponse update = await _mediator.Send(new CloseMatchCommand { MatchDto = matchDto });
-            TempData["Title"] = update.Title;
-            TempData["Message"] = update.Message;
-            TempData["State"] = update.State.ToString();
-
-            if (!update.IsSuccess)
+                return RedirectToAction(nameof(Matchs), new { id = matchDto.GroupId });
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = State.error.ToString();
                 return View(matchDto);
-            return RedirectToAction(nameof(Matchs), new { id = matchDto.GroupId });
+            }
+        }
+
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult> DeleteMatch(int id)
+        {
+            MatchDto match = await _mediator.Send(new GetMatchQuery { Id = id });
+            try
+            {
+                await _mediator.Send(new RemoveMatchCommand { Id = id });
+                TempData["Title"] = "Deleted!";
+                TempData["Message"] = $"Match has been deleted!";
+                TempData["State"] = State.success.ToString();
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = State.error.ToString();
+            }
+
+            return RedirectToAction("Matchs", "Match", new { Id = match.GroupId });
         }
     }
 }

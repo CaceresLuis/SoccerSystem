@@ -1,4 +1,4 @@
-﻿@model Web.ViewModel.GroupViewModels
+﻿@model Core.Dtos.GroupFullData
 
 @{
     ViewData["Title"] = "Details";
@@ -21,7 +21,10 @@
                     <a class="nav-link" href="#">Group || <b> @Html.DisplayFor(model => model.Name) </b></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#"># Teams || <b> @Html.DisplayFor(model => model.GroupDetails.Count) </b></a>
+                    <a class="nav-link" href="#"># Teams || <b> @Html.DisplayFor(model => model.GroupTeams.Count) </b></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"># Is Active || <b> @Model.IsActive </b></a>
                 </li>
             </ul>
         </div>
@@ -39,27 +42,34 @@
     <div>
         <a asp-controller="Tournament" asp-action="Details" asp-route-id="@Model.Tournament.Id" class="btn btn-default">
             <i class="bi bi-arrow-left-circle-fill"></i> Back
-        </a>
+        </a> 
         <a asp-controller="Match" asp-action="Matchs" asp-route-id="@Model.Id" class="btn btn-secondary">
             <i class="bi bi-plus-circle-fill"></i> View Match
         </a>
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
-            <i class="bi bi-pencil-square"></i> Edit Group
-        </a>
-        <a asp-controller="Match" asp-action="Create" asp-route-id="@Model.Id" class="btn btn-primary">
-            <i class="bi bi-plus-circle-fill"></i> Add Match
-        </a>
+        @if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
+        {
+
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                <i class="bi bi-pencil-square"></i> Edit Group
+            </a>
+            <a asp-controller="Match" asp-action="Create" asp-route-id="@Model.Id" class="btn btn-primary">
+                <i class="bi bi-plus-circle-fill"></i> Add Match
+            </a>
+        }
     </div>
     <br />
-    <form asp-controller="GroupDetails" asp-action="Create" method="get">
-        <input type="hidden" name="idTournament" asp-for="Tournament.Id" />
-        <input type="hidden" name="idGroup" asp-for="Id" />
-        <button type="submit" value="Save" class="btn btn-primary">
-            <i class="bi bi-plus-circle-fill"></i> Add Team
-        </button>
-    </form>
+     @if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
+     {
+        <form asp-controller="GroupTeam" asp-action="Create" method="get">
+            <input type="hidden" name="idTournament" asp-for="Tournament.Id" />
+            <input type="hidden" name="idGroup" asp-for="Id" />
+            <button type="submit" value="Save" class="btn btn-primary">
+                <i class="bi bi-plus-circle-fill"></i> Add Team
+            </button>
+        </form>
+     }
     <a name="Matches"></a>
-    @if (Model.GroupDetails.Count != 0)
+    @if (Model.GroupTeams.Count != 0)
     {
         <div class="row">
             <div class="col-md-12">
@@ -72,7 +82,7 @@
                             <thead>
                                 <tr>
                                     <th>
-                                        @Html.DisplayNameFor(model => model.GroupDetails.FirstOrDefault().Team.LogoPath)
+                                        @Html.DisplayNameFor(model => model.GroupTeams.FirstOrDefault().Team.LogoPath)
                                     </th>
                                     <th>
                                         Name
@@ -101,11 +111,11 @@
                                     <th>
                                         Goal Difference
                                     </th>
-                                    <th width="150px"> Actions </th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in Model.GroupDetails
+                                @foreach (var item in Model.GroupTeams
                               .OrderByDescending(g => g.Points)
                               .ThenByDescending(g => g.GoalDifference)
                               .ThenByDescending(g => g.GoalsFor))
@@ -148,9 +158,12 @@
                                         <td>
                                             @Html.DisplayFor(modelItem => item.GoalDifference)
                                         </td>
-                                        <td>
-                                            <button data-id="@item.Id" class="btn btn-danger deleteItem" data-toggle="modal" data-target="#deleteDialog"><i class="bi bi-trash-fill"></i></button>
-                                        </td>
+                                         @if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
+                                         { 
+                                            <td>
+                                                <button data-id="@item.Id" class="btn btn-danger deleteItem" data-toggle="modal" data-target="#deleteDialog"><i class="bi bi-trash-fill"></i></button>
+                                            </td>
+                                         }
                                     </tr>
                                 }
                             </tbody>
@@ -182,7 +195,7 @@
             });
 
             $("#btnYesDelete").click(function () {
-                window.location.href = '/GroupDetails/Delete/' + item_to_delete;
+                window.location.href = '/GroupTeam/Delete/' + item_to_delete;
             });
         });
     </script>

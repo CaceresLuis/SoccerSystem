@@ -29,7 +29,7 @@ namespace Core.Modules.MatchModule.Get
             if (groupEntity == null)
                 throw new Exception("error");
 
-            List<SelectListItem> selectTeam = groupEntity.GroupDetails.Select(t => new SelectListItem
+            List<SelectListItem> selectTeam = groupEntity.GroupTeams.Select(t => new SelectListItem
             {
                 Text = t.Team.Name,
                 Value = $"{t.Team.Id}"

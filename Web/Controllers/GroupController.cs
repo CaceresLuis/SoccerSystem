@@ -1,8 +1,7 @@
 ﻿using MediatR;
-using AutoMapper;
-using Web.ViewModel;
-using Core.ModelResponse;
-using Core.ModelResponse.One;
+using Core.Dtos;
+using Shared.Enums;
+using Shared.Exceptions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Core.Modules.GroupModule.Add;
@@ -10,102 +9,125 @@ using Core.Modules.GroupModule.Get;
 using Core.Modules.GroupModule.Remove;
 using Core.Modules.GroupModule.Update;
 using Core.Modules.TournamentModule.Get;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers
 {
     public class GroupController : Controller
     {
-        private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
-        public GroupController(IMediator mediator, IMapper mapper)
+        public GroupController(IMediator mediator)
         {
-            _mapper = mapper;
             _mediator = mediator;
         }
 
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> Create(int id)
         {
-            ATournamentResponse tournamentResponse = await _mediator.Send(new GetTournamentQuery { Id = id });
-            TempData["Title"] = tournamentResponse.Data.Title;
-            TempData["Message"] = tournamentResponse.Data.Message;
-            TempData["State"] = tournamentResponse.Data.State.ToString();
-            if (tournamentResponse == null)
-                return RedirectToAction("Details", "Tournament", new { Id = id });
+            try
+            {
+                TournamentDto tournamentDto = await _mediator.Send(new FindTournamentQuery { Id = id });
+                GroupDto groupDto = new GroupDto { Tournament = tournamentDto };
 
-            TournamentViewModels tournament = _mapper.Map<TournamentViewModels>(tournamentResponse.Tournament);
-            GroupViewModels groupView = new GroupViewModels { Tournament = tournament };
-
-            return View(groupView);
+                return View(groupDto);
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = e.Error.State;
+                return View();
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(GroupViewModels groupView)
+        public async Task<ActionResult> Create(GroupDto groupDto)
         {
-            groupView.Id = 0;
-            GroupResponse groupResponse = _mapper.Map<GroupResponse>(groupView);
-            ActionResponse create = await _mediator.Send(new AddGroupCommand { Group = groupResponse });
-            TempData["Title"] = create.Title;
-            TempData["Message"] = create.Message;
-            TempData["State"] = create.State.ToString();
+            try
+            {
+                groupDto.Id = 0;
+                bool create = await _mediator.Send(new AddGroupCommand { GroupDto = groupDto });
 
-            if (!create.IsSuccess)
-                return View(groupView);
+                TempData["Title"] = "Created!";
+                TempData["Message"] = $"The group {groupDto.Name} was created";
+                TempData["State"] = $"{State.success}";
 
-            return RedirectToAction("Details", "Tournament", new { id = groupView.Tournament.Id });
+                return RedirectToAction("Details", "Tournament", new { id = groupDto.Tournament.Id });
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = e.Error.State;
+                return View(groupDto);
+            }
         }
 
         public async Task<ActionResult> Detail(int id)
         {
-            AGroupResponse aGroupResponse = await _mediator.Send(new GetFullGroupQuery { Id = id });
-
-            if (!aGroupResponse.Data.IsSuccess)
+            try
+            {
+                GroupFullData groupFullData = await _mediator.Send(new GetFullGroupQuery { Id = id });
+                return View(groupFullData);
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = e.Error.State;
                 return RedirectToAction("Details", "Tournament", new { Id = id });
+            }
 
-            GroupViewModels groupView = _mapper.Map<GroupViewModels>(aGroupResponse.Group);
-
-            return View(groupView);
         }
 
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> Edit(int id)
         {
-            AGroupResponse AgroupResponse = await _mediator.Send(new GetFullGroupQuery { Id = id });
-            TempData["Title"] = AgroupResponse.Data.Title;
-            TempData["Message"] = AgroupResponse.Data.Message;
-            TempData["State"] = AgroupResponse.Data.State.ToString();
-
-            if (!AgroupResponse.Data.IsSuccess)
-                return RedirectToAction("Details", "Tournament", new { Id = id });
-
-            GroupViewModels groupView = _mapper.Map<GroupViewModels>(AgroupResponse.Group);
-
-            return View(groupView);
+            GroupDto groupDto = await _mediator.Send(new GetGroupQuery { Id = id });
+            return View(groupDto);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(GroupViewModels groupView)
+        public async Task<ActionResult> Edit(GroupDto groupDto)
         {
-            GroupResponse groupResponse = _mapper.Map<GroupResponse>(groupView);
-            ActionResponse update = await _mediator.Send(new UpdateGroupCommand { Group = groupResponse });
-            TempData["Title"] = update.Title;
-            TempData["Message"] = update.Message;
-            TempData["State"] = update.State.ToString();
+            try
+            {
+                bool update = await _mediator.Send(new UpdateGroupCommand { Group = groupDto });
+                TempData["Title"] = "Updated!";
+                TempData["Message"] = $"The group {groupDto.Name} was updated";
+                TempData["State"] = State.success.ToString();
 
-            if (!update.IsSuccess)
-                return View(groupView);
-
-            return RedirectToAction("Details", "Tournament", new { id = groupView.Tournament.Id });
+                return RedirectToAction("Detail", "Group", new { id = groupDto.Id });
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = State.error;
+                return View(groupDto);
+            }
         }
 
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> Delete(int id)
         {
-            GroupResponse group = await _mediator.Send(new GetGroupWithTournamentQuery { Id = id });
-            ActionResponse delete = await _mediator.Send(new RemoveGroupCommand { Id = id });
-            TempData["Title"] = delete.Title;
-            TempData["Message"] = delete.Message;
-            TempData["State"] = delete.State.ToString();
+            GroupDto group = await _mediator.Send(new GetGroupQuery { Id = id });
+            try
+            {
+                await _mediator.Send(new RemoveGroupCommand { Id = id });
+                TempData["Title"] = "Updated!";
+                TempData["Message"] = $"Tournament {group.Name} has been deleted!";
+                TempData["State"] = State.success.ToString();
+            }
+            catch (ExceptionHandler e)
+            {
+                TempData["Title"] = e.Error.Title;
+                TempData["Message"] = e.Error.Message;
+                TempData["State"] = State.error.ToString();
+            }
 
             return RedirectToAction("Details", "Tournament", new { id = group.Tournament.Id });
         }

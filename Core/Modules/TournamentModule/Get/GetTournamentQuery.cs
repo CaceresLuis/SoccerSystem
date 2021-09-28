@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using Core.ModelResponse.One;
+using Core.Dtos;
 
 namespace Core.Modules.TournamentModule.Get
 {
-    public class GetTournamentQuery : IRequest<ATournamentResponse>
+    public class GetTournamentQuery : IRequest<TournamentFullData>
     {
         public int Id { get; set; }
     }

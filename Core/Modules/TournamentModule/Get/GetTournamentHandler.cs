@@ -1,16 +1,17 @@
 ﻿using MediatR;
+using Core.Dtos;
 using AutoMapper;
+using System.Net;
 using Shared.Enums;
 using System.Threading;
-using Core.ModelResponse;
+using Shared.Exceptions;
 using Infrastructure.Models;
 using System.Threading.Tasks;
-using Core.ModelResponse.One;
 using Infrastructure.Interfaces;
 
 namespace Core.Modules.TournamentModule.Get
 {
-    public class GetTournamentHandler : IRequestHandler<GetTournamentQuery, ATournamentResponse>
+    public class GetTournamentHandler : IRequestHandler<GetTournamentQuery, TournamentFullData>
     {
         private readonly IMapper _mapper;
         private readonly ITournamentRepository _tournamentRepository;
@@ -21,19 +22,21 @@ namespace Core.Modules.TournamentModule.Get
             _tournamentRepository = tournamentRepository;
         }
 
-        public async Task<ATournamentResponse> Handle(GetTournamentQuery request, CancellationToken cancellationToken)
+        public async Task<TournamentFullData> Handle(GetTournamentQuery request, CancellationToken cancellationToken)
         {
-            ATournamentResponse response = new ATournamentResponse { Data = new ActionResponse { IsSuccess = true } };
-
             TournamentEntity tournament = await _tournamentRepository.GetTournamentDetailsAsync(request.Id);
             if(tournament == null)
-            {
-                response.Data = new ActionResponse { IsSuccess = false, Title = "Error", Message = "The tournament does not exist", State = State.error };
-                return response;
-            }
+                throw new ExceptionHandler(HttpStatusCode.NotFound,
+                    new Error
+                    {
+                        Code = "Error",
+                        Message = "The tournament does not exist",
+                        Title = "Error",
+                        State = State.error,
+                        IsSuccess = false
+                    });
 
-            response.Tournament = _mapper.Map<TournamentResponse>(tournament);
-            return response;
+            return _mapper.Map<TournamentFullData>(tournament);
         }
     }
 }

@@ -22,6 +22,6 @@ namespace Shared.Helpers.Image
             }
 
             return $"/images/{folder}/{file}";
-        }
+        }        
     }
 }

@@ -1,7 +1,7 @@
-﻿@model Web.ViewModel.GroupViewModels
+﻿@model Core.Dtos.GroupDto
 
 <div class="form-group">
     <label asp-for="Name" class="control-label"></label>
-    <input asp-for="Name" class="form-control" />
+    <input asp-for="Name" required class="form-control" />
     <span asp-validation-for="Name" class="text-danger"></span>
 </div>

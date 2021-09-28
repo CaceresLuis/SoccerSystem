@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public TournamentDto TournamentDto { get; set; }
+        public bool IsActive { get; set; }
+        public TournamentDto Tournament { get; set; }
     }
 }

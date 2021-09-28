@@ -1,0 +1,44 @@
+﻿@model Core.Dtos.UserDto
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+    <h3>User: @Model.Email</h3>
+<hr />
+<div class="row">
+    
+    <div class="col-md-5">
+        <dl class="dl-horizontal text-center">
+            <dd>Full Name</dd>
+            <dt>@Model.FirstName @Model.LastName</dt>
+            <dd>Email</dd>
+            <dt>@Model.Email</dt>
+            <dd>Document</dd>
+            <dt>@Model.Document</dt>
+            <dd>Address</dd>
+            <dt>@Model.Address</dt>
+            <dd>Roles</dd>
+            @foreach (var rol in Model.Roles)
+            {
+                <dt>@rol</dt>
+            }
+        </dl>
+    </div>
+
+    <div class="col-md-4">
+        @if (!string.IsNullOrEmpty(Model.PicturePath))
+        {
+            <img src="@Url.Content(Model.PicturePath)" alt="Image" style="width:300px;height:300px;max-width: 100%; height: auto;" />
+        }
+    </div>
+</div>
+<a asp-action="Edit" class="btn btn-secondary">
+    <i class="bi bi-pencil-square"></i> Update me
+</a>
+
+<partial name="_Alert" />
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

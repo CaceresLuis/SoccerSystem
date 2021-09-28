@@ -1,14 +1,15 @@
 ﻿using MediatR;
+using System.Net;
 using Shared.Enums;
 using System.Threading;
-using Core.ModelResponse;
+using Shared.Exceptions;
 using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 
 namespace Core.Modules.GroupModule.Update
 {
-    public class UpdateGroupHandler : IRequestHandler<UpdateGroupCommand, ActionResponse>
+    public class UpdateGroupHandler : IRequestHandler<UpdateGroupCommand, bool>
     {
         private readonly IGroupRepository _groupRepository;
 
@@ -17,16 +18,32 @@ namespace Core.Modules.GroupModule.Update
             _groupRepository = groupRepository;
         }
 
-        public async Task<ActionResponse> Handle(UpdateGroupCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(UpdateGroupCommand request, CancellationToken cancellationToken)
         {
             GroupEntity group = await _groupRepository.GetGroupWithTournamentAsync(request.Group.Id);
             if (group == null)
-                return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"The group does not exist", State = State.error };
+                throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                    new Error
+                    {
+                        Code = "Error",
+                        Message = "The group does not exist",
+                        Title = "Error",
+                        State = State.error,
+                        IsSuccess = false
+                    });
 
             if (request.Group.Name != group.Name)
             {
                 if (await _groupRepository.GetGroupByNameAndTournamentAsync(group.Tournament.Id, request.Group.Name) != null)
-                return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"The {request.Group.Name} is already registered in this tournament", State = State.error };
+                    throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                    new Error
+                    {
+                        Code = "Error",
+                        Message = $"The {request.Group.Name} is already registered in this tournament",
+                        Title = "Error",
+                        State = State.error,
+                        IsSuccess = false
+                    });
             }
 
             group.Name = request.Group.Name ?? group.Name;
@@ -34,9 +51,17 @@ namespace Core.Modules.GroupModule.Update
             group.IsActive = request.Group.IsActive;
 
             if (!await _groupRepository.UpdateGroupAsync(group))
-                return new ActionResponse { IsSuccess = false, Title = "Error", Message = $"Something has gone wrong", State = State.error };
+                throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                    new Error
+                    {
+                        Code = "Error",
+                        Message = "Something has gone wrong",
+                        Title = "Error",
+                        State = State.error,
+                        IsSuccess = false
+                    });
 
-            return new ActionResponse { IsSuccess = true, Title = "Updated!", Message = $"The group {group.Name} was updated", State = State.success };
+            return true;
         }
     }
 }

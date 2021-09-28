@@ -1,10 +1,10 @@
 ﻿using MediatR;
-using Core.ModelResponse;
+using Core.Dtos;
 
 namespace Core.Modules.GroupModule.Update
 {
-    public class UpdateGroupCommand : IRequest<ActionResponse>
+    public class UpdateGroupCommand : IRequest<bool>
     {
-        public GroupResponse Group { get; set; }
+        public GroupDto Group { get; set; }
     }
 }

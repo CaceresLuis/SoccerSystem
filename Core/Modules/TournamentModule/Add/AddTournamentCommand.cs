@@ -1,10 +1,10 @@
 ﻿using MediatR;
-using Core.ModelResponse;
+using Core.Dtos.DtosApi;
 
 namespace Core.Modules.TournamentModule.Add
 {
-    public class AddTournamentCommand : IRequest<ActionResponse>
+    public class AddTournamentCommand : IRequest<bool>
     {
-        public TournamentResponse Tournament { get; set; }
+        public AddTournamentDto Tournament { get; set; }
     }
 }

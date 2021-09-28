@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Infrastructure;
+using Infrastructure.Models;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Web
 {
@@ -13,14 +13,27 @@ namespace Web
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            IHost host = CreateHostBuilder(args).Build();
+            using(IServiceScope service = host.Services.CreateScope())
+            {
+                IServiceProvider provider = service.ServiceProvider;
+                UserManager<UserEntity> userManager = provider.GetRequiredService<UserManager<UserEntity>>();
+                RoleManager<IdentityRole> roleManager = provider.GetRequiredService<RoleManager<IdentityRole>>();
+                DataContext dataContext = provider.GetRequiredService<DataContext>();
+                IConfiguration configuration = provider.GetRequiredService<IConfiguration>();
+
+                DefaultUser.AddDataUser(dataContext, userManager, roleManager, configuration).Wait();
+            }
+            host.Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+            webBuilder.UseStartup<Startup>();
+            });
+        }
     }
 }

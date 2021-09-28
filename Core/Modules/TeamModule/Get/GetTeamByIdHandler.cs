@@ -1,16 +1,17 @@
 ﻿using MediatR;
+using Core.Dtos;
 using AutoMapper;
+using System.Net;
 using Shared.Enums;
 using System.Threading;
-using Core.ModelResponse;
+using Shared.Exceptions;
 using Infrastructure.Models;
-using Core.ModelResponse.One;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 
 namespace Core.Modules.TeamModule.Get
 {
-    public class GetTeamByIdHandler : IRequestHandler<GetTeamByIdQuery, ATeamResponse>
+    public class GetTeamByIdHandler : IRequestHandler<GetTeamByIdQuery, TeamDto>
     {
         private readonly IMapper _mapper;
         private readonly ITeamRepository _teamRepository;
@@ -21,19 +22,21 @@ namespace Core.Modules.TeamModule.Get
             _teamRepository = teamRepository;
         }
 
-        public async Task<ATeamResponse> Handle(GetTeamByIdQuery request, CancellationToken cancellationToken)
+        public async Task<TeamDto> Handle(GetTeamByIdQuery request, CancellationToken cancellationToken)
         {
-            ATeamResponse response = new ATeamResponse { Data = new ActionResponse { IsSuccess = true } };
             TeamEntity team = await _teamRepository.FindTeamByIdAsync(request.TeamId);
             if (team == null)
-            {
-                response.Data = new ActionResponse { IsSuccess = false, Title = "Error", Message = "The team does not exist", State = State.error };
-                return response;
-            }
+                throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                    new Error
+                    {
+                        Code = "Error",
+                        Message = "The team does not exist",
+                        Title = "Error",
+                        State = State.error,
+                        IsSuccess = false
+                    });
 
-            response.Team = _mapper.Map<TeamResponse>(team);
-
-            return response;
+            return _mapper.Map<TeamDto>(team); ;
         }
     }
 }
