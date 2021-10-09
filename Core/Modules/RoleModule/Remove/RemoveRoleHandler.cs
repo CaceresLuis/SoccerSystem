@@ -17,7 +17,7 @@ namespace Core.Modules.RoleModule.Remove
 
         public async Task<bool> Handle(RemoveRoleCommand request, CancellationToken cancellationToken)
         {
-            IdentityRole rol = await _roleRepository.GetRole(request.Name);
+            IdentityRole rol = await _roleRepository.GetRole(request.Id);
             return await _roleRepository.DeleteRole(rol);
         }
     }

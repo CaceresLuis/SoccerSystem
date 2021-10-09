@@ -1,12 +1,15 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using Core.Dtos;
 using AutoMapper;
 using Shared.Enums;
 using Shared.Exceptions;
+using Shared.Helpers.Image;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Core.Modules.TeamModule.Add;
 using Core.Modules.TeamModule.Get;
+using Core.Modules.ImageModule.Add;
 using Core.Modules.TeamModule.List;
 using Core.Modules.TeamModule.Remove;
 using Core.Modules.TeamModule.Update;
@@ -45,6 +48,10 @@ namespace Web.Controllers
             try
             {
                 await _mediator.Send(new AddTeamCommand { Team = teamDto });
+                TeamDto team = await _mediator.Send(new GetTeamByNameQuery { TeamName = teamDto.Name });
+                ImageData img = new ImageData { File = teamDto.LogoFile, Reference = team.Id, Folder = "Teams"};
+                await _mediator.Send(new AddImageCommad { ImageData = img });
+
                 TempData["Title"] = "Created";
                 TempData["Message"] = $"The team {teamDto.Name} was created";
                 TempData["State"] = State.success.ToString();
@@ -61,7 +68,7 @@ namespace Web.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult> Edit(int id)
+        public async Task<ActionResult> Edit(Guid id)
         {
             try
             {
@@ -100,7 +107,7 @@ namespace Web.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(Guid id)
         {
             try
             {

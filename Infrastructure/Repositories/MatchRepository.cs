@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
@@ -23,7 +24,7 @@ namespace Infrastructure.Repositories
             return await _dataContext.SaveChangesAsync() > 0;
         }
 
-        public async Task<List<MatchEntity>> GetMatchByGroupAsync(int idGroup)
+        public async Task<List<MatchEntity>> GetMatchByGroupAsync(Guid idGroup)
         {
             return await _dataContext.Matchs
                 .Include(m => m.Group)
@@ -33,7 +34,7 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<MatchEntity> GetMatchAsync(int id)
+        public async Task<MatchEntity> GetMatchAsync(Guid id)
         {
             var a = await _dataContext.Matchs
                 .Include(m => m.Group)
@@ -43,7 +44,7 @@ namespace Infrastructure.Repositories
             return a;
         }
 
-        public async Task<MatchEntity> FindMatchByIdAsync(int matchId)
+        public async Task<MatchEntity> FindMatchByIdAsync(Guid matchId)
         {
             return await _dataContext.Matchs.FindAsync(matchId);
         }

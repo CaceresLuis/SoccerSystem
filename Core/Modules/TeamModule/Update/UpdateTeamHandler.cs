@@ -56,7 +56,7 @@ namespace Core.Modules.TeamModule.Update
             }
 
             team.Name = upTeam.Name ?? team.Name;
-            team.LogoPath = upTeam.LogoPath ?? team.LogoPath;
+            //team.LogoPath = upTeam.LogoPath ?? team.LogoPath;
 
             if (!await _teamRepository.UpdateTeamAsync(team))
                 throw new ExceptionHandler(HttpStatusCode.BadRequest,

@@ -140,13 +140,13 @@ namespace Web.Controllers
         [Authorize(Roles = "admin, user")]
         public async Task<ActionResult> MyProfile()
         {
-            return View(await _mediator.Send(new GetMyProfileQuery { }));
+            return View(await _mediator.Send(new GetMyProfileQuery { UserName = User.Identity.Name }));
         }
 
         [Authorize(Roles = "admin, user")]
         public async Task<ActionResult> Edit()
         {
-            return View(await _mediator.Send(new GetMyProfileQuery { }));
+            return View(await _mediator.Send(new GetMyProfileQuery { UserName = User.Identity.Name }));
         }
 
         [HttpPost]
@@ -155,7 +155,7 @@ namespace Web.Controllers
         {
             try
             {
-                await _mediator.Send(new UpdateUserCommand { UserDto = addUser });
+                var update = await _mediator.Send(new UpdateUserCommand { UserDto = addUser, UserName = User.Identity.Name });
 
                 TempData["Title"] = "Updated";
                 TempData["Message"] = "your profile has been updated";

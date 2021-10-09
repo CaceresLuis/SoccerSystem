@@ -8,6 +8,7 @@ using Core.Modules.GroupTeamModule.Add;
 using Core.Modules.GroupTeamModule.Get;
 using Microsoft.AspNetCore.Authorization;
 using Core.Modules.GroupTeamModule.Remove;
+using System;
 
 namespace Web.Controllers
 {
@@ -21,7 +22,7 @@ namespace Web.Controllers
             _mediator = mediator;
         }
 
-        public async Task<ActionResult> Create(int idGroup, int idTournament)
+        public async Task<ActionResult> Create(Guid idGroup, Guid idTournament)
         {
             try
             {
@@ -60,11 +61,11 @@ namespace Web.Controllers
             }
         }
 
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(Guid id)
         {
             try
             {
-                int delete = await _mediator.Send(new RemoveGroupDetailCommand { Id = id });
+                Guid delete = await _mediator.Send(new RemoveGroupDetailCommand { Id = id });
                 TempData["Title"] = "Deleted!";
                 TempData["Message"] = "Team has been deleted!";
                 TempData["State"] = $"{State.success}"; 
@@ -76,7 +77,7 @@ namespace Web.Controllers
                 TempData["Message"] = e.Error.Message;
                 TempData["State"] = e.Error.State;
 
-                return RedirectToAction("Detail", "Group", new { id = int.Parse(e.Error.Code) });
+                return RedirectToAction("Detail", "Group", new { id = e.Error.Code });
             }    
         }
     }

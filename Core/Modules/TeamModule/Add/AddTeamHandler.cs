@@ -16,19 +16,18 @@ namespace Core.Modules.TeamModule.Add
         private readonly IMapper _mapper;
         private readonly IIMageHelper _iMageHelper;
         private readonly ITeamRepository _teamRepository;
+        private readonly IImageRepository _imageRepository;
 
-        public AddTeamHandler(ITeamRepository teamRepository, IMapper mapper, IIMageHelper iMageHelper)
+        public AddTeamHandler(ITeamRepository teamRepository, IMapper mapper, IIMageHelper iMageHelper, IImageRepository imageRepository)
         {
             _mapper = mapper;
             _iMageHelper = iMageHelper;
             _teamRepository = teamRepository;
+            _imageRepository = imageRepository;
         }
 
         public async Task<bool> Handle(AddTeamCommand request, CancellationToken cancellationToken)
         {
-            if (request.Team.LogoFile != null)
-                request.Team.LogoPath = await _iMageHelper.UploadImageAsync(request.Team.LogoFile, "Tournaments");
-
             TeamEntity team = _mapper.Map<TeamEntity>(request.Team);
 
             if(await _teamRepository.FindTeamByNameAsync(team.Name) != null)
@@ -42,7 +41,8 @@ namespace Core.Modules.TeamModule.Add
                         IsSuccess = false
                     });
 
-            if (!await _teamRepository.AddTeamAsync(team))
+            var save = await _teamRepository.AddTeamAsync(team);
+            if (!save)
                 throw new ExceptionHandler(HttpStatusCode.BadRequest,
                     new Error
                     {

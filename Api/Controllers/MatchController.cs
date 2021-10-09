@@ -8,6 +8,7 @@ using Core.Modules.MatchModule.Add;
 using Core.Modules.MatchModule.Close;
 using Core.Modules.MatchModule.Remove;
 using Microsoft.AspNetCore.Authorization;
+using System;
 
 namespace Api.Controllers
 {
@@ -24,7 +25,7 @@ namespace Api.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<GroupMatchsDto>> GetMatchs(int idGroup)
+        public async Task<ActionResult<GroupMatchsDto>> GetMatchs(Guid idGroup)
         {
             return await _mediator.Send(new ListMatchByGroupQuery { GroupId = idGroup });
         }
@@ -63,7 +64,7 @@ namespace Api.Controllers
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult<bool>> DeleteMatchEntity(int id)
+        public async Task<ActionResult<bool>> DeleteMatchEntity(Guid id)
         {
             return await _mediator.Send(new RemoveMatchCommand { Id = id });
         }

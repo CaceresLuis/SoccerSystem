@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using Core.Dtos;
 using Shared.Enums;
 using Shared.Exceptions;
@@ -22,14 +23,14 @@ namespace Web.Controllers
             _mediator = mediator;
         }
 
-        public async Task<ActionResult> Matchs(int id)
+        public async Task<ActionResult> Matchs(Guid id)
         {
             GroupMatchsDto list = await _mediator.Send(new ListMatchByGroupQuery { GroupId = id });
             return View(list);
         }
 
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult> Create(int id)
+        public async Task<ActionResult> Create(Guid id)
         {
             AddMatchDto addMatchDto = await _mediator.Send(new GetGroupDetailsforMatchQuery { GroupId = id });
             return View(addMatchDto);
@@ -57,7 +58,7 @@ namespace Web.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult> CloseMatch(int id)
+        public async Task<ActionResult> CloseMatch(Guid id)
         {
             MatchDto match = await _mediator.Send(new GetMatchQuery { Id = id });
             return View(match);
@@ -86,7 +87,7 @@ namespace Web.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult> DeleteMatch(int id)
+        public async Task<ActionResult> DeleteMatch(Guid id)
         {
             MatchDto match = await _mediator.Send(new GetMatchQuery { Id = id });
             try

@@ -21,21 +21,19 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Infrastructure.Models.GroupEntity", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(30)")
                         .HasMaxLength(30);
 
-                    b.Property<int?>("TournamentId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("TournamentId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -46,10 +44,9 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Infrastructure.Models.GroupTeamEntity", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("GoalsAgainst")
                         .HasColumnType("int");
@@ -57,8 +54,8 @@ namespace Infrastructure.Migrations
                     b.Property<int>("GoalsFor")
                         .HasColumnType("int");
 
-                    b.Property<int?>("GroupId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("GroupId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("MatchesLost")
                         .HasColumnType("int");
@@ -72,8 +69,8 @@ namespace Infrastructure.Migrations
                     b.Property<int>("MatchesWon")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TeamId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("TeamId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -84,12 +81,29 @@ namespace Infrastructure.Migrations
                     b.ToTable("GroupTeams");
                 });
 
-            modelBuilder.Entity("Infrastructure.Models.MatchEntity", b =>
+            modelBuilder.Entity("Infrastructure.Models.ImageEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Path")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Reference")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Images");
+                });
+
+            modelBuilder.Entity("Infrastructure.Models.MatchEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -100,8 +114,8 @@ namespace Infrastructure.Migrations
                     b.Property<int>("GoalsVisitor")
                         .HasColumnType("int");
 
-                    b.Property<int?>("GroupId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("GroupId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Hour")
                         .HasColumnType("datetime2");
@@ -109,11 +123,11 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("IsClosed")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("LocalId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("LocalId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("VisitorId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("VisitorId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -126,66 +140,29 @@ namespace Infrastructure.Migrations
                     b.ToTable("Matchs");
                 });
 
-            modelBuilder.Entity("Infrastructure.Models.PredictionEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("GoalsLocal")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("GoalsVisitor")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MatchId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Points")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MatchId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Predictions");
-                });
-
             modelBuilder.Entity("Infrastructure.Models.TeamEntity", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LogoPath")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
 
                     b.ToTable("Teams");
                 });
 
             modelBuilder.Entity("Infrastructure.Models.TournamentEntity", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
@@ -197,7 +174,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
 
@@ -226,7 +202,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Document")
-                        .IsRequired()
                         .HasColumnType("nvarchar(20)")
                         .HasMaxLength(20);
 
@@ -238,12 +213,10 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
@@ -276,8 +249,8 @@ namespace Infrastructure.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TeamId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("TeamEntityId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -285,9 +258,6 @@ namespace Infrastructure.Migrations
                     b.Property<string>("UserName")
                         .HasColumnType("nvarchar(256)")
                         .HasMaxLength(256);
-
-                    b.Property<int>("UserType")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -299,7 +269,7 @@ namespace Infrastructure.Migrations
                         .HasName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.HasIndex("TeamId");
+                    b.HasIndex("TeamEntityId");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -445,7 +415,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Infrastructure.Models.GroupTeamEntity", b =>
                 {
                     b.HasOne("Infrastructure.Models.GroupEntity", "Group")
-                        .WithMany("GroupDetails")
+                        .WithMany("GroupTeams")
                         .HasForeignKey("GroupId");
 
                     b.HasOne("Infrastructure.Models.TeamEntity", "Team")
@@ -468,22 +438,11 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("VisitorId");
                 });
 
-            modelBuilder.Entity("Infrastructure.Models.PredictionEntity", b =>
-                {
-                    b.HasOne("Infrastructure.Models.MatchEntity", "Match")
-                        .WithMany("Predictions")
-                        .HasForeignKey("MatchId");
-
-                    b.HasOne("Infrastructure.Models.UserEntity", "User")
-                        .WithMany("Predictions")
-                        .HasForeignKey("UserId");
-                });
-
             modelBuilder.Entity("Infrastructure.Models.UserEntity", b =>
                 {
-                    b.HasOne("Infrastructure.Models.TeamEntity", "Team")
+                    b.HasOne("Infrastructure.Models.TeamEntity", null)
                         .WithMany("Users")
-                        .HasForeignKey("TeamId");
+                        .HasForeignKey("TeamEntityId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

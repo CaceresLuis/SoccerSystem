@@ -1,9 +1,10 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 
 namespace Core.Modules.MatchModule.Remove
 {
     public class RemoveMatchCommand : IRequest<bool>
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
     }
 }

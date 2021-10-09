@@ -68,6 +68,10 @@ else
                                     {
                                         <img src="@item.LogoPath" alt="Image" style="width:100px;height:100px;max-width: 100%; height: auto;" />
                                     }
+                                    else
+                                    {
+                                        <img src="~/images/noimage.jpeg" alt="Image" style="width:200px;height:200px;max-width: 100%; height: auto;" />
+                                    }
                                 </td>
                                 @if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
                                 {

@@ -9,12 +9,14 @@ namespace Shared.Helpers.Image
     {
         public async Task<string> UploadImageAsync(IFormFile imageFile, string folder)
         {
-            string guid = Guid.NewGuid().ToString();
-            string file = $"{guid}.jpg";
+            string file = $"{Guid.NewGuid()}{Path.GetExtension(imageFile.FileName)}";
             string path = Path.Combine(
                 Directory.GetCurrentDirectory(),
                 $"wwwroot\\images\\{folder}",
                 file);
+
+            if (path.Contains("Api"))
+                path = path.Replace("Api", "Web");
 
             using (FileStream stream = new FileStream(path, FileMode.Create))
             {
@@ -22,6 +24,18 @@ namespace Shared.Helpers.Image
             }
 
             return $"/images/{folder}/{file}";
-        }        
+        }
+
+        public void DeleteImage(string path)
+        {
+            string route = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                $"wwwroot\\{path}");
+
+            if (route.Contains("Api"))
+                route = route.Replace("Api", "Web");
+
+            File.Delete(route);
+        }
     }
 }

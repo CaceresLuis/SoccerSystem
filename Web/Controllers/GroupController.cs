@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using Core.Dtos;
 using Shared.Enums;
 using Shared.Exceptions;
@@ -23,7 +24,7 @@ namespace Web.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult> Create(int id)
+        public async Task<ActionResult> Create(Guid id)
         {
             try
             {
@@ -47,7 +48,6 @@ namespace Web.Controllers
         {
             try
             {
-                groupDto.Id = 0;
                 bool create = await _mediator.Send(new AddGroupCommand { GroupDto = groupDto });
 
                 TempData["Title"] = "Created!";
@@ -65,7 +65,7 @@ namespace Web.Controllers
             }
         }
 
-        public async Task<ActionResult> Detail(int id)
+        public async Task<ActionResult> Detail(Guid id)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace Web.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult> Edit(int id)
+        public async Task<ActionResult> Edit(Guid id)
         {
             GroupDto groupDto = await _mediator.Send(new GetGroupQuery { Id = id });
             return View(groupDto);
@@ -112,7 +112,7 @@ namespace Web.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(Guid id)
         {
             GroupDto group = await _mediator.Send(new GetGroupQuery { Id = id });
             try

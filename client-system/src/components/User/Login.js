@@ -1,7 +1,7 @@
 import React from 'react';
 import style from '../../theme/style';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import { Avatar, Container, Typography } from '@mui/material';
+import { Avatar, Button, Container, TextField, Typography } from '@mui/material';
 
 const Login = () => {
     return (
@@ -13,6 +13,11 @@ const Login = () => {
                 <Typography component='h1' variant='h5'>
                     User Login
                 </Typography>
+                <form style={style.form}>
+                    <TextField variant='outlined' label='Ener your Email' name='email' fullWidth margin='normal' />
+                    <TextField variant='outlined' label='Ener your passsword' name='password' fullWidth margin='normal'/>
+                    <Button type='submit' fullWidth variant='contained' color='primary' style={style.submit} >Login</Button>
+                </form>
             </div>
         </Container>
     );

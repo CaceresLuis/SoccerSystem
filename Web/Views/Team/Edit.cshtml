@@ -29,7 +29,12 @@
 
         @if (!string.IsNullOrEmpty(Model.LogoPath))
         {
-<img src="@Model.LogoPath" alt="Image" style="width:200px;height:200px;max-width: 100%; height: auto;" />}
+            <img src="@Model.LogoPath" alt="Image" style="width:200px;height:200px;max-width: 100%; height: auto;" />
+        }
+        else
+        {
+            <img src="~/images/noimage.jpeg" alt="Image" style="width:200px;height:200px;max-width: 100%; height: auto;" />
+        }
     </div>
 </div>
 

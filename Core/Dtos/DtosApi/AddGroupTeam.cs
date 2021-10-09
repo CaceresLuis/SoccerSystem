@@ -1,8 +1,10 @@
-﻿namespace Core.Dtos.DtosApi
+﻿using System;
+
+namespace Core.Dtos.DtosApi
 {
     public class AddGroupTeam
     {
-        public int IdTeam { get; set; }
-        public int IdGroup { get; set; }
+        public Guid IdTeam { get; set; }
+        public Guid IdGroup { get; set; }
     }
 }

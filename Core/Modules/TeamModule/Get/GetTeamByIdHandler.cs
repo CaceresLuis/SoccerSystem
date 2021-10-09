@@ -15,11 +15,13 @@ namespace Core.Modules.TeamModule.Get
     {
         private readonly IMapper _mapper;
         private readonly ITeamRepository _teamRepository;
+        private readonly IImageRepository _imageRepository;
 
-        public GetTeamByIdHandler(ITeamRepository teamRepository, IMapper mapper)
+        public GetTeamByIdHandler(ITeamRepository teamRepository, IMapper mapper, IImageRepository imageRepository)
         {
             _mapper = mapper;
             _teamRepository = teamRepository;
+            _imageRepository = imageRepository;
         }
 
         public async Task<TeamDto> Handle(GetTeamByIdQuery request, CancellationToken cancellationToken)
@@ -35,8 +37,11 @@ namespace Core.Modules.TeamModule.Get
                         State = State.error,
                         IsSuccess = false
                     });
+            ImageEntity img = await _imageRepository.GetImage(team.Id);
 
-            return _mapper.Map<TeamDto>(team); ;
+            var dto = _mapper.Map<TeamDto>(team);
+            dto.LogoPath = img.Path;
+            return dto;
         }
     }
 }

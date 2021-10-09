@@ -1,5 +1,4 @@
-﻿using System;
-using MediatR;
+﻿using MediatR;
 using Core.Dtos;
 using AutoMapper;
 using System.Net;
@@ -10,6 +9,8 @@ using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Core.Modules.UserModule.Add
 {
@@ -21,7 +22,7 @@ namespace Core.Modules.UserModule.Add
 
         public AddUserHandler(IUserRepository userRepository, IRoleRepository roleRepository, IMapper mapper)
         {
-            _mapper = mapper; 
+            _mapper = mapper;
             _userRepository = userRepository;
             _roleRepository = roleRepository;
         }
@@ -43,7 +44,7 @@ namespace Core.Modules.UserModule.Add
             UserEntity user = _mapper.Map<UserEntity>(userdto);
             user.UserName = user.Email;
 
-            var userExist = await _userRepository.FindByEmailAsync(user.Email);
+            UserEntity userExist = await _userRepository.FindByEmailAsync(user.Email);
             if (userExist != null)
                 throw new ExceptionHandler(HttpStatusCode.BadRequest,
                     new Error
@@ -54,8 +55,29 @@ namespace Core.Modules.UserModule.Add
                         State = State.error,
                         IsSuccess = false
                     });
-          
-            await _userRepository.AddUserAsync(user, userdto.PasswordConfirm);
+
+
+
+            IdentityResult add = await _userRepository.AddUserAsync(user, userdto.PasswordConfirm);
+            if (!add.Succeeded)
+            {
+                IEnumerable<string> error = add.Errors.Select(a => a.Code);
+                throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                    new Error
+                    {
+                        Code = "Not registered",
+                        Message = $"{error.First()}",
+                        Title = "Not registered",
+                        State = State.error,
+                        IsSuccess = false
+                    });
+            }
+
+            if(add.Succeeded && userdto.PictureFile != null)
+            {
+
+                var up = await _userRepository.UpdateUserAsync(user);
+            }
 
             if (userdto.Roles != null)
             {

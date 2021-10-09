@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System;
 
 namespace Infrastructure.Repositories
 {
@@ -24,12 +25,12 @@ namespace Infrastructure.Repositories
             return await _dataContext.SaveChangesAsync() > 0;
         }
 
-        public async Task<GroupEntity> FindGroupByIdAsync(int id)
+        public async Task<GroupEntity> FindGroupByIdAsync(Guid id)
         {
             return await _dataContext.Groups.FindAsync(id);
         }
 
-        public async Task<GroupEntity> GetGroupWithTournamentAsync(int id)
+        public async Task<GroupEntity> GetGroupWithTournamentAsync(Guid id)
         {
             return await _dataContext.Groups.Include(g => g.Tournament).FirstOrDefaultAsync(g => g.Id == id);
         }
@@ -39,18 +40,18 @@ namespace Infrastructure.Repositories
             return await _dataContext.Groups.Include(g => g.Tournament).ToArrayAsync();
         }
 
-        public async Task<GroupEntity> GetGroupByNameAndTournamentAsync(int idTournament, string groupName)
+        public async Task<GroupEntity> GetGroupByNameAndTournamentAsync(Guid idTournament, string groupName)
         {
             return await _dataContext.Groups.Include(g => g.Tournament)
                 .Where(g => g.Tournament.Id == idTournament && g.Name == groupName).FirstOrDefaultAsync();
         }
 
-        public async Task<List<GroupEntity>> GetAllGroupOfTournamentAsync(int idTournamnet)
+        public async Task<List<GroupEntity>> GetAllGroupOfTournamentAsync(Guid idTournamnet)
         {
             return await _dataContext.Groups.Include(g => g.Tournament).Where(g => g.Tournament.Id == idTournamnet && g.IsActive == true).ToListAsync();
         }
 
-        public async Task<GroupEntity> GetGroupMatchsAsync(int id)
+        public async Task<GroupEntity> GetGroupMatchsAsync(Guid id)
         {
             return await _dataContext.Groups
                 .Include(g => g.Matches)
@@ -61,7 +62,7 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync(g => g.Id == id);
         }
 
-        public async Task<GroupEntity> GetGroupTeamAndDetailsAsync(int id)
+        public async Task<GroupEntity> GetGroupTeamAndDetailsAsync(Guid id)
         {
             return await _dataContext.Groups
                 .Include(g => g.Tournament)

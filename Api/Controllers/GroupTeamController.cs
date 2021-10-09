@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Core.Modules.GroupTeamModule.Add;
 using Core.Modules.GroupTeamModule.Remove;
 using Microsoft.AspNetCore.Authorization;
+using System;
 
 namespace Api.Controllers
 {
@@ -29,10 +30,10 @@ namespace Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<bool>> DeleteGroupTeamEntity(int id)
+        public async Task<ActionResult<bool>> DeleteGroupTeamEntity(Guid id)
         {
-            int delete = await _mediator.Send(new RemoveGroupDetailCommand { Id = id });
-            return delete > 0;
+            await _mediator.Send(new RemoveGroupDetailCommand { Id = id });
+            return true;
         }
     }
 }

@@ -1,9 +1,10 @@
 ﻿using MediatR;
+using System;
 
 namespace Core.Modules.GroupTeamModule.Remove
 {
-    public class RemoveGroupDetailCommand : IRequest<int>
+    public class RemoveGroupDetailCommand : IRequest<Guid>
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
     }
 }

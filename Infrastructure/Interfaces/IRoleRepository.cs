@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 
@@ -9,7 +10,7 @@ namespace Infrastructure.Interfaces
         Task AddRole(string name);
         Task<bool> DeleteRole(IdentityRole role);
         Task<IdentityRole> FindRole(string id);
-        Task<IdentityRole> GetRole(string name);
+        Task<IdentityRole> GetRole(String name);
         Task<List<IdentityRole>> GetRoles();
     }
 }

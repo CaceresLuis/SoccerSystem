@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using Core.Dtos;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -31,14 +32,14 @@ namespace Api.Controllers
 
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult<GroupDto>> GetGroupEntity(int id)
+        public async Task<ActionResult<GroupDto>> GetGroupEntity(Guid id)
         {
             return await _mediator.Send(new GetGroupQuery { Id = id });
         }
 
         [HttpPut("{id}")]
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult<bool>> PutGroupEntity(int id, GroupDto groupDto)
+        public async Task<ActionResult<bool>> PutGroupEntity(Guid id, GroupDto groupDto)
         {
             groupDto.Id = id;
             return await _mediator.Send(new UpdateGroupCommand { Group = groupDto });
@@ -53,7 +54,7 @@ namespace Api.Controllers
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult<bool>> DeleteGroupEntity(int id)
+        public async Task<ActionResult<bool>> DeleteGroupEntity(Guid id)
         {
             return await _mediator.Send(new RemoveGroupCommand { Id = id });
         }

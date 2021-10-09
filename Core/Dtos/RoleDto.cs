@@ -1,8 +1,10 @@
-﻿namespace Core.Dtos
+﻿using System;
+
+namespace Core.Dtos
 {
     public class RoleDto
     {
-        public string Id { get; set; }
+        public String Id { get; set; }
         public string Name { get; set; }
     }
 }

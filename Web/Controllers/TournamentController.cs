@@ -13,6 +13,7 @@ using Core.Modules.TournamentModule.List;
 using Microsoft.AspNetCore.Authorization;
 using Core.Modules.TournamentModule.Remove;
 using Core.Modules.TournamentModule.Update;
+using System;
 
 namespace Web.Controllers
 {
@@ -65,7 +66,7 @@ namespace Web.Controllers
             }
         }
 
-        public async Task<ActionResult> Details(int id)
+        public async Task<ActionResult> Details(Guid id)
         {
             try
             {
@@ -82,7 +83,7 @@ namespace Web.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult> Edit(int id)
+        public async Task<ActionResult> Edit(Guid id)
         {
             try
             {
@@ -120,7 +121,7 @@ namespace Web.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(Guid id)
         {
             try
             {

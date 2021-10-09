@@ -56,24 +56,24 @@ namespace Core.Validations
         }
     }
 
-    public class UserValidator : AbstractValidator<UserDto>
-    {
-        public UserValidator()
-        {
-            RuleFor(u => u.Document)
-                .NotEmpty()
-                .WithMessage("The Document is requered");
-            RuleFor(u => u.FirstName)
-                .NotEmpty()
-                .WithMessage("The First Name is requered");
-            RuleFor(u => u.LastName)
-                .NotEmpty()
-                .WithMessage("The LastName is requered");
-            RuleFor(u => u.Password)
-                .NotEmpty()
-                .WithMessage("The Password is requered");
-        }
-    }
+    //public class UserValidator : AbstractValidator<UserDto>
+    //{
+    //    public UserValidator()
+    //    {
+    //        RuleFor(u => u.Document)
+    //            .NotEmpty()
+    //            .WithMessage("The Document is requered");
+    //        RuleFor(u => u.FirstName)
+    //            .NotEmpty()
+    //            .WithMessage("The First Name is requered");
+    //        RuleFor(u => u.LastName)
+    //            .NotEmpty()
+    //            .WithMessage("The LastName is requered");
+    //        RuleFor(u => u.Password)
+    //            .NotEmpty()
+    //            .WithMessage("The Password is requered");
+    //    }
+    //}
     
     public class RoleValidator : AbstractValidator<RoleDto>
     {

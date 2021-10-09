@@ -8,7 +8,7 @@ namespace Infrastructure.Interfaces
     public interface IUserRepository
     {
         Task<bool> AddRoleToUser(UserEntity user, string role);
-        Task<bool> AddUserAsync(UserEntity user, string pass);
+        Task<IdentityResult> AddUserAsync(UserEntity user, string pass);
         Task<bool> ChanguePassword(UserEntity user, string currentPassword, string newPassword);
         Task<bool> UpdateUserAsync(UserEntity user);
         Task<UserEntity> FindByEmailAsync(string email);
@@ -20,5 +20,6 @@ namespace Infrastructure.Interfaces
         Task<List<string>> GetUserRolesAsync(UserEntity user);
         Task<List<UserEntity>> GetUsersAsync();
         Task<bool> LoginApiAsync(UserEntity user, string password);
+        Task<UserEntity> GetUserInSesscion(string userName);
     }
 }

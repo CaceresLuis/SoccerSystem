@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Core.Dtos;
 using System.Threading.Tasks;
+using System;
 using Microsoft.AspNetCore.Mvc;
 using Core.Modules.TeamModule.Get;
 using Core.Modules.TeamModule.Add;
@@ -32,14 +33,14 @@ namespace Api.Controllers
 
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult<TeamDto>> GetTeam(int id)
+        public async Task<ActionResult<TeamDto>> GetTeam(Guid id)
         {
             return await _mediator.Send(new GetTeamByIdQuery { TeamId = id });
         }
 
         [HttpPut("{id}")]
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult<bool>> PutTeam(int id, [FromForm] TeamDto teamDto)
+        public async Task<ActionResult<bool>> PutTeam(Guid id, [FromForm] TeamDto teamDto)
         {
             teamDto.Id = id;
             return await _mediator.Send(new UpdateTeamCommand { Team = teamDto });
@@ -54,7 +55,7 @@ namespace Api.Controllers
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult<bool>> DeleteTeam(int id)
+        public async Task<ActionResult<bool>> DeleteTeam(Guid id)
         {
             return await _mediator.Send(new RemoveTeamCommand { IdTeam = id });
         }
