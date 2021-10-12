@@ -1,11 +1,14 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using Core.Dtos;
 using AutoMapper;
 using Shared.Enums;
-using Core.Dtos.DtosApi;
+using Core.Dtos.AddDtos;
 using Shared.Exceptions;
+using Shared.Helpers.Image;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Core.Modules.ImageModule.Add;
 using Microsoft.AspNetCore.Hosting;
 using Core.Modules.TournamentModule.Add;
 using Core.Modules.TournamentModule.Get;
@@ -13,7 +16,6 @@ using Core.Modules.TournamentModule.List;
 using Microsoft.AspNetCore.Authorization;
 using Core.Modules.TournamentModule.Remove;
 using Core.Modules.TournamentModule.Update;
-using System;
 
 namespace Web.Controllers
 {
@@ -50,6 +52,9 @@ namespace Web.Controllers
             try
             {
                 await _mediator.Send(new AddTournamentCommand { Tournament = addTournamentDto });
+                var tournament = await _mediator.Send(new GetTournamentByNameQuery { Name = addTournamentDto.Name });
+                ImageData img = new ImageData { File = addTournamentDto.LogoFile, Reference = tournament.Id, Folder = "Tournaments" };
+                await _mediator.Send(new AddImageCommad { ImageData = img });
 
                 TempData["Title"] = "Created!";
                 TempData["Message"] = $"The tournament {addTournamentDto.Name} was created";

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Http;
 
-namespace Core.Dtos.DtosApi
+namespace Core.Dtos.AddDtos
 {
     public class AddTournamentDto
     {

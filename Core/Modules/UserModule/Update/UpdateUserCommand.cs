@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Core.Dtos;
-using Shared.Helpers.Image;
 
 namespace Core.Modules.UserModule.Update
 {
@@ -8,6 +7,5 @@ namespace Core.Modules.UserModule.Update
     {
         public UserDto UserDto { get; set; }
         public string UserName { get; set; }
-        public ImageData ImageData { get; set; }
     }
 }

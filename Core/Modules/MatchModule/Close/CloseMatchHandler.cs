@@ -1,11 +1,13 @@
 ﻿using MediatR;
-using Core.Dtos;
 using Core.Helpers;
 using System.Threading;
+using Core.Dtos.DtosApi;
 using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
-using System;
+using Shared.Exceptions;
+using System.Net;
+using Shared.Enums;
 
 namespace Core.Modules.MatchModule.Close
 {
@@ -24,19 +26,24 @@ namespace Core.Modules.MatchModule.Close
 
         public async Task<bool> Handle(CloseMatchCommand request, CancellationToken cancellationToken)
         {
-            MatchDto dto = request.MatchDto;
-            if (dto.Visitor != null && dto.Local != null)
-            {
-                dto.VisitorId = dto.Visitor.Id;
-                dto.LocalId = dto.Local.Id;
-            }
+            CloseMatchDto dto = request.CloseMatchDto;
+            MatchEntity match = await _matchRepository.FindMatchByIdAsync(dto.IdMatch) ??
+                throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                    new Error
+                    {
+                        Code = "Error",
+                        Message = "The match does not exist",
+                        Title = "Error",
+                        State = State.error,
+                        IsSuccess = false
+                    });
 
-            MatchEntity match = await _matchRepository.FindMatchByIdAsync(dto.Id);
+
             if (match.IsClosed)
                 await _resetMatchHelper.ResetMatchAsync(dto);
 
-            GroupTeamEntity local = await _groupTeamsRepository.GetGroupDetailsByGroupAdnTeamAsync(dto.GroupId, dto.LocalId);
-            GroupTeamEntity visitor = await _groupTeamsRepository.GetGroupDetailsByGroupAdnTeamAsync(dto.GroupId, dto.VisitorId);
+            GroupTeamEntity local = await _groupTeamsRepository.GetGroupDetailsByGroupAdnTeamAsync(match.Group.Id, dto.LocalId);
+            GroupTeamEntity visitor = await _groupTeamsRepository.GetGroupDetailsByGroupAdnTeamAsync(match.Group.Id, dto.VisitorId);
 
             local.MatchesPlayed++;
             local.GoalsFor += dto.GoalsLocal;

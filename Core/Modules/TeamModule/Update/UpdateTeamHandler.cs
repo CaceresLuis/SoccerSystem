@@ -15,19 +15,18 @@ namespace Core.Modules.TeamModule.Update
     {
         private readonly IIMageHelper _iMageHelper;
         private readonly ITeamRepository _teamRepository;
+        private readonly IImageRepository _imageRepository;
 
-        public UpdateTeamHandler(ITeamRepository teamRepository, IIMageHelper iMageHelper)
+        public UpdateTeamHandler(ITeamRepository teamRepository, IIMageHelper iMageHelper, IImageRepository imageRepository)
         {
             _iMageHelper = iMageHelper;
             _teamRepository = teamRepository;
+            _imageRepository = imageRepository;
         }
 
         public async Task<bool> Handle(UpdateTeamCommand request, CancellationToken cancellationToken)
         {
             TeamDto upTeam = request.Team;
-            if(upTeam.LogoFile != null)
-                upTeam.LogoPath = await _iMageHelper.UploadImageAsync(upTeam.LogoFile, "Teams");
-
             TeamEntity team = await _teamRepository.FindTeamByIdAsync(upTeam.Id);
             
             if(team == null)
@@ -56,7 +55,6 @@ namespace Core.Modules.TeamModule.Update
             }
 
             team.Name = upTeam.Name ?? team.Name;
-            //team.LogoPath = upTeam.LogoPath ?? team.LogoPath;
 
             if (!await _teamRepository.UpdateTeamAsync(team))
                 throw new ExceptionHandler(HttpStatusCode.BadRequest,
@@ -68,6 +66,15 @@ namespace Core.Modules.TeamModule.Update
                         State = State.error,
                         IsSuccess = false
                     });
+
+            if (upTeam.LogoFile != null)
+            {
+                ImageEntity img = await _imageRepository.GetImage(upTeam.Id);
+                _iMageHelper.DeleteImage(img.Path);
+                string newImg = await _iMageHelper.UploadImageAsync(upTeam.LogoFile, "Teams");
+                img.Path = newImg;
+                await _imageRepository.UpdateImage(img);
+            }
 
             return true;
         }

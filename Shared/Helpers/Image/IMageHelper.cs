@@ -28,9 +28,10 @@ namespace Shared.Helpers.Image
 
         public void DeleteImage(string path)
         {
+            var p = path.Replace("/", "\\");
             string route = Path.Combine(
                 Directory.GetCurrentDirectory(),
-                $"wwwroot\\{path}");
+                $"wwwroot{p}");
 
             if (route.Contains("Api"))
                 route = route.Replace("Api", "Web");

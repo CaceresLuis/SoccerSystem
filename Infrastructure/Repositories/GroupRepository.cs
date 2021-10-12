@@ -51,9 +51,11 @@ namespace Infrastructure.Repositories
             return await _dataContext.Groups.Include(g => g.Tournament).Where(g => g.Tournament.Id == idTournamnet && g.IsActive == true).ToListAsync();
         }
 
-        public async Task<GroupEntity> GetGroupMatchsAsync(Guid id)
+        public async Task<GroupEntity> GetFullGroupAsync(Guid id)
         {
             return await _dataContext.Groups
+                .Include(g => g.GroupTeams)
+                .ThenInclude(gt => gt.Team)
                 .Include(g => g.Matches)
                 .ThenInclude(g => g.Local)
                 .Include(g => g.Matches)

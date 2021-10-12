@@ -1,10 +1,10 @@
 ﻿using MediatR;
-using Core.Dtos;
+using Core.Dtos.DtosApi;
 
 namespace Core.Modules.MatchModule.Close
 {
     public class CloseMatchCommand : IRequest<bool>
     {
-        public MatchDto MatchDto { get; set; }
+        public CloseMatchDto CloseMatchDto { get; set; }
     }
 }

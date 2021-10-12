@@ -6,6 +6,7 @@ using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Core.Modules.TeamModule.List
 {
@@ -40,14 +41,17 @@ namespace Core.Modules.TeamModule.List
                 }
             }
 
-            foreach (GroupEntity group in groupTournament)
+            if (groupTournament != null)
             {
-                foreach (GroupTeamEntity detail in group.GroupTeams)
+                foreach (GroupEntity group in groupTournament)
                 {
-                    TeamEntity team = detail.Team;
-                    TeamEntity teamList = teams.Find(t => t.Name == team.Name);
-                    if (teamList != null)
-                        teams.Remove(teamList);
+                    foreach (GroupTeamEntity detail in group.GroupTeams)
+                    {
+                        TeamEntity team = detail.Team;
+                        TeamEntity teamList = teams.Find(t => t.Name == team.Name);
+                        if (teamList != null)
+                            teams.Remove(teamList);
+                    }
                 }
             }
 

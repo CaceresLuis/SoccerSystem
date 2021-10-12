@@ -9,5 +9,6 @@ namespace Infrastructure.Interfaces
         Task<bool> AddImage(string path, Guid reference);
         Task<bool> DeleteImage(ImageEntity imageEntity);
         Task<ImageEntity> GetImage(Guid reference);
+        Task<bool> UpdateImage(ImageEntity imageEntity);
     }
 }

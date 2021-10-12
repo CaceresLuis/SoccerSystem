@@ -9,6 +9,8 @@ using Core.Modules.TeamModule.List;
 using Core.Modules.TeamModule.Update;
 using Core.Modules.TeamModule.Remove;
 using Microsoft.AspNetCore.Authorization;
+using Shared.Helpers.Image;
+using Core.Modules.ImageModule.Add;
 
 namespace Api.Controllers
 {
@@ -18,10 +20,12 @@ namespace Api.Controllers
     public class TeamController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IIMageHelper _iMageHelper;
 
-        public TeamController(IMediator mediator)
+        public TeamController(IMediator mediator, IIMageHelper iMageHelper)
         {
             _mediator = mediator;
+            _iMageHelper = iMageHelper;
         }
 
         [HttpGet]
@@ -50,7 +54,11 @@ namespace Api.Controllers
         [Authorize(Roles = "admin")]
         public async Task<ActionResult<bool>> PostTeam([FromForm] TeamDto teamDto)
         {
-            return await _mediator.Send(new AddTeamCommand { Team = teamDto });
+            await _mediator.Send(new AddTeamCommand { Team = teamDto });
+            TeamDto team = await _mediator.Send(new GetTeamByNameQuery { TeamName = teamDto.Name });
+            ImageData img = new ImageData { File = teamDto.LogoFile, Reference = team.Id, Folder = "Teams" };
+            bool save = await _mediator.Send(new AddImageCommad { ImageData = img });
+            return save;
         }
 
         [HttpDelete("{id}")]

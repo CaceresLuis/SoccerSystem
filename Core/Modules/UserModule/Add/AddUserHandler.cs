@@ -2,15 +2,15 @@
 using Core.Dtos;
 using AutoMapper;
 using System.Net;
+using System.Linq;
 using Shared.Enums;
 using System.Threading;
 using Shared.Exceptions;
 using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
-using Microsoft.AspNetCore.Identity;
-using System.Linq;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 
 namespace Core.Modules.UserModule.Add
 {

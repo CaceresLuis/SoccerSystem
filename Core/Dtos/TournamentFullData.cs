@@ -1,5 +1,5 @@
-﻿using Core.Dtos.DtosApi;
-using System;
+﻿using System;
+using Core.Dtos.DtosApi;
 using System.Collections.Generic;
 
 namespace Core.Dtos
@@ -13,7 +13,5 @@ namespace Core.Dtos
         public bool IsActive { get; set; }
         public string LogoPath { get; set; }
         public ICollection<GroupFullDataApi> Groups { get; set; }
-        public DateTime EndDateLocal => EndDate.ToLocalTime();
-        public DateTime StartDateLocal => StartDate.ToLocalTime();
     }
 }

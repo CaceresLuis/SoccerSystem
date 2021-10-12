@@ -11,9 +11,9 @@ namespace Core.Dtos
         public int MatchesLost { get; set; }
         public int GoalsFor { get; set; }
         public int GoalsAgainst { get; set; }
-        public TeamDto Team { get; set; }
-        public Guid GroupId { get; set; }
         public int Points => MatchesWon * 3 + MatchesTied;
         public int GoalDifference => GoalsFor - GoalsAgainst;
+        public Guid GroupId { get; set; }
+        public TeamDto Team { get; set; }
     }
 }

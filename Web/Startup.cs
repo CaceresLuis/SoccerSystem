@@ -113,7 +113,7 @@ namespace Web
             app.UseMiddleware<MiddelwareHandler>();
             if (env.IsDevelopment())
             {
-                //app.UseDeveloperExceptionPage();
+                app.UseDeveloperExceptionPage();
             }
             else
             {

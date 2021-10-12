@@ -1,7 +1,7 @@
 ﻿using System;
 using MediatR;
 using Core.Dtos;
-using Core.Dtos.DtosApi;
+using Core.Dtos.AddDtos;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Core.Modules.TournamentModule.Add;

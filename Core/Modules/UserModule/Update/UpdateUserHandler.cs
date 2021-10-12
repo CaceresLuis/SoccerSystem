@@ -8,6 +8,7 @@ using Shared.Helpers.Image;
 using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
+using System;
 
 namespace Core.Modules.UserModule.Update
 {
@@ -15,17 +16,18 @@ namespace Core.Modules.UserModule.Update
     {
         private readonly IIMageHelper _iMageHelper;
         private readonly IUserRepository _userRepository;
+        private readonly IImageRepository _imageRepository;
 
-        public UpdateUserHandler(IUserRepository userRepository, IIMageHelper iMageHelper)
+        public UpdateUserHandler(IUserRepository userRepository, IIMageHelper iMageHelper, IImageRepository imageRepository)
         {
             _iMageHelper = iMageHelper;
             _userRepository = userRepository;
+            _imageRepository = imageRepository;
         }
 
         public async Task<bool> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
             UserDto userDto = request.UserDto;
-            ImageData imgData = request.ImageData;
             UserEntity user = await _userRepository.FindByEmailAsync(userDto.Email);
             if (userDto.Email != user.Email)
                 throw new ExceptionHandler(HttpStatusCode.BadRequest,
@@ -42,7 +44,6 @@ namespace Core.Modules.UserModule.Update
             user.Document = userDto.Document ?? user.Document;
             user.LastName = userDto.LastName ?? user.LastName;
             user.FirstName = userDto.FirstName ?? user.FirstName;
-            //user.PicturePath = request.ImageData.Url ?? user.PicturePath;
 
             bool update = await _userRepository.UpdateUserAsync(user);
             if (!update)
@@ -55,7 +56,25 @@ namespace Core.Modules.UserModule.Update
                         State = State.error,
                         IsSuccess = false
                     });
-            return update;
+
+            if (userDto.PictureFile == null)
+                return update;
+
+            Guid id = Guid.Parse(user.Id);
+            ImageEntity img = await _imageRepository.GetImage(id);
+            if(img != null)
+            {
+                _iMageHelper.DeleteImage(img.Path);
+                string newImg = await _iMageHelper.UploadImageAsync(userDto.PictureFile, "Users");
+                img.Path = newImg;
+                var upImg = await _imageRepository.UpdateImage(img);
+                return upImg;
+            }
+
+            string local = await _iMageHelper.UploadImageAsync(userDto.PictureFile, "Users");
+            bool save = await _imageRepository.AddImage(local, id);
+
+            return save;
         }
     }
 }

@@ -24,18 +24,16 @@ namespace Core.Modules.GroupTeamModule.Add
 
         public async Task<bool> Handle(AddGroupTeamCommand request, CancellationToken cancellationToken)
         {
-            var data = request.AddGroupTeamDto;
-            if(data.Group != null)
-                data.IdGroup = data.Group.Id;
+            var data = request.AddGroupTeam;
 
-            TeamEntity team = await _teamRepository.FindTeamByIdAsync(data.TeamId);
+            TeamEntity team = await _teamRepository.FindTeamByIdAsync(data.IdTeam);
             GroupEntity group = await _groupRepository.FindGroupByIdAsync(data.IdGroup);
             if(team == null || group == null)
                 throw new ExceptionHandler(HttpStatusCode.BadRequest,
                     new Error
                     {
                         Code = "Not registered",
-                        Message = "Something has gone wrong",
+                        Message = "Team or Group does't exits",
                         Title = "Not registered",
                         State = State.error,
                         IsSuccess = false

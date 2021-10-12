@@ -1,6 +1,8 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using Core.Dtos;
 using Shared.Enums;
+using Core.Dtos.AddDtos;
 using Shared.Exceptions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +10,6 @@ using Core.Modules.GroupTeamModule.Add;
 using Core.Modules.GroupTeamModule.Get;
 using Microsoft.AspNetCore.Authorization;
 using Core.Modules.GroupTeamModule.Remove;
-using System;
 
 namespace Web.Controllers
 {
@@ -44,7 +45,8 @@ namespace Web.Controllers
         {
             try
             {
-                bool create = await _mediator.Send(new AddGroupTeamCommand { AddGroupTeamDto = addGroupTeamDto });
+                var addGroupTeam = new AddGroupTeam { IdGroup = addGroupTeamDto.Group.Id, IdTeam = addGroupTeamDto.TeamId };
+                bool create = await _mediator.Send(new AddGroupTeamCommand { AddGroupTeam = addGroupTeam });
                 TempData["Title"] = "Added";
                 TempData["Message"] = $"The team was added to the group";
                 TempData["State"] = $"{State.success}";

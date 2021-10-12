@@ -15,6 +15,5 @@ namespace Core.Dtos
         public Guid VisitorId { get; set; }
         public TeamDto Visitor { get; set; }
         public Guid GroupId { get; set; }
-        public DateTime DateLocal => Date.ToLocalTime();
     }
 }

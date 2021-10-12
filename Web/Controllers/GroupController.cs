@@ -11,6 +11,7 @@ using Core.Modules.GroupModule.Remove;
 using Core.Modules.GroupModule.Update;
 using Core.Modules.TournamentModule.Get;
 using Microsoft.AspNetCore.Authorization;
+using Core.Dtos.DtosApi;
 
 namespace Web.Controllers
 {
@@ -44,7 +45,7 @@ namespace Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(GroupDto groupDto)
+        public async Task<ActionResult> Create(LiteGroupDto groupDto)
         {
             try
             {
@@ -54,7 +55,7 @@ namespace Web.Controllers
                 TempData["Message"] = $"The group {groupDto.Name} was created";
                 TempData["State"] = $"{State.success}";
 
-                return RedirectToAction("Details", "Tournament", new { id = groupDto.Tournament.Id });
+                return RedirectToAction("Details", "Tournament", new { id = groupDto.Id });
             }
             catch (ExceptionHandler e)
             {
@@ -85,7 +86,7 @@ namespace Web.Controllers
         [Authorize(Roles = "admin")]
         public async Task<ActionResult> Edit(Guid id)
         {
-            GroupDto groupDto = await _mediator.Send(new GetGroupQuery { Id = id });
+            GroupFullDataApi groupDto = await _mediator.Send(new GetGroupQuery { Id = id });
             return View(groupDto);
         }
 
@@ -114,7 +115,7 @@ namespace Web.Controllers
         [Authorize(Roles = "admin")]
         public async Task<ActionResult> Delete(Guid id)
         {
-            GroupDto group = await _mediator.Send(new GetGroupQuery { Id = id });
+            GroupFullDataApi group = await _mediator.Send(new GetGroupQuery { Id = id });
             try
             {
                 await _mediator.Send(new RemoveGroupCommand { Id = id });
@@ -129,7 +130,7 @@ namespace Web.Controllers
                 TempData["State"] = State.error.ToString();
             }
 
-            return RedirectToAction("Details", "Tournament", new { id = group.Tournament.Id });
+            return RedirectToAction("Details", "Tournament", new { id = group.TournamentId });
         }
     }
 }

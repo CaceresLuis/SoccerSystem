@@ -11,6 +11,7 @@ using Core.Modules.MatchModule.List;
 using Core.Modules.MatchModule.Close;
 using Core.Modules.MatchModule.Remove;
 using Microsoft.AspNetCore.Authorization;
+using Core.Dtos.DtosApi;
 
 namespace Web.Controllers
 {
@@ -66,23 +67,23 @@ namespace Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CloseMatch(MatchDto matchDto)
+        public async Task<ActionResult> CloseMatch(CloseMatchDto closeMatchDto)
         {
             try
             {
-                await _mediator.Send(new CloseMatchCommand { MatchDto = matchDto });
+                await _mediator.Send(new CloseMatchCommand { CloseMatchDto = closeMatchDto });
                 TempData["Title"] = "Success";
                 TempData["Message"] = "Macht Closet!";
                 TempData["State"] = State.success.ToString();
 
-                return RedirectToAction(nameof(Matchs), new { id = matchDto.GroupId });
+                return RedirectToAction(nameof(Matchs), new { id = closeMatchDto.GroupId });
             }
             catch (ExceptionHandler e)
             {
                 TempData["Title"] = e.Error.Title;
                 TempData["Message"] = e.Error.Message;
                 TempData["State"] = State.error.ToString();
-                return View(matchDto);
+                return View(closeMatchDto);
             }
         }
 

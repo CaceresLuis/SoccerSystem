@@ -31,5 +31,11 @@ namespace Infrastructure.Repositories
             _dataContext.Remove(imageEntity);
             return await _dataContext.SaveChangesAsync() > 0;
         }
+        
+        public async Task<bool> UpdateImage(ImageEntity imageEntity)
+        {
+            _dataContext.Update(imageEntity);
+            return await _dataContext.SaveChangesAsync() > 0;
+        }
     }
 }

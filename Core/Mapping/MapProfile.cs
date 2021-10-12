@@ -1,6 +1,7 @@
 ﻿using Core.Dtos;
 using AutoMapper;
 using Core.Dtos.DtosApi;
+using Core.Dtos.AddDtos;
 using Infrastructure.Models;
 
 namespace Core.Mapping
@@ -9,24 +10,16 @@ namespace Core.Mapping
     {
         public MapProfile()
         {
-            //TODO
-            CreateMap<AddUserDto, UserEntity>();
-
-
             CreateMap<TeamEntity, TeamDto>().ReverseMap();
-            CreateMap<TeamDto, TeamDtoApi>().ReverseMap();
             CreateMap<UserEntity, UserDto>().ReverseMap();
-            CreateMap<UserEntity, UserDtoApi>().ReverseMap();
             CreateMap<MatchEntity, MatchDto>().ReverseMap();
             CreateMap<GroupEntity, GroupDto>().ReverseMap();
+            CreateMap<UserEntity, UserDtoApi>().ReverseMap();
+            CreateMap<GroupEntity, LiteGroupDto>().ReverseMap();
             CreateMap<GroupEntity, GroupFullData>().ReverseMap();
-            CreateMap<GroupTeamEntity, GroupTeamDto>().ReverseMap();
-
-            CreateMap<GroupEntity, GroupFullDataApi>()
-                .ForMember(dto => dto.TournamentId, conf => conf.MapFrom(ent => ent.Id))
-                .ReverseMap();
-
             CreateMap<GroupEntity, GroupMatchsDto>().ReverseMap();
+            CreateMap<GroupTeamEntity, GroupTeamDto>().ReverseMap();
+            CreateMap<GroupEntity, GroupFullDataApi>().ReverseMap();
             CreateMap<TournamentEntity, TournamentDto>().ReverseMap();
             CreateMap<TournamentEntity, AddTournamentDto>().ReverseMap();
             CreateMap<TournamentEntity, TournamentFullData>().ReverseMap();

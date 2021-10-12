@@ -1,8 +1,8 @@
-﻿using FluentValidation;
-using Core.Dtos.DtosApi;
+﻿using Core.Dtos;
+using FluentValidation;
+using Core.Dtos.AddDtos;
 using Infrastructure.Models;
 using Core.Modules.UserModule.LoginWeb;
-using Core.Dtos;
 
 namespace Core.Validations
 {

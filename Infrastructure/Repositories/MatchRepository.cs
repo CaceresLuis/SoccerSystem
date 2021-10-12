@@ -46,7 +46,9 @@ namespace Infrastructure.Repositories
 
         public async Task<MatchEntity> FindMatchByIdAsync(Guid matchId)
         {
-            return await _dataContext.Matchs.FindAsync(matchId);
+            return await _dataContext.Matchs
+                .Include(m => m.Group)
+                .FirstOrDefaultAsync(m => m.Id == matchId);
         }
 
         public async Task<bool> UpdateMatchAsync(MatchEntity match)

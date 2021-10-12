@@ -1,6 +1,8 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using Core.Dtos;
 using Core.Dtos.DtosApi;
+using Core.Dtos.AddDtos;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Core.Modules.MatchModule.List;
@@ -8,7 +10,6 @@ using Core.Modules.MatchModule.Add;
 using Core.Modules.MatchModule.Close;
 using Core.Modules.MatchModule.Remove;
 using Microsoft.AspNetCore.Authorization;
-using System;
 
 namespace Api.Controllers
 {
@@ -23,11 +24,11 @@ namespace Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult<GroupMatchsDto>> GetMatchs(Guid idGroup)
+        public async Task<ActionResult<GroupMatchsDto>> GetMatchs(Guid id)
         {
-            return await _mediator.Send(new ListMatchByGroupQuery { GroupId = idGroup });
+            return await _mediator.Send(new ListMatchByGroupQuery { GroupId = id });
         }
 
         [HttpPost]
@@ -50,16 +51,7 @@ namespace Api.Controllers
         [Authorize(Roles = "admin")]
         public async Task<ActionResult<bool>> Close(CloseMatchDto closeMatchDto)
         {
-            MatchDto matchDto = new MatchDto 
-            {
-                Id = closeMatchDto.IdMatch,
-                GoalsLocal = closeMatchDto.GoalsLocal,
-                GoalsVisitor = closeMatchDto.GoalsVisitor,
-                GroupId = closeMatchDto.GroupId,
-                LocalId = closeMatchDto.LocalId,
-                VisitorId = closeMatchDto.VisitorId
-            };
-            return await _mediator.Send(new CloseMatchCommand { MatchDto = matchDto });
+            return await _mediator.Send(new CloseMatchCommand { CloseMatchDto = closeMatchDto });
         }
 
         [HttpDelete("{id}")]

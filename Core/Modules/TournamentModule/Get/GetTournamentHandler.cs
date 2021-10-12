@@ -14,17 +14,20 @@ namespace Core.Modules.TournamentModule.Get
     public class GetTournamentHandler : IRequestHandler<GetTournamentQuery, TournamentFullData>
     {
         private readonly IMapper _mapper;
+        private readonly IImageRepository _imageRepository;
         private readonly ITournamentRepository _tournamentRepository;
 
-        public GetTournamentHandler(ITournamentRepository tournamentRepository, IMapper mapper)
+        public GetTournamentHandler(ITournamentRepository tournamentRepository, IMapper mapper, IImageRepository imageRepository)
         {
             _mapper = mapper;
+            _imageRepository = imageRepository;
             _tournamentRepository = tournamentRepository;
         }
 
         public async Task<TournamentFullData> Handle(GetTournamentQuery request, CancellationToken cancellationToken)
         {
             TournamentEntity tournament = await _tournamentRepository.GetTournamentDetailsAsync(request.Id);
+            ImageEntity img = await _imageRepository.GetImage(tournament.Id);
             if(tournament == null)
                 throw new ExceptionHandler(HttpStatusCode.NotFound,
                     new Error
@@ -35,8 +38,10 @@ namespace Core.Modules.TournamentModule.Get
                         State = State.error,
                         IsSuccess = false
                     });
+            TournamentFullData dto = _mapper.Map<TournamentFullData>(tournament);
+            dto.LogoPath = img.Path;
 
-            return _mapper.Map<TournamentFullData>(tournament);
+            return dto;
         }
     }
 }
