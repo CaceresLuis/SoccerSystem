@@ -6,7 +6,7 @@ namespace Infrastructure.Models
 {
     public class MatchEntity
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}", ApplyFormatInEditMode = false)]
@@ -21,6 +21,5 @@ namespace Infrastructure.Models
         public int GoalsVisitor { get; set; }
         public bool IsClosed { get; set; }
         public GroupEntity Group { get; set; }
-        public ICollection<PredictionEntity> Predictions { get; set; }
     }
 }

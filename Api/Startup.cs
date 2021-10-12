@@ -90,6 +90,7 @@ namespace Api
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ITeamRepository, TeamRepository>();
+            services.AddScoped<IImageRepository, ImageRepository>();
             services.AddScoped<IGroupRepository, GroupRepository>();
             services.AddScoped<IMatchRepository, MatchRepository>();
             services.AddScoped<ITournamentRepository, TournamentRepository>();

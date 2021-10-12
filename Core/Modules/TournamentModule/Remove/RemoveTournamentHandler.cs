@@ -4,6 +4,7 @@ using System.Linq;
 using Shared.Enums;
 using System.Threading;
 using Shared.Exceptions;
+using Shared.Helpers.Image;
 using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
@@ -12,10 +13,14 @@ namespace Core.Modules.TournamentModule.Remove
 {
     public class RemoveTournamentHandler : IRequestHandler<RemoveTournamentCommand, bool>
     {
+        private readonly IIMageHelper _iMageHelper;
+        private readonly IImageRepository _imageRepository;
         private readonly ITournamentRepository _tournamentRepository;
 
-        public RemoveTournamentHandler(ITournamentRepository tournamentRepository)
+        public RemoveTournamentHandler(ITournamentRepository tournamentRepository, IIMageHelper iMageHelper, IImageRepository imageRepository)
         {
+            _iMageHelper = iMageHelper;
+            _imageRepository = imageRepository;
             _tournamentRepository = tournamentRepository;
         }
 
@@ -54,6 +59,10 @@ namespace Core.Modules.TournamentModule.Remove
                         State = State.error,
                         IsSuccess = false
                     });
+
+            ImageEntity img = await _imageRepository.GetImage(request.Id);
+            await _imageRepository.DeleteImage(img);
+            _iMageHelper.DeleteImage(img.Path);
 
             return true;
         }

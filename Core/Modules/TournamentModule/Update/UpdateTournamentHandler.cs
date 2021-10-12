@@ -14,20 +14,19 @@ namespace Core.Modules.TournamentModule.Update
     public class UpdateTournamentHandler : IRequestHandler<UpdateTournamentCommnad, bool>
     {
         private readonly IIMageHelper _iMageHelper;
+        private readonly IImageRepository _imageRepository;
         private readonly ITournamentRepository _tournamentRepository;
 
-        public UpdateTournamentHandler(ITournamentRepository tournamentRepository, IIMageHelper iMageHelper)
+        public UpdateTournamentHandler(ITournamentRepository tournamentRepository, IIMageHelper iMageHelper, IImageRepository imageRepository)
         {
             _iMageHelper = iMageHelper;
+            _imageRepository = imageRepository;
             _tournamentRepository = tournamentRepository;
         }
 
         public async Task<bool> Handle(UpdateTournamentCommnad request, CancellationToken cancellationToken)
         {
             TournamentDto upTournament = request.TournamentDto;
-            if (upTournament.LogoFile != null)
-                upTournament.LogoPath = await _iMageHelper.UploadImageAsync(upTournament.LogoFile, "Teams");
-
             TournamentEntity tournament = await _tournamentRepository.GetTournamentFindAsync(request.TournamentDto.Id);
             if (tournament == null)
                 throw new ExceptionHandler(HttpStatusCode.BadRequest,
@@ -70,6 +69,15 @@ namespace Core.Modules.TournamentModule.Update
                         State = State.error,
                         IsSuccess = false
                     });
+
+            if (upTournament.LogoFile != null)
+            {
+                ImageEntity img = await _imageRepository.GetImage(upTournament.Id);
+                _iMageHelper.DeleteImage(img.Path);
+                string newImg = await _iMageHelper.UploadImageAsync(upTournament.LogoFile, "Tournaments");
+                img.Path = newImg;
+                await _imageRepository.UpdateImage(img);
+            }
 
             return true;
         }

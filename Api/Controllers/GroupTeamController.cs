@@ -1,11 +1,11 @@
-﻿using MediatR;
-using Core.Dtos;
-using Core.Dtos.DtosApi;
+﻿using System;
+using MediatR;
+using Core.Dtos.AddDtos;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Core.Modules.GroupTeamModule.Add;
-using Core.Modules.GroupTeamModule.Remove;
 using Microsoft.AspNetCore.Authorization;
+using Core.Modules.GroupTeamModule.Remove;
 
 namespace Api.Controllers
 {
@@ -24,15 +24,14 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<ActionResult<bool>> PostGroupTeamEntity(AddGroupTeam addGroupTeam)
         {
-            AddGroupTeamDto addGroupTeamDto = new AddGroupTeamDto { TeamId = addGroupTeam.IdGroup, IdGroup = addGroupTeam.IdGroup };
-            return await _mediator.Send(new AddGroupTeamCommand { AddGroupTeamDto = addGroupTeamDto });
+            return await _mediator.Send(new AddGroupTeamCommand { AddGroupTeam = addGroupTeam });
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<bool>> DeleteGroupTeamEntity(int id)
+        public async Task<ActionResult<bool>> DeleteGroupTeamEntity(Guid id)
         {
-            int delete = await _mediator.Send(new RemoveGroupDetailCommand { Id = id });
-            return delete > 0;
+            await _mediator.Send(new RemoveGroupDetailCommand { Id = id });
+            return true;
         }
     }
 }

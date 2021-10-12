@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using Core.Dtos;
 using Shared.Enums;
 using Shared.Exceptions;
@@ -10,6 +11,7 @@ using Core.Modules.MatchModule.List;
 using Core.Modules.MatchModule.Close;
 using Core.Modules.MatchModule.Remove;
 using Microsoft.AspNetCore.Authorization;
+using Core.Dtos.DtosApi;
 
 namespace Web.Controllers
 {
@@ -22,14 +24,14 @@ namespace Web.Controllers
             _mediator = mediator;
         }
 
-        public async Task<ActionResult> Matchs(int id)
+        public async Task<ActionResult> Matchs(Guid id)
         {
             GroupMatchsDto list = await _mediator.Send(new ListMatchByGroupQuery { GroupId = id });
             return View(list);
         }
 
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult> Create(int id)
+        public async Task<ActionResult> Create(Guid id)
         {
             AddMatchDto addMatchDto = await _mediator.Send(new GetGroupDetailsforMatchQuery { GroupId = id });
             return View(addMatchDto);
@@ -57,7 +59,7 @@ namespace Web.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult> CloseMatch(int id)
+        public async Task<ActionResult> CloseMatch(Guid id)
         {
             MatchDto match = await _mediator.Send(new GetMatchQuery { Id = id });
             return View(match);
@@ -65,28 +67,28 @@ namespace Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CloseMatch(MatchDto matchDto)
+        public async Task<ActionResult> CloseMatch(CloseMatchDto closeMatchDto)
         {
             try
             {
-                await _mediator.Send(new CloseMatchCommand { MatchDto = matchDto });
+                await _mediator.Send(new CloseMatchCommand { CloseMatchDto = closeMatchDto });
                 TempData["Title"] = "Success";
                 TempData["Message"] = "Macht Closet!";
                 TempData["State"] = State.success.ToString();
 
-                return RedirectToAction(nameof(Matchs), new { id = matchDto.GroupId });
+                return RedirectToAction(nameof(Matchs), new { id = closeMatchDto.GroupId });
             }
             catch (ExceptionHandler e)
             {
                 TempData["Title"] = e.Error.Title;
                 TempData["Message"] = e.Error.Message;
                 TempData["State"] = State.error.ToString();
-                return View(matchDto);
+                return View(closeMatchDto);
             }
         }
 
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult> DeleteMatch(int id)
+        public async Task<ActionResult> DeleteMatch(Guid id)
         {
             MatchDto match = await _mediator.Send(new GetMatchQuery { Id = id });
             try

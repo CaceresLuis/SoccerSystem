@@ -1,8 +1,9 @@
-﻿using Infrastructure.Models;
+﻿using System;
+using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
@@ -23,7 +24,7 @@ namespace Infrastructure.Repositories
             return await _dataContext.SaveChangesAsync() > 0;
         }
 
-        public async Task<TeamEntity> FindTeamByIdAsync(int teamId)
+        public async Task<TeamEntity> FindTeamByIdAsync(Guid teamId)
         {
             return await _dataContext.Teams.FindAsync(teamId);
         }

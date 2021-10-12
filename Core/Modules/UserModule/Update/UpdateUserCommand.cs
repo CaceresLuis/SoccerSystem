@@ -6,5 +6,6 @@ namespace Core.Modules.UserModule.Update
     public class UpdateUserCommand : IRequest<bool>
     {
         public UserDto UserDto { get; set; }
+        public string UserName { get; set; }
     }
 }

@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "Web\Web.csproj", "{4
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api", "Api\Api.csproj", "{259D4BDF-64D1-4563-91F1-9E56B75F3820}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClienteSoccerSystem", "ClienteSoccerSystem\ClienteSoccerSystem.csproj", "{72C5DF88-878A-47E3-9338-99F36A917221}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,10 +39,6 @@ Global
 		{259D4BDF-64D1-4563-91F1-9E56B75F3820}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{259D4BDF-64D1-4563-91F1-9E56B75F3820}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{259D4BDF-64D1-4563-91F1-9E56B75F3820}.Release|Any CPU.Build.0 = Release|Any CPU
-		{72C5DF88-878A-47E3-9338-99F36A917221}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{72C5DF88-878A-47E3-9338-99F36A917221}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{72C5DF88-878A-47E3-9338-99F36A917221}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{72C5DF88-878A-47E3-9338-99F36A917221}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

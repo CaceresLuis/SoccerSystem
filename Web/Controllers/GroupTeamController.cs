@@ -1,6 +1,8 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using Core.Dtos;
 using Shared.Enums;
+using Core.Dtos.AddDtos;
 using Shared.Exceptions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +23,7 @@ namespace Web.Controllers
             _mediator = mediator;
         }
 
-        public async Task<ActionResult> Create(int idGroup, int idTournament)
+        public async Task<ActionResult> Create(Guid idGroup, Guid idTournament)
         {
             try
             {
@@ -43,7 +45,8 @@ namespace Web.Controllers
         {
             try
             {
-                bool create = await _mediator.Send(new AddGroupTeamCommand { AddGroupTeamDto = addGroupTeamDto });
+                var addGroupTeam = new AddGroupTeam { IdGroup = addGroupTeamDto.Group.Id, IdTeam = addGroupTeamDto.TeamId };
+                bool create = await _mediator.Send(new AddGroupTeamCommand { AddGroupTeam = addGroupTeam });
                 TempData["Title"] = "Added";
                 TempData["Message"] = $"The team was added to the group";
                 TempData["State"] = $"{State.success}";
@@ -60,11 +63,11 @@ namespace Web.Controllers
             }
         }
 
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(Guid id)
         {
             try
             {
-                int delete = await _mediator.Send(new RemoveGroupDetailCommand { Id = id });
+                Guid delete = await _mediator.Send(new RemoveGroupDetailCommand { Id = id });
                 TempData["Title"] = "Deleted!";
                 TempData["Message"] = "Team has been deleted!";
                 TempData["State"] = $"{State.success}"; 
@@ -76,7 +79,7 @@ namespace Web.Controllers
                 TempData["Message"] = e.Error.Message;
                 TempData["State"] = e.Error.State;
 
-                return RedirectToAction("Detail", "Group", new { id = int.Parse(e.Error.Code) });
+                return RedirectToAction("Detail", "Group", new { id = e.Error.Code });
             }    
         }
     }

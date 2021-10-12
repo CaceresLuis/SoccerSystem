@@ -5,24 +5,21 @@ using System.Net;
 using Shared.Enums;
 using System.Threading;
 using Shared.Exceptions;
-using Shared.Helpers.Image;
+using Core.Dtos.AddDtos;
 using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
-using Core.Dtos.DtosApi;
 
 namespace Core.Modules.TournamentModule.Add
 {
     public class AddTournamentHandler : IRequestHandler<AddTournamentCommand, bool>
     {
         private readonly IMapper _mapper;
-        private readonly IIMageHelper _iMageHelper;
         private readonly ITournamentRepository _tournamentRepository;
 
-        public AddTournamentHandler(ITournamentRepository tournamentRepository, IMapper mapper, IIMageHelper iMageHelper)
+        public AddTournamentHandler(ITournamentRepository tournamentRepository, IMapper mapper)
         {
             _mapper = mapper;
-            _iMageHelper = iMageHelper;
             _tournamentRepository = tournamentRepository;
         }
 
@@ -36,9 +33,6 @@ namespace Core.Modules.TournamentModule.Add
                 data.StartDate = DateTime.Now;
 
             TournamentEntity tournament = _mapper.Map<TournamentEntity>(data);
-
-            if(data.LogoFile != null)
-                tournament.LogoPath = await _iMageHelper.UploadImageAsync(data.LogoFile, "Tournaments");
 
             if (await _tournamentRepository.GetTournamentByNameAsync(tournament.Name) != null)
                 throw new ExceptionHandler(HttpStatusCode.BadRequest,

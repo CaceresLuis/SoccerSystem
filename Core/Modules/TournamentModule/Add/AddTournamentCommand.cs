@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Core.Dtos.DtosApi;
+using Core.Dtos.AddDtos;
 
 namespace Core.Modules.TournamentModule.Add
 {

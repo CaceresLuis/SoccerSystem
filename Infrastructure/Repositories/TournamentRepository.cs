@@ -1,9 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace Infrastructure.Repositories
 {
@@ -22,7 +22,7 @@ namespace Infrastructure.Repositories
             return await _dataContext.SaveChangesAsync() > 0;
         }
 
-        public async Task<TournamentEntity> GetTournamentFindAsync(int id)
+        public async Task<TournamentEntity> GetTournamentFindAsync(Guid id)
         {
             return await _dataContext.Tournaments.FindAsync(id);
         }
@@ -31,13 +31,13 @@ namespace Infrastructure.Repositories
             return await _dataContext.Tournaments.FirstOrDefaultAsync(t => t.Name == name);
         }
         
-        public async Task<TournamentEntity> GetTournamentWithGroupAsync(int id)
+        public async Task<TournamentEntity> GetTournamentWithGroupAsync(Guid id)
         {
             return await _dataContext.Tournaments
                 .Include(t => t.Groups).FirstOrDefaultAsync(t => t.Id == id);
         }
 
-        public async Task<TournamentEntity> GetTournamentDetailsAsync(int id)
+        public async Task<TournamentEntity> GetTournamentDetailsAsync(Guid id)
         {
             return await _dataContext.Tournaments
                 .Include(t => t.Groups)

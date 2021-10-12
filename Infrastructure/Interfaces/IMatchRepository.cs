@@ -1,6 +1,7 @@
-﻿using Infrastructure.Models;
-using System.Collections.Generic;
+﻿using System;
+using Infrastructure.Models;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Infrastructure.Interfaces
 {
@@ -8,9 +9,9 @@ namespace Infrastructure.Interfaces
     {
         Task<bool> AddMatchAsync(MatchEntity match);
         Task<bool> DeleteMatchAsync(MatchEntity match);
-        Task<MatchEntity> FindMatchByIdAsync(int matchId);
-        Task<MatchEntity> GetMatchAsync(int id);
-        Task<List<MatchEntity>> GetMatchByGroupAsync(int idGroup);
+        Task<MatchEntity> FindMatchByIdAsync(Guid matchId);
+        Task<MatchEntity> GetMatchAsync(Guid id);
+        Task<List<MatchEntity>> GetMatchByGroupAsync(Guid idGroup);
         Task<bool> UpdateMatchAsync(MatchEntity match);
     }
 }

@@ -5,6 +5,6 @@ namespace Core.Modules.GroupModule.Add
 {
     public class AddGroupCommand : IRequest<bool>
     {
-        public GroupDto GroupDto { get; set; }
+        public LiteGroupDto GroupDto { get; set; }
     }
 }

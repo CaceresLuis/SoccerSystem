@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Migrations
 {
-    public partial class initial : Migration
+    public partial class Data : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -22,12 +22,25 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Teams",
+                name: "Images",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(maxLength: 100, nullable: false),
+                    Reference = table.Column<Guid>(nullable: false),
+                    Path = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Images", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Teams",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    Name = table.Column<string>(maxLength: 100, nullable: true),
                     LogoPath = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -39,9 +52,8 @@ namespace Infrastructure.Migrations
                 name: "Tournaments",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(maxLength: 100, nullable: false),
+                    Id = table.Column<Guid>(nullable: false),
+                    Name = table.Column<string>(maxLength: 100, nullable: true),
                     StartDate = table.Column<DateTime>(nullable: false),
                     EndDate = table.Column<DateTime>(nullable: false),
                     IsActive = table.Column<bool>(nullable: false),
@@ -92,20 +104,19 @@ namespace Infrastructure.Migrations
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
-                    Document = table.Column<string>(maxLength: 20, nullable: false),
-                    FirstName = table.Column<string>(maxLength: 50, nullable: false),
-                    LastName = table.Column<string>(maxLength: 50, nullable: false),
+                    Document = table.Column<string>(maxLength: 20, nullable: true),
+                    FirstName = table.Column<string>(maxLength: 50, nullable: true),
+                    LastName = table.Column<string>(maxLength: 50, nullable: true),
                     Address = table.Column<string>(maxLength: 100, nullable: true),
                     PicturePath = table.Column<string>(nullable: true),
-                    UserType = table.Column<int>(nullable: false),
-                    TeamId = table.Column<int>(nullable: true)
+                    TeamEntityId = table.Column<Guid>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUsers_Teams_TeamId",
-                        column: x => x.TeamId,
+                        name: "FK_AspNetUsers_Teams_TeamEntityId",
+                        column: x => x.TeamEntityId,
                         principalTable: "Teams",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -115,10 +126,10 @@ namespace Infrastructure.Migrations
                 name: "Groups",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(maxLength: 30, nullable: false),
-                    TournamentId = table.Column<int>(nullable: true)
+                    Id = table.Column<Guid>(nullable: false),
+                    Name = table.Column<string>(maxLength: 30, nullable: true),
+                    IsActive = table.Column<bool>(nullable: false),
+                    TournamentId = table.Column<Guid>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -217,31 +228,30 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "GroupDetails",
+                name: "GroupTeams",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(nullable: false),
                     MatchesPlayed = table.Column<int>(nullable: false),
                     MatchesWon = table.Column<int>(nullable: false),
                     MatchesTied = table.Column<int>(nullable: false),
                     MatchesLost = table.Column<int>(nullable: false),
                     GoalsFor = table.Column<int>(nullable: false),
                     GoalsAgainst = table.Column<int>(nullable: false),
-                    GroupId = table.Column<int>(nullable: true),
-                    TeamId = table.Column<int>(nullable: true)
+                    GroupId = table.Column<Guid>(nullable: true),
+                    TeamId = table.Column<Guid>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GroupDetails", x => x.Id);
+                    table.PrimaryKey("PK_GroupTeams", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_GroupDetails_Groups_GroupId",
+                        name: "FK_GroupTeams_Groups_GroupId",
                         column: x => x.GroupId,
                         principalTable: "Groups",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_GroupDetails_Teams_TeamId",
+                        name: "FK_GroupTeams_Teams_TeamId",
                         column: x => x.TeamId,
                         principalTable: "Teams",
                         principalColumn: "Id",
@@ -252,16 +262,15 @@ namespace Infrastructure.Migrations
                 name: "Matchs",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(nullable: false),
                     Date = table.Column<DateTime>(nullable: false),
-                    LocalId = table.Column<int>(nullable: true),
-                    VisitorId = table.Column<int>(nullable: true),
-                    GoalsLocal = table.Column<int>(nullable: true),
-                    GoalsVisitor = table.Column<int>(nullable: true),
+                    Hour = table.Column<DateTime>(nullable: false),
+                    LocalId = table.Column<Guid>(nullable: true),
+                    VisitorId = table.Column<Guid>(nullable: true),
+                    GoalsLocal = table.Column<int>(nullable: false),
+                    GoalsVisitor = table.Column<int>(nullable: false),
                     IsClosed = table.Column<bool>(nullable: false),
-                    GroupId = table.Column<int>(nullable: true),
-                    TeamId = table.Column<int>(nullable: true)
+                    GroupId = table.Column<Guid>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -279,44 +288,9 @@ namespace Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Matchs_Teams_TeamId",
-                        column: x => x.TeamId,
-                        principalTable: "Teams",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_Matchs_Teams_VisitorId",
                         column: x => x.VisitorId,
                         principalTable: "Teams",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Predictions",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    MatchId = table.Column<int>(nullable: true),
-                    UserId = table.Column<string>(nullable: true),
-                    GoalsLocal = table.Column<int>(nullable: true),
-                    GoalsVisitor = table.Column<int>(nullable: true),
-                    Points = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Predictions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Predictions_Matchs_MatchId",
-                        column: x => x.MatchId,
-                        principalTable: "Matchs",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Predictions_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -361,24 +335,24 @@ namespace Infrastructure.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_TeamId",
+                name: "IX_AspNetUsers_TeamEntityId",
                 table: "AspNetUsers",
-                column: "TeamId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_GroupDetails_GroupId",
-                table: "GroupDetails",
-                column: "GroupId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_GroupDetails_TeamId",
-                table: "GroupDetails",
-                column: "TeamId");
+                column: "TeamEntityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Groups_TournamentId",
                 table: "Groups",
                 column: "TournamentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GroupTeams_GroupId",
+                table: "GroupTeams",
+                column: "GroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GroupTeams_TeamId",
+                table: "GroupTeams",
+                column: "TeamId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Matchs_GroupId",
@@ -391,30 +365,9 @@ namespace Infrastructure.Migrations
                 column: "LocalId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Matchs_TeamId",
-                table: "Matchs",
-                column: "TeamId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Matchs_VisitorId",
                 table: "Matchs",
                 column: "VisitorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Predictions_MatchId",
-                table: "Predictions",
-                column: "MatchId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Predictions_UserId",
-                table: "Predictions",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Teams_Name",
-                table: "Teams",
-                column: "Name",
-                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -435,16 +388,16 @@ namespace Infrastructure.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "GroupDetails");
+                name: "GroupTeams");
 
             migrationBuilder.DropTable(
-                name: "Predictions");
-
-            migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "Images");
 
             migrationBuilder.DropTable(
                 name: "Matchs");
+
+            migrationBuilder.DropTable(
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

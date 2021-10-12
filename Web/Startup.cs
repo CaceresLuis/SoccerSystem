@@ -1,5 +1,6 @@
 using System;
 using MediatR;
+using System.Text;
 using Core.Helpers;
 using Infrastructure;
 using Core.Validations;
@@ -17,13 +18,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Web
 {
@@ -87,7 +87,7 @@ namespace Web
                     ValidateAudience = false,
                     ValidateIssuer = false
                 };
-            });
+            }).AddCookie();
 
             //Inyection of Repositories
             services.AddScoped<IUserSession, UserSession>();
@@ -95,6 +95,7 @@ namespace Web
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ITeamRepository, TeamRepository>();
+            services.AddScoped<IImageRepository, ImageRepository>();
             services.AddScoped<IGroupRepository, GroupRepository>();
             services.AddScoped<IMatchRepository, MatchRepository>();
             services.AddScoped<ITournamentRepository, TournamentRepository>();
@@ -112,7 +113,7 @@ namespace Web
             app.UseMiddleware<MiddelwareHandler>();
             if (env.IsDevelopment())
             {
-                //app.UseDeveloperExceptionPage();
+                app.UseDeveloperExceptionPage();
             }
             else
             {
@@ -121,12 +122,11 @@ namespace Web
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
 
             app.UseAuthentication();
-
             app.UseAuthorization();
+
             app.UseCookiePolicy();
             app.UseEndpoints(endpoints =>
             {

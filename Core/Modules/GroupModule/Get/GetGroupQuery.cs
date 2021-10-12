@@ -1,10 +1,11 @@
-﻿using MediatR;
-using Core.Dtos;
+﻿using System;
+using MediatR;
+using Core.Dtos.DtosApi;
 
 namespace Core.Modules.GroupModule.Get
 {
-    public class GetGroupQuery : IRequest<GroupDto>
+    public class GetGroupQuery : IRequest<GroupFullDataApi>
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
     }
 }

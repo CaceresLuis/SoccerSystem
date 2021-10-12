@@ -27,8 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\images\Tournaments\" />
-    <Folder Include="wwwroot\images\Teams\" />
+    <Folder Include="wwwroot\Images\Users\" />
+    <Folder Include="wwwroot\Images\Tournaments\" />
+    <Folder Include="wwwroot\Images\Teams\" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,7 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using Core.Dtos;
-using Core.Dtos.DtosApi;
+using Core.Dtos.AddDtos;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Core.Modules.TournamentModule.Add;
@@ -32,14 +33,14 @@ namespace Web.Controllers.Api
 
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult<TournamentFullData>> GetTournament(int id)
+        public async Task<ActionResult<TournamentFullData>> GetTournament(Guid id)
         {
             return await _mediator.Send(new GetTournamentQuery { Id = id });
         }
 
         [HttpPut("{id}")]
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult<bool>> PutTournamentEntity(int id, [FromForm] TournamentDto tournamentDto)
+        public async Task<ActionResult<bool>> PutTournamentEntity(Guid id, [FromForm] TournamentDto tournamentDto)
         {
             tournamentDto.Id = id;
             return await _mediator.Send(new UpdateTournamentCommnad { TournamentDto = tournamentDto });
@@ -54,7 +55,7 @@ namespace Web.Controllers.Api
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult<bool>> DeleteTournamentEntity(int id)
+        public async Task<ActionResult<bool>> DeleteTournamentEntity(Guid id)
         {
             return await _mediator.Send(new RemoveTournamentCommand { Id = id });
         }

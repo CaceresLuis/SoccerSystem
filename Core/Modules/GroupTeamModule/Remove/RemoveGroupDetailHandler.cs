@@ -6,10 +6,11 @@ using Shared.Exceptions;
 using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
+using System;
 
 namespace Core.Modules.GroupTeamModule.Remove
 {
-    public class RemoveGroupDetailHandler : IRequestHandler<RemoveGroupDetailCommand, int>
+    public class RemoveGroupDetailHandler : IRequestHandler<RemoveGroupDetailCommand, Guid>
     {
         private readonly IGroupTeamsRepository _groupDetailsRepository;
 
@@ -18,7 +19,7 @@ namespace Core.Modules.GroupTeamModule.Remove
             _groupDetailsRepository = groupDetailsRepository;
         }
 
-        public async Task<int> Handle(RemoveGroupDetailCommand request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(RemoveGroupDetailCommand request, CancellationToken cancellationToken)
         {
             GroupTeamEntity groupDetailEntity = await _groupDetailsRepository.GetGroupDetailsAsync(request.Id);
             if (groupDetailEntity.MatchesPlayed > 0)

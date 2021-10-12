@@ -75,7 +75,7 @@ namespace Web.Controllers
         {
             try
             {
-                bool delete = await _mediator.Send(new RemoveRoleCommand { Name = id });
+                bool delete = await _mediator.Send(new RemoveRoleCommand { Id = id });
                 TempData["Title"] = "Deleted";
                 TempData["Message"] = $"The role: {id} has been deleted";
                 TempData["State"] = $"{State.success}";

@@ -4,25 +4,31 @@ using System.Net;
 using Shared.Enums;
 using System.Threading;
 using Shared.Exceptions;
+using Shared.Helpers.Image;
 using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
+using System;
 
 namespace Core.Modules.UserModule.Update
 {
     public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, bool>
     {
+        private readonly IIMageHelper _iMageHelper;
         private readonly IUserRepository _userRepository;
+        private readonly IImageRepository _imageRepository;
 
-        public UpdateUserHandler(IUserRepository userRepository)
+        public UpdateUserHandler(IUserRepository userRepository, IIMageHelper iMageHelper, IImageRepository imageRepository)
         {
+            _iMageHelper = iMageHelper;
             _userRepository = userRepository;
+            _imageRepository = imageRepository;
         }
 
         public async Task<bool> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
             UserDto userDto = request.UserDto;
-            UserEntity user = await _userRepository.GetUserInSesscion();
+            UserEntity user = await _userRepository.FindByEmailAsync(userDto.Email);
             if (userDto.Email != user.Email)
                 throw new ExceptionHandler(HttpStatusCode.BadRequest,
                     new Error
@@ -51,7 +57,24 @@ namespace Core.Modules.UserModule.Update
                         IsSuccess = false
                     });
 
-            return update;
+            if (userDto.PictureFile == null)
+                return update;
+
+            Guid id = Guid.Parse(user.Id);
+            ImageEntity img = await _imageRepository.GetImage(id);
+            if(img != null)
+            {
+                _iMageHelper.DeleteImage(img.Path);
+                string newImg = await _iMageHelper.UploadImageAsync(userDto.PictureFile, "Users");
+                img.Path = newImg;
+                var upImg = await _imageRepository.UpdateImage(img);
+                return upImg;
+            }
+
+            string local = await _iMageHelper.UploadImageAsync(userDto.PictureFile, "Users");
+            bool save = await _imageRepository.AddImage(local, id);
+
+            return save;
         }
     }
 }

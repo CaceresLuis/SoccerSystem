@@ -6,8 +6,8 @@ using Core.Modules.RoleModule.Add;
 using Core.Modules.RoleModule.List;
 using Microsoft.AspNetCore.Identity;
 using Core.Modules.RoleModule.Remove;
-using Core.Modules.UserModule.AddRoleToUer;
 using Microsoft.AspNetCore.Authorization;
+using Core.Modules.UserModule.AddRoleToUer;
 
 namespace Api.Controllers
 {

@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using Core.Dtos;
 using Shared.Enums;
 using Shared.Exceptions;
@@ -10,6 +11,7 @@ using Core.Modules.GroupModule.Remove;
 using Core.Modules.GroupModule.Update;
 using Core.Modules.TournamentModule.Get;
 using Microsoft.AspNetCore.Authorization;
+using Core.Dtos.DtosApi;
 
 namespace Web.Controllers
 {
@@ -23,7 +25,7 @@ namespace Web.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult> Create(int id)
+        public async Task<ActionResult> Create(Guid id)
         {
             try
             {
@@ -43,18 +45,17 @@ namespace Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(GroupDto groupDto)
+        public async Task<ActionResult> Create(LiteGroupDto groupDto)
         {
             try
             {
-                groupDto.Id = 0;
                 bool create = await _mediator.Send(new AddGroupCommand { GroupDto = groupDto });
 
                 TempData["Title"] = "Created!";
                 TempData["Message"] = $"The group {groupDto.Name} was created";
                 TempData["State"] = $"{State.success}";
 
-                return RedirectToAction("Details", "Tournament", new { id = groupDto.Tournament.Id });
+                return RedirectToAction("Details", "Tournament", new { id = groupDto.Id });
             }
             catch (ExceptionHandler e)
             {
@@ -65,7 +66,7 @@ namespace Web.Controllers
             }
         }
 
-        public async Task<ActionResult> Detail(int id)
+        public async Task<ActionResult> Detail(Guid id)
         {
             try
             {
@@ -83,9 +84,9 @@ namespace Web.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult> Edit(int id)
+        public async Task<ActionResult> Edit(Guid id)
         {
-            GroupDto groupDto = await _mediator.Send(new GetGroupQuery { Id = id });
+            GroupFullDataApi groupDto = await _mediator.Send(new GetGroupQuery { Id = id });
             return View(groupDto);
         }
 
@@ -112,9 +113,9 @@ namespace Web.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(Guid id)
         {
-            GroupDto group = await _mediator.Send(new GetGroupQuery { Id = id });
+            GroupFullDataApi group = await _mediator.Send(new GetGroupQuery { Id = id });
             try
             {
                 await _mediator.Send(new RemoveGroupCommand { Id = id });
@@ -129,7 +130,7 @@ namespace Web.Controllers
                 TempData["State"] = State.error.ToString();
             }
 
-            return RedirectToAction("Details", "Tournament", new { id = group.Tournament.Id });
+            return RedirectToAction("Details", "Tournament", new { id = group.TournamentId });
         }
     }
 }

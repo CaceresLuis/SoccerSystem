@@ -1,12 +1,14 @@
-﻿namespace Core.Dtos.DtosApi
+﻿using System;
+
+namespace Core.Dtos.DtosApi
 {
     public class CloseMatchDto
     {
-        public int IdMatch { get; set; }
+        public Guid IdMatch { get; set; }
         public int GoalsLocal { get; set; }
         public int GoalsVisitor { get; set; }
-        public int LocalId { get; set; }
-        public int VisitorId { get; set; }
-        public int GroupId { get; set; }
+        public Guid LocalId { get; set; }
+        public Guid VisitorId { get; set; }
+        public Guid GroupId { get; set; }
     }
 }

@@ -25,7 +25,17 @@ namespace Core.Modules.GroupModule.Add
 
         public async Task<bool> Handle(AddGroupCommand request, CancellationToken cancellationToken)
         {
-            TournamentEntity tournamentEntity = await _tournamentRepository.GetTournamentFindAsync(request.GroupDto.Tournament.Id);
+            TournamentEntity tournamentEntity = await _tournamentRepository.GetTournamentFindAsync(request.GroupDto.TournamentId) ??
+                throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                    new Error
+                    {
+                        Code = "Error",
+                        Message = "The Tournament does't exist",
+                        Title = "Error",
+                        State = State.error,
+                        IsSuccess = false
+                    });
+
             GroupEntity group = _mapper.Map<GroupEntity>(request.GroupDto);
             group.IsActive = true;
             group.Tournament = tournamentEntity;

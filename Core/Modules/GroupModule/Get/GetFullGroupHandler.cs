@@ -8,6 +8,7 @@ using Shared.Exceptions;
 using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
+using System.Linq;
 
 namespace Core.Modules.GroupModule.Get
 {
@@ -15,11 +16,13 @@ namespace Core.Modules.GroupModule.Get
     {
         private readonly IMapper _mapper;
         private readonly IGroupRepository _groupRepository;
+        private readonly IImageRepository _imageRepository;
 
-        public GetFullGroupHandler(IMapper mapper, IGroupRepository groupRepository)
+        public GetFullGroupHandler(IMapper mapper, IGroupRepository groupRepository, IImageRepository imageRepository)
         {
             _mapper = mapper;
             _groupRepository = groupRepository;
+            _imageRepository = imageRepository;
         }
 
         public async Task<GroupFullData> Handle(GetFullGroupQuery request, CancellationToken cancellationToken)
@@ -36,7 +39,18 @@ namespace Core.Modules.GroupModule.Get
                         IsSuccess = false
                     });
 
-            return _mapper.Map<GroupFullData>(group);
+            var groupDto = _mapper.Map<GroupFullData>(group);
+            foreach (TeamEntity team in group.GroupTeams.Select(a => a.Team))
+            {
+                ImageEntity img = await _imageRepository.GetImage(team.Id);
+                foreach (TeamDto dto in groupDto.GroupTeams.Select(a => a.Team))
+                {
+                    if (team.Id == dto.Id)
+                        dto.LogoPath = img.Path;
+                }
+            }
+
+            return groupDto;
         }
     }
 }

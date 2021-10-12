@@ -1,11 +1,14 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using Core.Dtos;
 using AutoMapper;
 using Shared.Enums;
-using Core.Dtos.DtosApi;
+using Core.Dtos.AddDtos;
 using Shared.Exceptions;
+using Shared.Helpers.Image;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Core.Modules.ImageModule.Add;
 using Microsoft.AspNetCore.Hosting;
 using Core.Modules.TournamentModule.Add;
 using Core.Modules.TournamentModule.Get;
@@ -49,6 +52,9 @@ namespace Web.Controllers
             try
             {
                 await _mediator.Send(new AddTournamentCommand { Tournament = addTournamentDto });
+                var tournament = await _mediator.Send(new GetTournamentByNameQuery { Name = addTournamentDto.Name });
+                ImageData img = new ImageData { File = addTournamentDto.LogoFile, Reference = tournament.Id, Folder = "Tournaments" };
+                await _mediator.Send(new AddImageCommad { ImageData = img });
 
                 TempData["Title"] = "Created!";
                 TempData["Message"] = $"The tournament {addTournamentDto.Name} was created";
@@ -65,7 +71,7 @@ namespace Web.Controllers
             }
         }
 
-        public async Task<ActionResult> Details(int id)
+        public async Task<ActionResult> Details(Guid id)
         {
             try
             {
@@ -82,7 +88,7 @@ namespace Web.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult> Edit(int id)
+        public async Task<ActionResult> Edit(Guid id)
         {
             try
             {
@@ -120,7 +126,7 @@ namespace Web.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(Guid id)
         {
             try
             {

@@ -5,6 +5,7 @@ namespace Shared.Helpers.Image
 {
     public interface IIMageHelper
     {
+        void DeleteImage(string path);
         Task<string> UploadImageAsync(IFormFile imageFile, string folder);
     }
 }

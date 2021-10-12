@@ -1,11 +1,12 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using Core.Dtos;
 
 namespace Core.Modules.GroupTeamModule.Get
 {
     public class GetGroupTeamByGroupQuery : IRequest<AddGroupTeamDto>
     {
-        public int IdGroup { get; set; }
-        public int IdTournament { get; set; }
+        public Guid IdGroup { get; set; }
+        public Guid IdTournament { get; set; }
     }
 }

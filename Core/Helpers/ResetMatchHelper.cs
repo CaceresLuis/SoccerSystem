@@ -1,7 +1,7 @@
-﻿using Infrastructure.Models;
+﻿using Core.Dtos.DtosApi;
+using Infrastructure.Models;
 using System.Threading.Tasks;
 using Infrastructure.Interfaces;
-using Core.Dtos;
 
 namespace Core.Helpers
 {
@@ -16,17 +16,11 @@ namespace Core.Helpers
             _groupTeamsRepository = groupTeamsRepository;
         }
 
-        public async Task<bool> ResetMatchAsync(MatchDto matchDto)
+        public async Task<bool> ResetMatchAsync(CloseMatchDto closeMatchDto)
         {
-            if (matchDto.Visitor != null && matchDto.Local != null)
-            {
-                matchDto.VisitorId = matchDto.Visitor.Id;
-                matchDto.LocalId = matchDto.Local.Id;
-            }
-
-            GroupTeamEntity local = await _groupTeamsRepository.GetGroupDetailsByGroupAdnTeamAsync(matchDto.GroupId, matchDto.LocalId);
-            GroupTeamEntity visitor = await _groupTeamsRepository.GetGroupDetailsByGroupAdnTeamAsync(matchDto.GroupId, matchDto.VisitorId);
-            MatchEntity match = await _matchRepository.FindMatchByIdAsync(matchDto.Id);
+            GroupTeamEntity local = await _groupTeamsRepository.GetGroupDetailsByGroupAdnTeamAsync(closeMatchDto.GroupId, closeMatchDto.LocalId);
+            GroupTeamEntity visitor = await _groupTeamsRepository.GetGroupDetailsByGroupAdnTeamAsync(closeMatchDto.GroupId, closeMatchDto.VisitorId);
+            MatchEntity match = await _matchRepository.FindMatchByIdAsync(closeMatchDto.IdMatch);
 
             local.MatchesPlayed--;
             local.GoalsFor -= match.GoalsLocal;

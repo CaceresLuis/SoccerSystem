@@ -46,6 +46,11 @@ namespace Infrastructure.Repositories
         {
             return await _userManager.FindByNameAsync(GetSessionUser());
         }
+        
+        public async Task<UserEntity> GetUserInSesscion(string userName)
+        {
+            return await _userManager.FindByNameAsync(userName);
+        }
 
         public async Task<List<string>> GetUserRolesAsync(UserEntity user)
         {
@@ -66,11 +71,10 @@ namespace Infrastructure.Repositories
             await _signInManager.SignOutAsync();
         }
 
-        public async Task<bool> AddUserAsync(UserEntity user, string pass)
+        public async Task<IdentityResult> AddUserAsync(UserEntity user, string pass)
         {
-            IdentityResult addUser = await _userManager.CreateAsync(user, pass);
 
-            return addUser.Succeeded;
+            return await _userManager.CreateAsync(user, pass);
         }
 
         public async Task<bool> AddRoleToUser(UserEntity user, string role)
