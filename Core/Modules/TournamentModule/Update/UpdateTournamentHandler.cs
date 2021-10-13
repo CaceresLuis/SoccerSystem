@@ -57,7 +57,6 @@ namespace Core.Modules.TournamentModule.Update
             tournament.IsActive = upTournament.IsActive;
             tournament.StartDate = (upTournament.StartDate == null) ? tournament.StartDate : upTournament.StartDate;
             tournament.Name = upTournament.Name ?? tournament.Name;
-            tournament.LogoPath = upTournament.LogoPath ?? tournament.LogoPath;
 
             if(!await _tournamentRepository.UpdateTournamentAsync(tournament))
                 throw new ExceptionHandler(HttpStatusCode.BadRequest,
