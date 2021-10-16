@@ -27,7 +27,6 @@ namespace Core.Modules.TournamentModule.Get
         public async Task<TournamentFullData> Handle(GetTournamentQuery request, CancellationToken cancellationToken)
         {
             TournamentEntity tournament = await _tournamentRepository.GetTournamentDetailsAsync(request.Id);
-            ImageEntity img = await _imageRepository.GetImage(tournament.Id);
             if(tournament == null)
                 throw new ExceptionHandler(HttpStatusCode.NotFound,
                     new Error
@@ -38,8 +37,11 @@ namespace Core.Modules.TournamentModule.Get
                         State = State.error,
                         IsSuccess = false
                     });
+
             TournamentFullData dto = _mapper.Map<TournamentFullData>(tournament);
-            dto.LogoPath = img.Path;
+            ImageEntity img = await _imageRepository.GetImage(tournament.Id);
+            if(img != null)
+                dto.LogoPath = img.Path;
 
             return dto;
         }

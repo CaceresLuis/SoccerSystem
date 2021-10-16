@@ -61,8 +61,11 @@ namespace Core.Modules.TournamentModule.Remove
                     });
 
             ImageEntity img = await _imageRepository.GetImage(request.Id);
-            await _imageRepository.DeleteImage(img);
-            _iMageHelper.DeleteImage(img.Path);
+            if(img != null)
+            {
+                await _imageRepository.DeleteImage(img);
+                _iMageHelper.DeleteImage(img.Path);
+            }
 
             return true;
         }

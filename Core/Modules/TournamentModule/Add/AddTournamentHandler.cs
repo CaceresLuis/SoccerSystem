@@ -26,11 +26,6 @@ namespace Core.Modules.TournamentModule.Add
         public async Task<bool> Handle(AddTournamentCommand request, CancellationToken cancellationToken)
         {
             AddTournamentDto data = request.Tournament;
-            if (data.EndDate == DateTime.MinValue)
-                data.EndDate = DateTime.Now;
-
-            if (data.StartDate == DateTime.MinValue)
-                data.StartDate = DateTime.Now;
 
             TournamentEntity tournament = _mapper.Map<TournamentEntity>(data);
 

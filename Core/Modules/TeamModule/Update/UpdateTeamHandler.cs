@@ -67,13 +67,21 @@ namespace Core.Modules.TeamModule.Update
                         IsSuccess = false
                     });
 
-            if (upTeam.LogoFile != null)
+            ImageEntity img = await _imageRepository.GetImage(upTeam.Id);
+            if (upTeam.LogoFile != null && img != null)
             {
-                ImageEntity img = await _imageRepository.GetImage(upTeam.Id);
                 _iMageHelper.DeleteImage(img.Path);
                 string newImg = await _iMageHelper.UploadImageAsync(upTeam.LogoFile, "Teams");
                 img.Path = newImg;
                 await _imageRepository.UpdateImage(img);
+
+                return true;
+            }
+
+            if(upTeam.LogoFile != null) 
+            {
+                string local = await _iMageHelper.UploadImageAsync(upTeam.LogoFile, "Teams");
+                await _imageRepository.AddImage(local, team.Id);
             }
 
             return true;

@@ -45,17 +45,18 @@ namespace Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(LiteGroupDto groupDto)
+        public async Task<ActionResult> Create(GroupDto groupDto)
         {
             try
             {
-                bool create = await _mediator.Send(new AddGroupCommand { GroupDto = groupDto });
+                LiteGroupDto LiteGroupDto = new LiteGroupDto { TournamentId = groupDto.Tournament.Id, Name = groupDto.Name };
+                bool create = await _mediator.Send(new AddGroupCommand { GroupDto = LiteGroupDto });
 
                 TempData["Title"] = "Created!";
                 TempData["Message"] = $"The group {groupDto.Name} was created";
                 TempData["State"] = $"{State.success}";
 
-                return RedirectToAction("Details", "Tournament", new { id = groupDto.Id });
+                return RedirectToAction("Details", "Tournament", new { id = groupDto.Tournament.Id });
             }
             catch (ExceptionHandler e)
             {
@@ -86,7 +87,7 @@ namespace Web.Controllers
         [Authorize(Roles = "admin")]
         public async Task<ActionResult> Edit(Guid id)
         {
-            GroupFullDataApi groupDto = await _mediator.Send(new GetGroupQuery { Id = id });
+            GroupDto groupDto = await _mediator.Send(new GetSimpleGroupQuery { Id = id });
             return View(groupDto);
         }
 

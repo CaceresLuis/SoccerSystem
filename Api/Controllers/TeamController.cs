@@ -55,10 +55,15 @@ namespace Api.Controllers
         public async Task<ActionResult<bool>> PostTeam([FromForm] TeamDto teamDto)
         {
             await _mediator.Send(new AddTeamCommand { Team = teamDto });
-            TeamDto team = await _mediator.Send(new GetTeamByNameQuery { TeamName = teamDto.Name });
-            ImageData img = new ImageData { File = teamDto.LogoFile, Reference = team.Id, Folder = "Teams" };
-            bool save = await _mediator.Send(new AddImageCommad { ImageData = img });
-            return save;
+
+            if(teamDto.LogoFile != null)
+            {
+                TeamDto team = await _mediator.Send(new GetTeamByNameQuery { TeamName = teamDto.Name });
+                ImageData img = new ImageData { File = teamDto.LogoFile, Reference = team.Id, Folder = "Teams" };
+                await _mediator.Send(new AddImageCommad { ImageData = img });
+            }
+
+            return true;
         }
 
         [HttpDelete("{id}")]

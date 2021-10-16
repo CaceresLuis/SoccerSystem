@@ -13,13 +13,13 @@ namespace Core.Modules.GroupTeamModule.Add
     {
         private readonly ITeamRepository _teamRepository;
         private readonly IGroupRepository _groupRepository;
-        private readonly IGroupTeamsRepository _groupDetailsRepository;
+        private readonly IGroupTeamsRepository _groupTeamsRepository;
 
-        public AddGroupTeamHandler(IGroupTeamsRepository groupDetailsRepository, ITeamRepository teamRepository = null, IGroupRepository groupRepository = null)
+        public AddGroupTeamHandler(IGroupTeamsRepository groupTeamsRepository, ITeamRepository teamRepository = null, IGroupRepository groupRepository = null)
         {
             _teamRepository = teamRepository;
             _groupRepository = groupRepository;
-            _groupDetailsRepository = groupDetailsRepository;
+            _groupTeamsRepository = groupTeamsRepository;
         }
 
         public async Task<bool> Handle(AddGroupTeamCommand request, CancellationToken cancellationToken)
@@ -40,8 +40,19 @@ namespace Core.Modules.GroupTeamModule.Add
                     });
 
             GroupTeamEntity groupDetail = new GroupTeamEntity { Group = group, Team = team };
+            var exist = await _groupTeamsRepository.GetGroupDetailsByGroupAdnTeamAsync(group.Id, team.Id);
+            if(exist != null)
+            throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                   new Error
+                   {
+                       Code = "Not registered",
+                       Message = "This team already exists in the group",
+                       Title = "Not registered",
+                       State = State.error,
+                       IsSuccess = false
+                   });
 
-            if (!await _groupDetailsRepository.AddGroupDetailsAsync(groupDetail))
+            if (!await _groupTeamsRepository.AddGroupDetailsAsync(groupDetail))
                 throw new ExceptionHandler(HttpStatusCode.BadRequest,
                    new Error
                    {

@@ -34,6 +34,24 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<bool> ConfirmAvailability(MatchEntity matchEntity)
+        {
+            var data = await _dataContext.Matchs
+                .Include(m => m.Group)
+                .Include(m => m.Visitor)
+                .Include(m => m.Local)
+                .FirstOrDefaultAsync
+                (
+                    m => m.Group.Id == matchEntity.Id && 
+                    m.Hour == matchEntity.Hour &&
+                    m.Date == matchEntity.Date &&
+                    m.Local == matchEntity.Local ||
+                    m.Visitor == matchEntity.Visitor 
+                );
+
+            return data != null;
+        }
+
         public async Task<MatchEntity> GetMatchAsync(Guid id)
         {
             var a = await _dataContext.Matchs

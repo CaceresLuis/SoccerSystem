@@ -39,7 +39,11 @@ namespace Core.Modules.GroupModule.Get
                         IsSuccess = false
                     });
 
-            var groupDto = _mapper.Map<GroupFullData>(group);
+            GroupFullData groupDto = _mapper.Map<GroupFullData>(group);
+            ImageEntity tournamentImg = await _imageRepository.GetImage(group.Tournament.Id);
+            if (tournamentImg != null)
+                groupDto.Tournament.LogoPath = tournamentImg.Path;
+
             foreach (TeamEntity team in group.GroupTeams.Select(a => a.Team))
             {
                 ImageEntity img = await _imageRepository.GetImage(team.Id);

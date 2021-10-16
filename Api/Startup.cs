@@ -62,7 +62,7 @@ namespace Api
 
 
             //Get SecretKey of userManager Secrets, also apply in JwtGenerator
-            string keySecret = Configuration["SecretKey"];
+            string keySecret = "YOURSECRETKEY";
             //Config para manejo de usuarios, login, etc
             IdentityBuilder builder = services.AddIdentityCore<UserEntity>();
             IdentityBuilder identityBuilder = new IdentityBuilder(builder.UserType, builder.Services);

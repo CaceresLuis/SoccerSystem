@@ -37,10 +37,12 @@ namespace Core.Modules.TeamModule.Get
                         State = State.error,
                         IsSuccess = false
                     });
-            ImageEntity img = await _imageRepository.GetImage(team.Id);
 
-            var dto = _mapper.Map<TeamDto>(team);
-            dto.LogoPath = img.Path;
+            TeamDto dto = _mapper.Map<TeamDto>(team);
+            ImageEntity img = await _imageRepository.GetImage(team.Id);
+            if(img != null)    
+                dto.LogoPath = img.Path;
+
             return dto;
         }
     }

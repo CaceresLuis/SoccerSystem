@@ -22,6 +22,17 @@ namespace Core.Modules.GroupTeamModule.Remove
         public async Task<Guid> Handle(RemoveGroupDetailCommand request, CancellationToken cancellationToken)
         {
             GroupTeamEntity groupDetailEntity = await _groupDetailsRepository.GetGroupDetailsAsync(request.Id);
+            if (groupDetailEntity == null)
+                throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                    new Error
+                    {
+                        Code = "Not found",
+                        Message = "The GroupTeam does not exist",
+                        Title = "Error",
+                        State = State.error,
+                        IsSuccess = false
+                    });
+
             if (groupDetailEntity.MatchesPlayed > 0)
                 throw new ExceptionHandler(HttpStatusCode.BadRequest,
                     new Error

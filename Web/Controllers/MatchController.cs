@@ -2,6 +2,7 @@
 using MediatR;
 using Core.Dtos;
 using Shared.Enums;
+using Core.Dtos.DtosApi;
 using Shared.Exceptions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,6 @@ using Core.Modules.MatchModule.List;
 using Core.Modules.MatchModule.Close;
 using Core.Modules.MatchModule.Remove;
 using Microsoft.AspNetCore.Authorization;
-using Core.Dtos.DtosApi;
 
 namespace Web.Controllers
 {
@@ -67,10 +67,20 @@ namespace Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CloseMatch(CloseMatchDto closeMatchDto)
+        public async Task<ActionResult> CloseMatch(MatchDto matchDto)
         {
             try
             {
+                var closeMatchDto = new CloseMatchDto 
+                { 
+                    IdMatch = matchDto.Id,
+                    GroupId = matchDto.GroupId,
+                    LocalId = matchDto.Local.Id,
+                    VisitorId = matchDto.Visitor.Id,
+                    GoalsLocal = matchDto.GoalsLocal,
+                    GoalsVisitor = matchDto.GoalsVisitor
+                };
+
                 await _mediator.Send(new CloseMatchCommand { CloseMatchDto = closeMatchDto });
                 TempData["Title"] = "Success";
                 TempData["Message"] = "Macht Closet!";
@@ -83,7 +93,7 @@ namespace Web.Controllers
                 TempData["Title"] = e.Error.Title;
                 TempData["Message"] = e.Error.Message;
                 TempData["State"] = State.error.ToString();
-                return View(closeMatchDto);
+                return View(matchDto);
             }
         }
 

@@ -2,8 +2,10 @@
 using MediatR;
 using Core.Dtos;
 using Core.Dtos.AddDtos;
+using Shared.Helpers.Image;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Core.Modules.ImageModule.Add;
 using Core.Modules.TournamentModule.Add;
 using Core.Modules.TournamentModule.Get;
 using Core.Modules.TournamentModule.List;
@@ -50,7 +52,15 @@ namespace Web.Controllers.Api
         [Authorize(Roles = "admin")]
         public async Task<ActionResult<bool>> PostTournamentEntity([FromForm] AddTournamentDto tournamentDto)
         {
-            return await _mediator.Send(new AddTournamentCommand { Tournament = tournamentDto });
+            await _mediator.Send(new AddTournamentCommand { Tournament = tournamentDto });
+            if(tournamentDto.LogoFile != null)
+            {
+                TournamentDto tournament = await _mediator.Send(new GetTournamentByNameQuery { Name = tournamentDto.Name });
+                ImageData img = new ImageData { File = tournamentDto.LogoFile, Reference = tournament.Id, Folder = "Tournaments" };
+                await _mediator.Send(new AddImageCommad { ImageData = img });
+            }
+
+            return true;
         }
 
         [HttpDelete("{id}")]

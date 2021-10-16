@@ -34,10 +34,13 @@ namespace Core.Modules.TeamModule.List
             foreach (TeamEntity team in teams)
             {
                 ImageEntity img = await _imageRepository.GetImage(team.Id);
-                foreach (TeamDto dto in teamDtos)
+                if(img != null)
                 {
-                    if(team.Id == dto.Id)
-                        dto.LogoPath = img.Path;
+                    foreach (TeamDto dto in teamDtos)
+                    {
+                        if(team.Id == dto.Id)
+                            dto.LogoPath = img.Path;
+                    }
                 }
             }
 
