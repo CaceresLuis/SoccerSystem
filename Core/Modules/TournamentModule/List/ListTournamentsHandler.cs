@@ -28,10 +28,13 @@ namespace Core.Modules.TournamentModule.List
             foreach (TournamentEntity tour in tournaments)
             {
                 ImageEntity img = await _imageRepository.GetImage(tour.Id);
-                foreach (TournamentFullData dto in tournamentdtos)
+                if(img != null)
                 {
-                    if (tour.Id == dto.Id)
-                        dto.LogoPath = img.Path;
+                    foreach (TournamentFullData dto in tournamentdtos)
+                    {
+                        if (tour.Id == dto.Id)
+                            dto.LogoPath = img.Path;
+                    }
                 }
             }
 

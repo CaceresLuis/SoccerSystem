@@ -47,10 +47,13 @@ namespace Web.Controllers
         {
             try
             {
-                await _mediator.Send(new AddTeamCommand { Team = teamDto });
-                TeamDto team = await _mediator.Send(new GetTeamByNameQuery { TeamName = teamDto.Name });
-                ImageData img = new ImageData { File = teamDto.LogoFile, Reference = team.Id, Folder = "Teams"};
-                await _mediator.Send(new AddImageCommad { ImageData = img });
+                var add = await _mediator.Send(new AddTeamCommand { Team = teamDto });
+                if(add && teamDto.LogoFile != null)
+                {
+                    TeamDto team = await _mediator.Send(new GetTeamByNameQuery { TeamName = teamDto.Name });
+                    ImageData img = new ImageData { File = teamDto.LogoFile, Reference = team.Id, Folder = "Teams"};
+                    await _mediator.Send(new AddImageCommad { ImageData = img });
+                }
 
                 TempData["Title"] = "Created";
                 TempData["Message"] = $"The team {teamDto.Name} was created";

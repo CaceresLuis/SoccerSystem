@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using Core.Dtos;
 using System.Net;
 using Shared.Enums;
@@ -53,9 +54,9 @@ namespace Core.Modules.TournamentModule.Update
                     });
             }
 
-            tournament.EndDate = (upTournament.EndDate == null) ? tournament.EndDate : upTournament.EndDate;
+            tournament.EndDate = (upTournament.EndDate == DateTime.MinValue) ? tournament.EndDate : upTournament.EndDate;
             tournament.IsActive = upTournament.IsActive;
-            tournament.StartDate = (upTournament.StartDate == null) ? tournament.StartDate : upTournament.StartDate;
+            tournament.StartDate = (upTournament.StartDate == DateTime.MinValue) ? tournament.StartDate : upTournament.StartDate;
             tournament.Name = upTournament.Name ?? tournament.Name;
 
             if(!await _tournamentRepository.UpdateTournamentAsync(tournament))
@@ -69,13 +70,20 @@ namespace Core.Modules.TournamentModule.Update
                         IsSuccess = false
                     });
 
-            if (upTournament.LogoFile != null)
+            ImageEntity img = await _imageRepository.GetImage(upTournament.Id);
+            if (upTournament.LogoFile != null && img != null)
             {
-                ImageEntity img = await _imageRepository.GetImage(upTournament.Id);
                 _iMageHelper.DeleteImage(img.Path);
                 string newImg = await _iMageHelper.UploadImageAsync(upTournament.LogoFile, "Tournaments");
                 img.Path = newImg;
                 await _imageRepository.UpdateImage(img);
+                return true;
+            }
+
+            if(upTournament.LogoFile != null)
+            {
+                string local = await _iMageHelper.UploadImageAsync(upTournament.LogoFile, "Tournaments");
+                await _imageRepository.AddImage(local, tournament.Id);
             }
 
             return true;

@@ -8,6 +8,7 @@ namespace Infrastructure.Interfaces
     public interface IMatchRepository
     {
         Task<bool> AddMatchAsync(MatchEntity match);
+        Task<bool> ConfirmAvailability(MatchEntity matchEntity);
         Task<bool> DeleteMatchAsync(MatchEntity match);
         Task<MatchEntity> FindMatchByIdAsync(Guid matchId);
         Task<MatchEntity> GetMatchAsync(Guid id);

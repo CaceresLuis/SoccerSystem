@@ -75,7 +75,7 @@ namespace Web
               .AddEntityFrameworkStores<DataContext>();
 
             //Get SecretKey of userManager Secrets
-            string keySecret = Configuration["SecretKey"];
+            string keySecret = "YOURSECRETKEY";
             //Configuracion autenticacion                                             //Secret key
             SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keySecret));
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>

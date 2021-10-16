@@ -42,7 +42,6 @@ namespace Infrastructure.Repositories
             return await _dataContext.GroupTeams
                 .Include(gd => gd.Team)
                 .Include(gd => gd.Group)
-                .ThenInclude(g => g.Tournament)
                 .FirstOrDefaultAsync(gd => gd.Id == id);
         }
 

@@ -12,14 +12,15 @@ namespace Infrastructure
         {
             if (!userManager.Users.Any())
             {
+                //Assing a pass user
                 string pass = configuration["Password"];
                 UserEntity user = new UserEntity
                 {
-                    FirstName = "Julanito",
-                    LastName = "De Tal",
-                    UserName = "jusla@nito.com",
+                    FirstName = "admin",
+                    LastName = "admin",
+                    UserName = "correo@temp.com",
                     Document = "2486468794694",
-                    Email = "jusla@nito.com"
+                    Email = "correo@temp.com"
                 };
                 string rol = "admin";
                 await userManager.CreateAsync(user, pass);

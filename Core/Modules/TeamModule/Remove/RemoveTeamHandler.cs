@@ -60,9 +60,13 @@ namespace Core.Modules.TeamModule.Remove
                         State = State.error,
                         IsSuccess = false
                     });
+
             ImageEntity img = await _imageRepository.GetImage(team.Id);
-            await _imageRepository.DeleteImage(img);
-            _iMageHelper.DeleteImage(img.Path);
+            if (img != null)
+            {
+                await _imageRepository.DeleteImage(img);
+                _iMageHelper.DeleteImage(img.Path);
+            }
 
             return true;
         }

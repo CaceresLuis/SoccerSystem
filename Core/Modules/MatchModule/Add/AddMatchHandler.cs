@@ -55,8 +55,19 @@ namespace Core.Modules.MatchModule.Add
                     });
 
             MatchEntity matchEntity = new MatchEntity { Group = groupEntity, Visitor = visitor, Local = local, Date = matchDto.Date, Hour = matchDto.Hour };
-            
-            if(!await _matchRepository.AddMatchAsync(matchEntity))
+
+            if(await _matchRepository.ConfirmAvailability(matchEntity))
+                throw new ExceptionHandler(HttpStatusCode.BadRequest,
+                    new Error
+                    {
+                        Code = "Error",
+                        Message = "One or both teams already have a match on this day and time",
+                        Title = "Error",
+                        State = State.error,
+                        IsSuccess = false
+                    });
+
+            if (!await _matchRepository.AddMatchAsync(matchEntity))
                 throw new ExceptionHandler(HttpStatusCode.BadRequest,
                     new Error
                     {
